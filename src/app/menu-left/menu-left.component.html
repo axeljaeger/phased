@@ -1,0 +1,107 @@
+<div class="mat-title">Simulation setup</div>
+<mat-accordion>
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Environment
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>Air, c = XXXX m/s</p>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Array config
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <form class="example-container" [formGroup]="arrayConfig">
+            <div>
+                <mat-button-toggle-group formControlName="arrayType">
+                    <mat-button-toggle value="ura">
+                        URA
+                        <mat-icon aria-hidden="false" aria-label="URA">square</mat-icon>
+                    </mat-button-toggle>
+                    <mat-button-toggle value="circular">
+                        Circular
+                        <mat-icon aria-hidden="false" aria-label="circular">circle</mat-icon>
+                    </mat-button-toggle>
+                </mat-button-toggle-group>
+            </div>
+
+            <div formGroupName="uraConfig" *ngIf="arrayConfig.controls['arrayType'].value === 'ura'">
+                <div>Element count</div>
+                <div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>x</mat-label>
+                        <input matInput type="number" formControlName="elementsX" min="1" max="16">
+                        </mat-form-field>
+                </div>
+                <div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>y</mat-label>
+                        <input matInput type="number" formControlName="elementsY" min="1" max="16">
+                    </mat-form-field>
+                </div>
+                
+                <div>Element distance</div>
+                <div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>x</mat-label>
+                        <input matInput type="number" formControlName="pitchX" min="0" max="1" step="0.0001">
+                    </mat-form-field>
+                
+                </div>
+                <div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>y</mat-label>
+                        <input matInput type="number" formControlName="pitchY" min="0" max="1" step="0.0001">
+                        </mat-form-field>
+                </div>
+
+            </div>
+        </form>
+    </mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Beamforming
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>Algorithm | Pick on plane</p>
+    </mat-expansion-panel>
+    <div class="mat-title">Results</div>
+    <mat-accordion>
+
+        <mat-expansion-panel hideToggle>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Tranducers
+                </mat-panel-title>
+                <mat-panel-description>
+                    4
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-selection-list #shoes [multiple]="false">
+                <mat-list-option *ngFor="let transducer of engineService.transducers | async">
+                    {{transducer.name}}
+                </mat-list-option>
+            </mat-selection-list>
+        </mat-expansion-panel>
+        <mat-expansion-panel hideToggle>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Rayleigh integral
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>Elongation | Amplitude | Phase</p>
+        </mat-expansion-panel>
+        <mat-expansion-panel hideToggle>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Far field 3D
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>Deform mesh | Logarithmic scale</p>
+        </mat-expansion-panel>
+    </mat-accordion>
