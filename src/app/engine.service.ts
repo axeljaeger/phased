@@ -2,7 +2,6 @@ import { ElementRef, Injectable, NgZone } from '@angular/core';
 
 import {
   Angle,
-  Animation,
   ArcRotateCamera,
   Engine,
   HemisphericLight,
@@ -12,11 +11,11 @@ import {
   Plane,
   Scene,
   ShaderMaterial,
-  Texture,
-  Vector2,
   Vector3
 } from '@babylonjs/core';
 import { BehaviorSubject } from 'rxjs';
+import { RayleighMaterial } from './materials/rayleigh.material';
+import { TransducerMaterial } from './materials/transducer.material';
 
 export interface Transducer {
   name: string;
@@ -25,7 +24,6 @@ export interface Transducer {
   selected: boolean;
   phase: number;
 }
-
 
 @Injectable({
   providedIn: 'root'
@@ -79,29 +77,8 @@ export class EngineService {
 
     const transducerDiameter = 0.0034;
 
-    const coolWarmTexture = new Texture('assets/coolwarm.png', scene);
-    coolWarmTexture.wrapU = Texture.CLAMP_ADDRESSMODE;
-
     // Transducer
-    this.transducerMaterial = new ShaderMaterial('transducerMaterial', scene, './assets/Transducer',
-      {
-        attributes: [
-          "position",
-          "normal",
-          "uv"
-        ],
-        uniforms: [
-          "world",
-          "worldView",
-          "worldViewProjection",
-          "view",
-          "projection",
-          "parameter",
-          "transducerDiameter"
-        ]
-      });
-
-    this.transducerMaterial.backFaceCulling = false;
+    this.transducerMaterial = new TransducerMaterial(scene);
 
     const apertureOptions = {
       sourcePlane: aperturePlane,
@@ -112,31 +89,7 @@ export class EngineService {
     this.transducerPrototype.material = this.transducerMaterial;
 
     // Result
-    this.rayleighMaterial = new ShaderMaterial('rayleighMaterial', scene, './assets/Rayleigh',
-      {
-        attributes: [
-          "position",
-          "normal",
-          "uv",
-          'world0',
-          'world1',
-          'world2',
-          'world3',
-        ],
-        uniforms: [
-          'excitation',
-          "world",
-          "worldView",
-          "worldViewProjection",
-          "view",
-          "projection",
-          "globalPhase"
-        ],
-        samplers: ['coolwarmSampler'],
-        defines: ["#define INSTANCES"]
-      });
-    this.rayleighMaterial.backFaceCulling = false;
-    this.rayleighMaterial.setTexture('coolwarmSampler', coolWarmTexture);
+    this.rayleighMaterial = new RayleighMaterial(scene);
 
     // Setup result plane
     const resultPlane = Plane.FromPositionAndNormal(origin, yPositive);
