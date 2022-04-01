@@ -1,18 +1,16 @@
 import { ElementRef, Injectable, NgZone } from '@angular/core';
 
-import {
-  Angle,
-  ArcRotateCamera,
-  Engine,
-  HemisphericLight,
-  Matrix,
-  Mesh,
-  MeshBuilder,
-  Plane,
-  Scene,
-  ShaderMaterial,
-  Vector3
-} from '@babylonjs/core';
+import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
+import { Angle } from '@babylonjs/core/Maths/math.path';
+import { Engine } from '@babylonjs/core/Engines/engine';
+import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
+import { Matrix, Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { Mesh } from '@babylonjs/core/Meshes/mesh';
+import '@babylonjs/core/Meshes/thinInstanceMesh'
+import { Plane } from '@babylonjs/core/Maths/math.plane';
+import { PlaneBuilder } from '@babylonjs/core/Meshes/Builders/planeBuilder';
+import { Scene } from '@babylonjs/core/scene';
+
 import { BehaviorSubject } from 'rxjs';
 import { RayleighMaterial } from './materials/rayleigh.material';
 import { TransducerMaterial } from './materials/transducer.material';
@@ -32,8 +30,8 @@ export class EngineService {
   engine: Engine;
   private scene: Scene;
 
-  private transducerMaterial: ShaderMaterial;
-  private rayleighMaterial: ShaderMaterial;
+  private transducerMaterial: TransducerMaterial;
+  private rayleighMaterial: RayleighMaterial;
 
   private transducerPrototype: Mesh;
 
@@ -85,7 +83,7 @@ export class EngineService {
       size: transducerDiameter
     };
 
-    this.transducerPrototype = MeshBuilder.CreatePlane('plane', apertureOptions, scene);
+    this.transducerPrototype = PlaneBuilder.CreatePlane('plane', apertureOptions, scene);
     this.transducerPrototype.material = this.transducerMaterial;
 
     // Result
@@ -97,7 +95,7 @@ export class EngineService {
       sourcePlane: resultPlane
     };
 
-    const plane = MeshBuilder.CreatePlane('plane', planeOptions, scene)
+    const plane =  PlaneBuilder.CreatePlane('plane', planeOptions, scene)
     plane.material = this.rayleighMaterial;
     plane.position = new Vector3(0, 0, .5);
 

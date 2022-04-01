@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
-import { FogBlock } from '@babylonjs/core';
+import { FormBuilder } from '@angular/forms';
 import { EngineService } from '../engine.service';
 
 

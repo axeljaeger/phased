@@ -1,4 +1,5 @@
-import { Scene, ShaderMaterial } from "@babylonjs/core";
+import { Scene } from '@babylonjs/core/scene';
+import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
 
 const glsl = (x: TemplateStringsArray) => x;
 
