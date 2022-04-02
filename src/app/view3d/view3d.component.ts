@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { EngineService } from '../engine.service';
 
 @Component({
@@ -6,16 +6,11 @@ import { EngineService } from '../engine.service';
   templateUrl: './view3d.component.html',
   styleUrls: ['./view3d.component.css']
 })
-export class View3dComponent implements OnInit {
+export class View3dComponent implements AfterViewInit {
   @ViewChild('view3dcanvas', { static: true })
   canvasRef: ElementRef<HTMLCanvasElement>;
 
   constructor(private readonly engineService: EngineService) { }
-
-  // ...
-  ngOnInit(): void {
-    // .. manipulate the scene
-  }
 
   ngAfterViewInit(): void {
     this.engineService.initEngine(this.canvasRef);
