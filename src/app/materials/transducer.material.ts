@@ -1,6 +1,9 @@
 import { Scene } from '@babylonjs/core/scene';
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
 
+import '@babylonjs/core/Shaders/ShadersInclude/instancesDeclaration'
+import '@babylonjs/core/Shaders/ShadersInclude/instancesVertex'
+
 const glsl = (x: TemplateStringsArray) => x;
 
 const transducerVertexShaderCode = glsl`
