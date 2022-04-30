@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { ToolbarComponent } from './toolbar/toolbar.component';
 
 
 
@@ -23,7 +24,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
   declarations: [
     AppComponent,
     MenuLeftComponent,
-    View3dComponent
+    View3dComponent,
+    ToolbarComponent
   ],
   imports: [
     BrowserModule,

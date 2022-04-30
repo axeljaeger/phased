@@ -24,7 +24,7 @@ export class MenuLeftComponent implements OnInit {
     }),
   });
 
-  constructor(public readonly engineService: EngineService, private fb: FormBuilder) { }
+  constructor(public engineService: EngineService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
 

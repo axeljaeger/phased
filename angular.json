@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "usarray": {
+    "aua": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/usarray",
+            "outputPath": "dist/aua",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -72,18 +72,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "usarray:build"
+            "browserTarget": "aua:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "usarray:build:production"
+              "browserTarget": "aua:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "usarray:build"
+            "browserTarget": "aua:build"
           }
         },
         "lint": {
@@ -95,22 +95,35 @@
             ]
           }
         },
+        "storybook": {
+          "builder": "@storybook/angular:start-storybook",
+          "options": {
+            "browserTarget": "aua:build",
+            "port": 4400
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "browserTarget": "aua-cli:build"
+          }
+        },
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "usarray:serve"
+            "devServerTarget": "aua:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "usarray:serve:production"
+              "devServerTarget": "aua:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "usarray",
+  "defaultProject": "aua",
   "cli": {
     "defaultCollection": "@angular-eslint/schematics"
   }

@@ -1,5 +1,5 @@
 {
-  "name": "usarray",
+  "name": "aua",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,10 @@
     "build": "ng build",
     "test": "jest",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
+    "storybook": "ng run aua:storybook",
+    "build-storybook": "ng run aua:build-storybook"
   },
   "jest": {
     "preset": "jest-preset-angular",
@@ -47,11 +50,23 @@
     "@angular-eslint/template-parser": "13.2.1",
     "@angular/cli": "13.3.4",
     "@angular/compiler-cli": "~13.3.5",
+    "@babel/core": "^7.17.10",
+    "@compodoc/compodoc": "^1.1.19",
+    "@storybook/addon-actions": "^6.4.22",
+    "@storybook/addon-essentials": "^6.4.22",
+    "@storybook/addon-interactions": "^6.4.22",
+    "@storybook/addon-links": "^6.4.22",
+    "@storybook/angular": "^6.4.22",
+    "@storybook/builder-webpack5": "^6.4.22",
+    "@storybook/manager-webpack5": "^6.4.22",
+    "@storybook/testing-library": "^0.0.11",
     "@types/jest": "^27.4.1",
     "@types/node": "^17.0.30",
     "@typescript-eslint/eslint-plugin": "5.21.0",
     "@typescript-eslint/parser": "5.21.0",
+    "babel-loader": "^8.2.5",
     "eslint": "^8.14.0",
+    "eslint-plugin-storybook": "^0.5.11",
     "jest": "^27.5.1",
     "jest-canvas-mock": "^2.4.0",
     "jest-preset-angular": "^11.1.2",
