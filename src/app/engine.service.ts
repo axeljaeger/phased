@@ -8,19 +8,25 @@ import { Matrix, Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import '@babylonjs/core/Meshes/thinInstanceMesh'
 import { Plane } from '@babylonjs/core/Maths/math.plane';
-import { PlaneBuilder } from '@babylonjs/core/Meshes/Builders/planeBuilder';
+import { CreatePlane } from '@babylonjs/core/Meshes/Builders/planeBuilder';
 import { Scene } from '@babylonjs/core/scene';
 
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { RayleighMaterial } from './materials/rayleigh.material';
 import { TransducerMaterial } from './materials/transducer.material';
+import { AbstractMesh, UniformBuffer } from '@babylonjs/core';
 
 export interface Transducer {
   name: string;
   pos: Vector3;
   enabled: boolean;
   selected: boolean;
+}
+
+export interface ExcitationElement {
+  pos: Vector3;
   phase: number;
+  amplitude: number;
 }
 
 @Injectable({
@@ -35,20 +41,13 @@ export class EngineService {
 
   private transducerPrototype: Mesh;
 
-  public transducers: BehaviorSubject<Array<Transducer>> = new BehaviorSubject<Array<Transducer>>([]);
+  private speedOfSoundSubject: BehaviorSubject<number> = new BehaviorSubject(343);
+  public speedOfSound$ = this.speedOfSoundSubject.asObservable();
+  
+  private transducersSubject = new BehaviorSubject<Array<Transducer>>([]);
+  public transducers$ = this.transducersSubject.asObservable();
 
-  constructor(private ngZone: NgZone) {
-
-
-    const aperturePitch = 0.0043;
-    const apdh = aperturePitch;
-    this.transducers.next([
-      { pos: new Vector3(-apdh, -apdh, 0), enabled: true, selected: false, phase: 0, name: '1' },
-      { pos: new Vector3(-apdh, apdh, 0), enabled: true, selected: false, phase: 0, name: '2' },
-      { pos: new Vector3(apdh, apdh, 0), enabled: true, selected: false, phase: 0, name: '3' },
-      { pos: new Vector3(apdh, -apdh, 0), enabled: true, selected: false, phase: 0, name: '4' }
-    ]);
-  }
+  constructor(private ngZone: NgZone) {}
 
   initEngine(canvas: ElementRef<HTMLCanvasElement>) {
     this.engine = new Engine(canvas.nativeElement, true);
@@ -64,8 +63,6 @@ export class EngineService {
     camera.inertia = 0;
 
     let light = new HemisphericLight("light1", new Vector3(0, 1, 0), scene);
-
-
 
     // Setup Aperture
     const origin = new Vector3(0, 0, 0);
@@ -83,7 +80,7 @@ export class EngineService {
       size: transducerDiameter
     };
 
-    this.transducerPrototype = PlaneBuilder.CreatePlane('plane', apertureOptions, scene);
+    this.transducerPrototype = CreatePlane('plane', apertureOptions, scene);
     this.transducerPrototype.material = this.transducerMaterial;
 
     // Result
@@ -95,21 +92,73 @@ export class EngineService {
       sourcePlane: resultPlane
     };
 
-    const plane =  PlaneBuilder.CreatePlane('plane', planeOptions, scene)
+    const plane = CreatePlane('plane', planeOptions, scene)
     plane.material = this.rayleighMaterial;
     plane.position = new Vector3(0, 0, .5);
+    plane.bakeCurrentTransformIntoVertices();
 
     let phase = 0;
     scene.registerBeforeRender(() => {
       this.transducerMaterial.setFloat('globalPhase', Angle.FromDegrees(phase).radians());
       this.rayleighMaterial.setFloat('globalPhase', Angle.FromDegrees(phase).radians());
+      this.rayleighMaterial.setFloat('t', Angle.FromDegrees(phase).radians());
 
       phase += 6;
       phase %= 360;
     });
+
+    const excitationBuffer = new UniformBuffer(this.engine);
+    // Unclear why we need to pass 16 here, 2x vec4 should be either
+    // 1) 8 -> if a float counts as 1
+    // 2) 32 -> if a float counts as 4: 2*4*4 
+    excitationBuffer.addUniform('elements', 4, this.transducersSubject.value.length * 2);
+
+    this.rayleighMaterial.onBind = ((mesh:AbstractMesh) => {
+      this.rayleighMaterial.getEffect().bindUniformBuffer(excitationBuffer.getBuffer()!, 'excitation');
+    })
+    
+    combineLatest([this.speedOfSound$, this.transducers$]).subscribe(
+      ([speedOfSound, transducers]) => {
+
+        this.rayleighMaterial.setInt('numElements', this.transducersSubject.value.length);
+      
+        const omega = 2.0 * Math.PI * 40000;
+        
+        this.rayleighMaterial.setFloat('omega', omega);
+        this.rayleighMaterial.setFloat('k', omega / speedOfSound);
+        
+        this.rayleighMaterial.setInt('viewmode', 0);
+        this.rayleighMaterial.setFloat('dynamicRange', 10);
+    
+        const elementSize = 8;
+
+        const buffers = transducers.reduce((buffer, transducer, index) => {
+          Matrix.Translation(
+            transducer.pos.x, 
+            transducer.pos.y, 
+            transducer.pos.z
+          ).copyToArray(buffer.matrixBuffer, index * 16);
+
+          const elementOffset = elementSize * index;
+          transducer.pos.toArray(buffer.excitationBuffer, elementOffset);
+          
+          buffer.excitationBuffer[elementOffset + 4] = 1; // amplitude
+          buffer.excitationBuffer[elementOffset + 5] = 1; // area
+          buffer.excitationBuffer[elementOffset + 6] = 0; // phase
+          buffer.excitationBuffer[elementOffset + 7] = 0; // zero  
+
+          return buffer;
+        }, { 
+          matrixBuffer: new Float32Array(16 * transducers.length),
+          excitationBuffer: new Float32Array(elementSize * transducers.length) 
+        } );
+
+        this.transducerPrototype.thinInstanceSetBuffer('matrix', buffers.matrixBuffer, 16, false);
+        excitationBuffer.updateUniformArray('elements', buffers.excitationBuffer, buffers.excitationBuffer.length);
+        excitationBuffer.update();
+      });
     return scene;
   }
-
 
   start() {
 
@@ -122,16 +171,7 @@ export class EngineService {
     });
   }
 
-  setTransducerPositions(positions: Array<{ x: number; y: number; phase: number }>) {
-    const matrixBuffer = new Float32Array(16 * positions.length);
-    const matrices = positions.map(pos => Matrix.Translation(pos.x, pos.y, 0));
-
-    const excitationBuffer: Array<number> = [];
-    positions.forEach(pos => {
-      return [...excitationBuffer, pos.x, pos.y, pos.phase];
-    });
-    this.rayleighMaterial.setArray3('excitation', excitationBuffer);
-    matrices.forEach((mat, index) => mat.copyToArray(matrixBuffer, index * 16));
-    this.transducerPrototype.thinInstanceSetBuffer('matrix', matrixBuffer, 16, false);
+  setTransducerPositions(positions: Array<Transducer>) {
+    this.transducersSubject.next(positions);
   }
 }

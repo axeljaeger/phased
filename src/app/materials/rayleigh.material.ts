@@ -7,37 +7,77 @@ const glsl = (x: TemplateStringsArray) => x;
 const rayleighVertexShaderCode = glsl`
   precision highp float;
 
-  // Attributes
-  attribute vec3 position;
-  attribute vec2 uv;
-
   // Uniforms
   uniform mat4 worldViewProjection;
 
+  // Attributes
+  attribute vec3 position;
+
   // Varying
-  varying vec2 vUV;
-  varying vec3 globalPos;
+  out highp vec3 r;
 
   void main(void) {
     gl_Position = worldViewProjection * vec4(position, 1.0);
-    globalPos = position;
-    vUV = uv;
+    r = position;
   }
 `;
 const rayleighFragmentShaderCode = glsl`
   precision highp float;
 
-  varying vec2 vUV;
-  varying vec3 globalPos;
-
   uniform sampler2D coolwarmSampler;
   uniform float globalPhase;
 
+  uniform float k;
+  uniform float t;
+  uniform float omega;
+
+  uniform int viewmode;
+  uniform float dynamicRange;
+
+  struct ExcitationElement { // size per element: 8
+    vec4 position; // offset 0
+    vec4 phasor; // 0: amplitude, 1: area, 2: delay, 3: dummy // Offset  16
+  };
+
+  uniform int numElements;
+
+  layout(std140) uniform ExcitationBuffer
+  {
+    ExcitationElement elements[4];
+  } excitation;
+
+  in highp vec3 r;
+
   void main(void) {
-      float phase = globalPos.x / 0.086;
-      float amplitude = sin(phase + globalPhase);
-      float u = 0.5*(1.0+amplitude);
-      gl_FragColor = texture2D(coolwarmSampler, vec2(u, 0.5));
+    vec2 elongation = vec2(0,0); // Complex number
+
+    for (int j = 0; j < numElements; ++j) {
+      ExcitationElement elm = excitation.elements[j];
+      float d = distance(elm.position.xyz, r);
+      float oodd = 1.0/pow(d,2.0);
+
+      float amplitude = elm.phasor.x;
+      float area = elm.phasor.y;
+      float delay = elm.phasor.z;
+      
+      float argz = (d*k - delay*omega - t);
+      elongation += vec2(cos(argz), sin(argz))*amplitude*area*oodd;
+    } 
+  
+    glFragColor = vec4(.5 + elongation.x, .5-elongation.x, 0.5,1);
+
+    // float intensity;
+    // if (viewmode == 0) { // Elongation
+    //   intensity = 0.5 + (.5*elongation.x + .25) / (float(numElements)*dynamicRange);
+    //   glFragColor = texture(coolwarmSampler, vec2(intensity, 0.375));
+    // } else if (viewmode == 1) { // Magnitude
+    //   //intensity = 0.25*length(elongation) / numsources;
+    //   intensity = log(length(elongation) / float(numElements))/log(10.0f);
+    //   glFragColor = texture(coolwarmSampler, vec2(intensity, 1));
+    // } else if (viewmode == 2) { // Phase
+    //   intensity = (atan(elongation.y,elongation.x)/(3.14) + .25);
+    //   glFragColor = texture(coolwarmSampler, vec2(intensity, 1));
+    // }
   }
 `;
 
@@ -63,7 +103,15 @@ export class RayleighMaterial extends ShaderMaterial {
         "worldViewProjection",
         "view",
         "projection",
-        "globalPhase"
+        "globalPhase",
+        "k",
+        "t",
+        "omega",
+        "viewmode",
+        "dynamicRange"
+      ],
+      uniformBuffers: [
+        'excitation'
       ],
       samplers: ['coolwarmSampler'],
       defines: ["#define INSTANCES"]
