@@ -83,7 +83,7 @@
                 </mat-panel-description>
             </mat-expansion-panel-header>
             <mat-selection-list #shoes [multiple]="false">
-                <mat-list-option *ngFor="let transducer of engineService.transducers | async">
+                <mat-list-option *ngFor="let transducer of engineService.transducers$ | async">
                     {{transducer.name}}
                 </mat-list-option>
             </mat-selection-list>

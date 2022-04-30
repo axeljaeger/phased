@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { EngineService } from '../engine.service';
+import { Vector3 } from '@babylonjs/core';
+import { EngineService, Transducer } from '../engine.service';
 
 
 @Component({
@@ -12,14 +13,14 @@ export class MenuLeftComponent implements OnInit {
   arrayConfig = this.fb.group({
     arrayType: 'ura',
     uraConfig: this.fb.group({
-      elementsX: this.fb.control(2),
-      elementsY: this.fb.control(2),
-      pitchX: this.fb.control(0.0043),
-      pitchY: this.fb.control(0.0043),
+      elementsX: this.fb.control(0),
+      elementsY: this.fb.control(0),
+      pitchX: this.fb.control(0),
+      pitchY: this.fb.control(0),
     }),
     circularConfig: this.fb.group({
-      radius: this.fb.control(2),
-      elements: this.fb.control(2),
+      radius: this.fb.control(0),
+      elements: this.fb.control(0),
     }),
   });
 
@@ -29,7 +30,8 @@ export class MenuLeftComponent implements OnInit {
 
     // memleak
     this.arrayConfig.valueChanges.subscribe(val => {
-      const excitation = [];
+      console.log("Array config update");
+      const excitation : Array<Transducer> = [];
       if (val.arrayType === 'ura') {
         const countX: number = val.uraConfig.elementsX;
         const countY: number = val.uraConfig.elementsY;
@@ -43,12 +45,31 @@ export class MenuLeftComponent implements OnInit {
           for (let y = 0; y < countY; y++) {
             const xpos = -sizeXH + x * pitchX;
             const ypos = -sizeYH + y * pitchY;
-            excitation.push({ x: xpos, y: ypos, phase: 0.0 });
+            excitation.push({ 
+              name: `Transducer ${y * countY + x}`,
+              pos: new Vector3(xpos, ypos), 
+              enabled: false,
+              selected: false
+            });
           }
         }
       }
 
       this.engineService.setTransducerPositions(excitation);
+    });
+
+    this.arrayConfig.patchValue({
+      arrayType: 'ura',
+      uraConfig: {
+        elementsX: 2,
+        elementsY: 2,
+        pitchX: 0.043,
+        pitchY: 0.0043,
+      },
+      circularConfig: {
+        radius: 2,
+        elements: 2,
+      }
     });
   }
 }
