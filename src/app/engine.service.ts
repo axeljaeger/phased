@@ -10,11 +10,14 @@ import '@babylonjs/core/Meshes/thinInstanceMesh'
 import { Plane } from '@babylonjs/core/Maths/math.plane';
 import { CreatePlane } from '@babylonjs/core/Meshes/Builders/planeBuilder';
 import { Scene } from '@babylonjs/core/scene';
+import { AbstractMesh  } from '@babylonjs/core/Meshes/abstractMesh';
+import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
+
 
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { RayleighMaterial } from './materials/rayleigh.material';
 import { TransducerMaterial } from './materials/transducer.material';
-import { AbstractMesh, UniformBuffer } from '@babylonjs/core';
+
 
 export interface Transducer {
   name: string;
