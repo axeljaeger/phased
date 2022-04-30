@@ -10,7 +10,7 @@ import { EngineService, Transducer } from '../engine.service';
   styleUrls: ['./menu-left.component.css']
 })
 export class MenuLeftComponent implements OnInit {
-  arrayConfig = this.fb.group({
+  public arrayConfig = this.fb.group({
     arrayType: 'ura',
     uraConfig: this.fb.group({
       elementsX: this.fb.control(0),

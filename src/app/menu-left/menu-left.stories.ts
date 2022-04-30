@@ -1,6 +1,21 @@
 // also exported from '@storybook/angular' if you can deal with breaking changes in 6.1
-import { Story, Meta } from '@storybook/angular/types-6-0';
+import { EngineService } from 'src/app/engine.service';
 import { MenuLeftComponent } from './menu-left.component';
+
+import { Story, Meta, moduleMetadata } from '@storybook/angular';
+import { FormBuilder } from '@angular/forms';
+
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { NoopAnimationsModule  } from '@angular/platform-browser/animations';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ReactiveFormsModule } from '@angular/forms';
+
+import { MatInputModule } from '@angular/material/input';
+
+import { BehaviorSubject } from 'rxjs';
 
 // More on default export: https://storybook.js.org/docs/angular/writing-stories/introduction#default-export
 export default {
@@ -8,8 +23,29 @@ export default {
   component: MenuLeftComponent,
   // More on argTypes: https://storybook.js.org/docs/angular/api/argtypes
   argTypes: {
-    backgroundColor: { control: 'color' },
+    arrayConfig: { control: 'object' },
   },
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {provide: EngineService, useValue: {
+            transducers$: new BehaviorSubject([{name: "x"},{name: "y"}]),
+            setTransducerPositions: () => {}
+        }}, 
+        {provide: FormBuilder, useClass: FormBuilder}
+      ],
+      imports: [
+        MatExpansionModule,
+        MatButtonToggleModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        MatListModule,
+        NoopAnimationsModule,
+        ReactiveFormsModule,
+      ]
+    })
+  ]
 } as Meta;
 
 // More on component templates: https://storybook.js.org/docs/angular/writing-stories/introduction#using-args
@@ -17,8 +53,22 @@ const Template: Story<MenuLeftComponent> = (args: MenuLeftComponent) => ({
   props: args,
 });
 
+const fb = new FormBuilder();
+
 export const Primary = Template.bind({});
 // More on args: https://storybook.js.org/docs/angular/writing-stories/args
 Primary.args = {
- 
+    arrayConfig:  fb.group({
+        arrayType: 'ura',
+        uraConfig: fb.group({
+          elementsX: fb.control(0),
+          elementsY: fb.control(0),
+          pitchX: fb.control(0),
+          pitchY: fb.control(0),
+        }),
+        circularConfig: fb.group({
+          radius: fb.control(0),
+          elements: fb.control(0),
+        }),
+      })
 };
