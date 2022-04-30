@@ -23,7 +23,7 @@ export default {
   component: MenuLeftComponent,
   // More on argTypes: https://storybook.js.org/docs/angular/api/argtypes
   argTypes: {
-    arrayConfig: { control: 'object' },
+
   },
   decorators: [
     moduleMetadata({
@@ -58,17 +58,5 @@ const fb = new FormBuilder();
 export const Primary = Template.bind({});
 // More on args: https://storybook.js.org/docs/angular/writing-stories/args
 Primary.args = {
-    arrayConfig:  fb.group({
-        arrayType: 'ura',
-        uraConfig: fb.group({
-          elementsX: fb.control(0),
-          elementsY: fb.control(0),
-          pitchX: fb.control(0),
-          pitchY: fb.control(0),
-        }),
-        circularConfig: fb.group({
-          radius: fb.control(0),
-          elements: fb.control(0),
-        }),
-      })
+  
 };

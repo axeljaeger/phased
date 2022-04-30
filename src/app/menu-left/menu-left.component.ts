@@ -10,26 +10,26 @@ import { EngineService, Transducer } from '../engine.service';
   styleUrls: ['./menu-left.component.css']
 })
 export class MenuLeftComponent implements OnInit {
-  public arrayConfig = this.fb.group({
-    arrayType: 'ura',
-    uraConfig: this.fb.group({
-      elementsX: this.fb.control(0),
-      elementsY: this.fb.control(0),
-      pitchX: this.fb.control(0),
-      pitchY: this.fb.control(0),
-    }),
-    circularConfig: this.fb.group({
-      radius: this.fb.control(0),
-      elements: this.fb.control(0),
-    }),
-  });
+  public arrayConfig: any;
 
   constructor(public engineService: EngineService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
-
+    this.arrayConfig = this.fb.group({
+      arrayType: 'ura',
+      uraConfig: this.fb.group({
+        elementsX: this.fb.control(0),
+        elementsY: this.fb.control(0),
+        pitchX: this.fb.control(0),
+        pitchY: this.fb.control(0),
+      }),
+      circularConfig: this.fb.group({
+        radius: this.fb.control(0),
+        elements: this.fb.control(0),
+      }),
+    });
     // memleak
-    this.arrayConfig.valueChanges.subscribe(val => {
+    this.arrayConfig.valueChanges.subscribe((val:any) => {
       console.log("Array config update");
       const excitation : Array<Transducer> = [];
       if (val.arrayType === 'ura') {

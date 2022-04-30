@@ -484,7 +484,7 @@
         },
         {
             "name": "MenuLeftComponent",
-            "id": "component-MenuLeftComponent-31bce829b0fe620dec337325b51271fa775d5753565231dadfc9f87e1d40aa467e602a1a0cb99d1b2ddd2e5b15d33b2ba250f4becf70ffc8ccf4984934b26d6e",
+            "id": "component-MenuLeftComponent-4331352dc6f218feea0a0f476ac6f0fe52b5c61d5fa04279093f3e1e1fecc0e8766ad7148b2451333b4a8cc73caf036c3367230e4b3aac32cde395fc5533d84a",
             "file": "src/app/menu-left/menu-left.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -505,13 +505,15 @@
             "propertiesClass": [
                 {
                     "name": "arrayConfig",
-                    "defaultValue": "this.fb.group({\r\n    arrayType: 'ura',\r\n    uraConfig: this.fb.group({\r\n      elementsX: this.fb.control(0),\r\n      elementsY: this.fb.control(0),\r\n      pitchX: this.fb.control(0),\r\n      pitchY: this.fb.control(0),\r\n    }),\r\n    circularConfig: this.fb.group({\r\n      radius: this.fb.control(0),\r\n      elements: this.fb.control(0),\r\n    }),\r\n  })",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "type": "",
+                    "type": "any",
                     "optional": false,
                     "description": "",
-                    "line": 13
+                    "line": 13,
+                    "modifierKind": [
+                        123
+                    ]
                 },
                 {
                     "name": "engineService",
@@ -520,7 +522,7 @@
                     "type": "EngineService",
                     "optional": false,
                     "description": "",
-                    "line": 27,
+                    "line": 15,
                     "modifierKind": [
                         123
                     ]
@@ -533,7 +535,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 29,
+                    "line": 17,
                     "deprecated": false,
                     "deprecationMessage": ""
                 }
@@ -545,7 +547,7 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import { Component, OnInit } from '@angular/core';\r\nimport { FormBuilder } from '@angular/forms';\r\nimport { Vector3 } from '@babylonjs/core/Maths/math.vector';\r\nimport { EngineService, Transducer } from '../engine.service';\r\n\r\n\r\n@Component({\r\n  selector: 'app-menu-left',\r\n  templateUrl: './menu-left.component.html',\r\n  styleUrls: ['./menu-left.component.css']\r\n})\r\nexport class MenuLeftComponent implements OnInit {\r\n  arrayConfig = this.fb.group({\r\n    arrayType: 'ura',\r\n    uraConfig: this.fb.group({\r\n      elementsX: this.fb.control(0),\r\n      elementsY: this.fb.control(0),\r\n      pitchX: this.fb.control(0),\r\n      pitchY: this.fb.control(0),\r\n    }),\r\n    circularConfig: this.fb.group({\r\n      radius: this.fb.control(0),\r\n      elements: this.fb.control(0),\r\n    }),\r\n  });\r\n\r\n  constructor(public engineService: EngineService, private fb: FormBuilder) { }\r\n\r\n  ngOnInit(): void {\r\n\r\n    // memleak\r\n    this.arrayConfig.valueChanges.subscribe(val => {\r\n      console.log(\"Array config update\");\r\n      const excitation : Array<Transducer> = [];\r\n      if (val.arrayType === 'ura') {\r\n        const countX: number = val.uraConfig.elementsX;\r\n        const countY: number = val.uraConfig.elementsY;\r\n        const pitchX: number = val.uraConfig.pitchX;\r\n        const pitchY: number = val.uraConfig.pitchY;\r\n\r\n        const sizeXH = (countX - 1) * pitchX / 2.0;\r\n        const sizeYH = (countY - 1) * pitchY / 2.0;\r\n\r\n        for (let x = 0; x < countX; x++) {\r\n          for (let y = 0; y < countY; y++) {\r\n            const xpos = -sizeXH + x * pitchX;\r\n            const ypos = -sizeYH + y * pitchY;\r\n            excitation.push({ \r\n              name: `Transducer ${y * countY + x}`,\r\n              pos: new Vector3(xpos, ypos), \r\n              enabled: false,\r\n              selected: false\r\n            });\r\n          }\r\n        }\r\n      }\r\n\r\n      this.engineService.setTransducerPositions(excitation);\r\n    });\r\n\r\n    this.arrayConfig.patchValue({\r\n      arrayType: 'ura',\r\n      uraConfig: {\r\n        elementsX: 2,\r\n        elementsY: 2,\r\n        pitchX: 0.043,\r\n        pitchY: 0.0043,\r\n      },\r\n      circularConfig: {\r\n        radius: 2,\r\n        elements: 2,\r\n      }\r\n    });\r\n  }\r\n}\r\n",
+            "sourceCode": "import { Component, OnInit } from '@angular/core';\r\nimport { FormBuilder } from '@angular/forms';\r\nimport { Vector3 } from '@babylonjs/core/Maths/math.vector';\r\nimport { EngineService, Transducer } from '../engine.service';\r\n\r\n\r\n@Component({\r\n  selector: 'app-menu-left',\r\n  templateUrl: './menu-left.component.html',\r\n  styleUrls: ['./menu-left.component.css']\r\n})\r\nexport class MenuLeftComponent implements OnInit {\r\n  public arrayConfig: any;\r\n\r\n  constructor(public engineService: EngineService, private fb: FormBuilder) { }\r\n\r\n  ngOnInit(): void {\r\n    this.fb.group({\r\n      arrayType: 'ura',\r\n      uraConfig: this.fb.group({\r\n        elementsX: this.fb.control(0),\r\n        elementsY: this.fb.control(0),\r\n        pitchX: this.fb.control(0),\r\n        pitchY: this.fb.control(0),\r\n      }),\r\n      circularConfig: this.fb.group({\r\n        radius: this.fb.control(0),\r\n        elements: this.fb.control(0),\r\n      }),\r\n    });\r\n    // memleak\r\n    this.arrayConfig.valueChanges.subscribe((val:any) => {\r\n      console.log(\"Array config update\");\r\n      const excitation : Array<Transducer> = [];\r\n      if (val.arrayType === 'ura') {\r\n        const countX: number = val.uraConfig.elementsX;\r\n        const countY: number = val.uraConfig.elementsY;\r\n        const pitchX: number = val.uraConfig.pitchX;\r\n        const pitchY: number = val.uraConfig.pitchY;\r\n\r\n        const sizeXH = (countX - 1) * pitchX / 2.0;\r\n        const sizeYH = (countY - 1) * pitchY / 2.0;\r\n\r\n        for (let x = 0; x < countX; x++) {\r\n          for (let y = 0; y < countY; y++) {\r\n            const xpos = -sizeXH + x * pitchX;\r\n            const ypos = -sizeYH + y * pitchY;\r\n            excitation.push({ \r\n              name: `Transducer ${y * countY + x}`,\r\n              pos: new Vector3(xpos, ypos), \r\n              enabled: false,\r\n              selected: false\r\n            });\r\n          }\r\n        }\r\n      }\r\n\r\n      this.engineService.setTransducerPositions(excitation);\r\n    });\r\n\r\n    this.arrayConfig.patchValue({\r\n      arrayType: 'ura',\r\n      uraConfig: {\r\n        elementsX: 2,\r\n        elementsY: 2,\r\n        pitchX: 0.043,\r\n        pitchY: 0.0043,\r\n      },\r\n      circularConfig: {\r\n        radius: 2,\r\n        elements: 2,\r\n      }\r\n    });\r\n  }\r\n}\r\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
@@ -573,7 +575,7 @@
                         "deprecationMessage": ""
                     }
                 ],
-                "line": 25,
+                "line": 13,
                 "jsdoctags": [
                     {
                         "name": "engineService",
@@ -762,13 +764,13 @@
     "modules": [
         {
             "name": "AppModule",
-            "id": "module-AppModule-a12d09860557ba0b7092172d45eb4dc092fee608e4edfc23164491d2f79a5618b2cad73788b2a27e500e0b99b65d57dce860dce357d3cf16c164fb916f194040",
+            "id": "module-AppModule-81aef5a8696c079d476a214cbdfe07f226a6888be796e298de33779936392f999fd0a0e95da87d268c5458d69578d274d3129fcc3fca4a5286e5a45b21e870ce",
             "description": "",
             "deprecationMessage": "",
             "deprecated": false,
             "file": "src/app/app.module.ts",
             "methods": [],
-            "sourceCode": "import { NgModule } from '@angular/core';\nimport { BrowserModule } from '@angular/platform-browser';\nimport { ReactiveFormsModule } from '@angular/forms';\n\n\nimport { AppRoutingModule } from './app-routing.module';\nimport { AppComponent } from './app.component';\nimport { BrowserAnimationsModule } from '@angular/platform-browser/animations';\nimport { MenuLeftComponent } from './menu-left/menu-left.component';\nimport { View3dComponent } from './view3d/view3d.component';\n\nimport { MatButtonToggleModule } from '@angular/material/button-toggle';\nimport { MatExpansionModule } from '@angular/material/expansion';\nimport { MatFormFieldModule } from '@angular/material/form-field';\nimport { MatIconModule } from '@angular/material/icon';\nimport { MatInputModule } from '@angular/material/input';\nimport { MatListModule } from '@angular/material/list';\nimport { MatSidenavModule } from '@angular/material/sidenav';\nimport { ToolbarComponent } from './toolbar/toolbar.component';\n\n\n\n@NgModule({\n  declarations: [\n    AppComponent,\n    MenuLeftComponent,\n    View3dComponent,\n    ToolbarComponent\n  ],\n  imports: [\n    BrowserModule,\n    AppRoutingModule,\n    BrowserAnimationsModule,\n    MatButtonToggleModule,\n    MatExpansionModule,\n    MatFormFieldModule,\n    MatIconModule,\n    MatInputModule,\n    MatListModule,\n    MatSidenavModule,\n    ReactiveFormsModule,\n  ],\n  providers: [],\n  bootstrap: [AppComponent]\n})\nexport class AppModule { }\n",
+            "sourceCode": "import { NgModule } from '@angular/core';\nimport { BrowserModule } from '@angular/platform-browser';\n\n\nimport { AppRoutingModule } from './app-routing.module';\nimport { AppComponent } from './app.component';\nimport { BrowserAnimationsModule } from '@angular/platform-browser/animations';\nimport { MenuLeftComponent } from './menu-left/menu-left.component';\nimport { View3dComponent } from './view3d/view3d.component';\n\nimport { MatButtonToggleModule } from '@angular/material/button-toggle';\nimport { MatExpansionModule } from '@angular/material/expansion';\nimport { MatFormFieldModule } from '@angular/material/form-field';\nimport { MatIconModule } from '@angular/material/icon';\nimport { MatInputModule } from '@angular/material/input';\nimport { MatListModule } from '@angular/material/list';\nimport { MatSidenavModule } from '@angular/material/sidenav';\nimport { ReactiveFormsModule } from '@angular/forms';\n\nimport { ToolbarComponent } from './toolbar/toolbar.component';\n\n\n\n@NgModule({\n  declarations: [\n    AppComponent,\n    MenuLeftComponent,\n    View3dComponent,\n    ToolbarComponent\n  ],\n  imports: [\n    BrowserModule,\n    AppRoutingModule,\n    BrowserAnimationsModule,\n    MatButtonToggleModule,\n    MatExpansionModule,\n    MatFormFieldModule,\n    MatIconModule,\n    MatInputModule,\n    MatListModule,\n    MatSidenavModule,\n    ReactiveFormsModule,\n  ],\n  providers: [],\n  bootstrap: [AppComponent]\n})\nexport class AppModule { }\n",
             "children": [
                 {
                     "type": "providers",
@@ -860,16 +862,6 @@
                 "name": "environment",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/environments/environment.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "object",
-                "defaultValue": "{\n  production: false\n}"
-            },
-            {
-                "name": "environment",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
                 "file": "src/environments/environment.prod.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
@@ -877,10 +869,30 @@
                 "defaultValue": "{\n  production: true\n}"
             },
             {
+                "name": "environment",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/environments/environment.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "object",
+                "defaultValue": "{\n  production: false\n}"
+            },
+            {
+                "name": "fb",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/menu-left/menu-left.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "new FormBuilder()"
+            },
+            {
                 "name": "glsl",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/app/materials/rayleigh.material.ts",
+                "file": "src/app/materials/transducer.material.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "",
@@ -890,7 +902,7 @@
                 "name": "glsl",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/app/materials/transducer.material.ts",
+                "file": "src/app/materials/rayleigh.material.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "",
@@ -981,18 +993,6 @@
         "typealiases": [],
         "enumerations": [],
         "groupedVariables": {
-            "src/environments/environment.ts": [
-                {
-                    "name": "environment",
-                    "ctype": "miscellaneous",
-                    "subtype": "variable",
-                    "file": "src/environments/environment.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "object",
-                    "defaultValue": "{\n  production: false\n}"
-                }
-            ],
             "src/environments/environment.prod.ts": [
                 {
                     "name": "environment",
@@ -1005,36 +1005,48 @@
                     "defaultValue": "{\n  production: true\n}"
                 }
             ],
-            "src/app/materials/rayleigh.material.ts": [
+            "src/environments/environment.ts": [
                 {
-                    "name": "glsl",
+                    "name": "environment",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
-                    "file": "src/app/materials/rayleigh.material.ts",
+                    "file": "src/environments/environment.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "object",
+                    "defaultValue": "{\n  production: false\n}"
+                }
+            ],
+            "src/app/menu-left/menu-left.stories.ts": [
+                {
+                    "name": "fb",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/menu-left/menu-left.stories.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "",
-                    "defaultValue": "(x: TemplateStringsArray) => x"
+                    "defaultValue": "new FormBuilder()"
                 },
                 {
-                    "name": "rayleighFragmentShaderCode",
+                    "name": "Primary",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
-                    "file": "src/app/materials/rayleigh.material.ts",
+                    "file": "src/app/menu-left/menu-left.stories.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "",
-                    "defaultValue": "glsl`\r\n  precision highp float;\r\n\r\n  uniform sampler2D coolwarmSampler;\r\n  uniform float globalPhase;\r\n\r\n  uniform float k;\r\n  uniform float t;\r\n  uniform float omega;\r\n\r\n  uniform int viewmode;\r\n  uniform float dynamicRange;\r\n\r\n  struct ExcitationElement { // size per element: 8\r\n    vec4 position; // offset 0\r\n    vec4 phasor; // 0: amplitude, 1: area, 2: delay, 3: dummy // Offset  16\r\n  };\r\n\r\n  uniform int numElements;\r\n\r\n  layout(std140) uniform ExcitationBuffer\r\n  {\r\n    ExcitationElement elements[4];\r\n  } excitation;\r\n\r\n  in highp vec3 r;\r\n\r\n  void main(void) {\r\n    vec2 elongation = vec2(0,0); // Complex number\r\n\r\n    for (int j = 0; j < numElements; ++j) {\r\n      ExcitationElement elm = excitation.elements[j];\r\n      float d = distance(elm.position.xyz, r);\r\n      float oodd = 1.0/pow(d,2.0);\r\n\r\n      float amplitude = elm.phasor.x;\r\n      float area = elm.phasor.y;\r\n      float delay = elm.phasor.z;\r\n      \r\n      float argz = (d*k - delay*omega - t);\r\n      elongation += vec2(cos(argz), sin(argz))*amplitude*area*oodd;\r\n    } \r\n  \r\n    glFragColor = vec4(.5 + elongation.x, .5-elongation.x, 0.5,1);\r\n\r\n    // float intensity;\r\n    // if (viewmode == 0) { // Elongation\r\n    //   intensity = 0.5 + (.5*elongation.x + .25) / (float(numElements)*dynamicRange);\r\n    //   glFragColor = texture(coolwarmSampler, vec2(intensity, 0.375));\r\n    // } else if (viewmode == 1) { // Magnitude\r\n    //   //intensity = 0.25*length(elongation) / numsources;\r\n    //   intensity = log(length(elongation) / float(numElements))/log(10.0f);\r\n    //   glFragColor = texture(coolwarmSampler, vec2(intensity, 1));\r\n    // } else if (viewmode == 2) { // Phase\r\n    //   intensity = (atan(elongation.y,elongation.x)/(3.14) + .25);\r\n    //   glFragColor = texture(coolwarmSampler, vec2(intensity, 1));\r\n    // }\r\n  }\r\n`"
+                    "defaultValue": "Template.bind({})"
                 },
                 {
-                    "name": "rayleighVertexShaderCode",
+                    "name": "Template",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
-                    "file": "src/app/materials/rayleigh.material.ts",
+                    "file": "src/app/menu-left/menu-left.stories.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "type": "",
-                    "defaultValue": "glsl`\r\n  precision highp float;\r\n\r\n  // Uniforms\r\n  uniform mat4 worldViewProjection;\r\n\r\n  // Attributes\r\n  attribute vec3 position;\r\n\r\n  // Varying\r\n  out highp vec3 r;\r\n\r\n  void main(void) {\r\n    gl_Position = worldViewProjection * vec4(position, 1.0);\r\n    r = position;\r\n  }\r\n`"
+                    "type": "Story<MenuLeftComponent>",
+                    "defaultValue": "(args: MenuLeftComponent) => ({\r\n  props: args,\r\n})"
                 }
             ],
             "src/app/materials/transducer.material.ts": [
@@ -1069,26 +1081,36 @@
                     "defaultValue": "glsl`\r\n  precision highp float;\r\n\r\n  // Attributes\r\n  attribute vec3 position;\r\n  attribute vec2 uv;\r\n\r\n  #include<instancesDeclaration>\r\n\r\n  // Uniforms\r\n  uniform mat4 worldViewProjection;\r\n\r\n  // Varying\r\n  varying vec2 vUV;\r\n\r\n  void main(void) {\r\n  #include<instancesVertex>\r\n    gl_Position = worldViewProjection * finalWorld* vec4(position, 1.0);\r\n    vUV = uv;\r\n  }\r\n`"
                 }
             ],
-            "src/app/menu-left/menu-left.stories.ts": [
+            "src/app/materials/rayleigh.material.ts": [
                 {
-                    "name": "Primary",
+                    "name": "glsl",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
-                    "file": "src/app/menu-left/menu-left.stories.ts",
+                    "file": "src/app/materials/rayleigh.material.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "",
-                    "defaultValue": "Template.bind({})"
+                    "defaultValue": "(x: TemplateStringsArray) => x"
                 },
                 {
-                    "name": "Template",
+                    "name": "rayleighFragmentShaderCode",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
-                    "file": "src/app/menu-left/menu-left.stories.ts",
+                    "file": "src/app/materials/rayleigh.material.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "type": "Story<MenuLeftComponent>",
-                    "defaultValue": "(args: MenuLeftComponent) => ({\r\n  props: args,\r\n})"
+                    "type": "",
+                    "defaultValue": "glsl`\r\n  precision highp float;\r\n\r\n  uniform sampler2D coolwarmSampler;\r\n  uniform float globalPhase;\r\n\r\n  uniform float k;\r\n  uniform float t;\r\n  uniform float omega;\r\n\r\n  uniform int viewmode;\r\n  uniform float dynamicRange;\r\n\r\n  struct ExcitationElement { // size per element: 8\r\n    vec4 position; // offset 0\r\n    vec4 phasor; // 0: amplitude, 1: area, 2: delay, 3: dummy // Offset  16\r\n  };\r\n\r\n  uniform int numElements;\r\n\r\n  layout(std140) uniform ExcitationBuffer\r\n  {\r\n    ExcitationElement elements[4];\r\n  } excitation;\r\n\r\n  in highp vec3 r;\r\n\r\n  void main(void) {\r\n    vec2 elongation = vec2(0,0); // Complex number\r\n\r\n    for (int j = 0; j < numElements; ++j) {\r\n      ExcitationElement elm = excitation.elements[j];\r\n      float d = distance(elm.position.xyz, r);\r\n      float oodd = 1.0/pow(d,2.0);\r\n\r\n      float amplitude = elm.phasor.x;\r\n      float area = elm.phasor.y;\r\n      float delay = elm.phasor.z;\r\n      \r\n      float argz = (d*k - delay*omega - t);\r\n      elongation += vec2(cos(argz), sin(argz))*amplitude*area*oodd;\r\n    } \r\n  \r\n    glFragColor = vec4(.5 + elongation.x, .5-elongation.x, 0.5,1);\r\n\r\n    // float intensity;\r\n    // if (viewmode == 0) { // Elongation\r\n    //   intensity = 0.5 + (.5*elongation.x + .25) / (float(numElements)*dynamicRange);\r\n    //   glFragColor = texture(coolwarmSampler, vec2(intensity, 0.375));\r\n    // } else if (viewmode == 1) { // Magnitude\r\n    //   //intensity = 0.25*length(elongation) / numsources;\r\n    //   intensity = log(length(elongation) / float(numElements))/log(10.0f);\r\n    //   glFragColor = texture(coolwarmSampler, vec2(intensity, 1));\r\n    // } else if (viewmode == 2) { // Phase\r\n    //   intensity = (atan(elongation.y,elongation.x)/(3.14) + .25);\r\n    //   glFragColor = texture(coolwarmSampler, vec2(intensity, 1));\r\n    // }\r\n  }\r\n`"
+                },
+                {
+                    "name": "rayleighVertexShaderCode",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/materials/rayleigh.material.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "glsl`\r\n  precision highp float;\r\n\r\n  // Uniforms\r\n  uniform mat4 worldViewProjection;\r\n\r\n  // Attributes\r\n  attribute vec3 position;\r\n\r\n  // Varying\r\n  out highp vec3 r;\r\n\r\n  void main(void) {\r\n    gl_Position = worldViewProjection * vec4(position, 1.0);\r\n    r = position;\r\n  }\r\n`"
                 }
             ],
             "src/app/toolbar/toolbar.stories.ts": [
@@ -1257,6 +1279,16 @@
                 "name": "MenuLeftComponent",
                 "coveragePercent": 0,
                 "coverageCount": "0/5",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/menu-left/menu-left.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "fb",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
                 "status": "low"
             },
             {
