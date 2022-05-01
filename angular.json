@@ -105,7 +105,7 @@
         "build-storybook": {
           "builder": "@storybook/angular:build-storybook",
           "options": {
-            "browserTarget": "aua-cli:build"
+            "browserTarget": "aua:build"
           }
         },
         "e2e": {

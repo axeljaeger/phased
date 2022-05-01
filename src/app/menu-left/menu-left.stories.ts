@@ -3,6 +3,8 @@ import { EngineService } from 'src/app/engine.service';
 import { MenuLeftComponent } from './menu-left.component';
 
 import { Story, Meta, moduleMetadata } from '@storybook/angular';
+import { userEvent, within } from '@storybook/testing-library';
+
 import { FormBuilder } from '@angular/forms';
 
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -55,8 +57,20 @@ const Template: Story<MenuLeftComponent> = (args: MenuLeftComponent) => ({
 
 const fb = new FormBuilder();
 
-export const Primary = Template.bind({});
+export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/angular/writing-stories/args
-Primary.args = {
+Default.args = {
   
 };
+
+export const OpenAndClose = Template.bind({});
+OpenAndClose.play = async ({ canvasElement }) => {
+  // Starts querying the component from its root element
+  const canvas = within(canvasElement);
+
+  await userEvent.click(canvas.getByTestId('section-environment'));
+  await userEvent.click(canvas.getByTestId('section-arrayconfig'));
+  await userEvent.click(canvas.getByTestId('section-beamforming'));
+
+};
+
