@@ -2,7 +2,8 @@ import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { Scene } from '@babylonjs/core/scene';
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
 
-const glsl = (x: TemplateStringsArray) => x;
+import { glsl } from 'src/app/utils/webgl.utils';
+import { excitationBufferMaxElementsDefine } from 'src/app/utils/excitationbuffer';
 
 const rayleighVertexShaderCode = glsl`
   precision highp float;
@@ -23,6 +24,7 @@ const rayleighVertexShaderCode = glsl`
 `;
 const rayleighFragmentShaderCode = glsl`
   precision highp float;
+  #include<ExcitationBuffer>
 
   uniform sampler2D coolwarmSampler;
   uniform float globalPhase;
@@ -34,17 +36,7 @@ const rayleighFragmentShaderCode = glsl`
   uniform int viewmode;
   uniform float dynamicRange;
 
-  struct ExcitationElement { // size per element: 8
-    vec4 position; // offset 0
-    vec4 phasor; // 0: amplitude, 1: area, 2: delay, 3: dummy // Offset  16
-  };
-
   uniform int numElements;
-
-  layout(std140) uniform ExcitationBuffer
-  {
-    ExcitationElement elements[4];
-  } excitation;
 
   in highp vec3 r;
 
@@ -114,7 +106,10 @@ export class RayleighMaterial extends ShaderMaterial {
         'excitation'
       ],
       samplers: ['coolwarmSampler'],
-      defines: ["#define INSTANCES"]
+      defines: [
+        "#define INSTANCES", 
+        excitationBufferMaxElementsDefine
+      ]
     });
 
     this.backFaceCulling = false;

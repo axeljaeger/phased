@@ -79,7 +79,7 @@
                     Tranducers
                 </mat-panel-title>
                 <mat-panel-description>
-                    4
+                    {{(engineService.transducers$ | async)?.length}}
                 </mat-panel-description>
             </mat-expansion-panel-header>
             <mat-selection-list #shoes [multiple]="false">

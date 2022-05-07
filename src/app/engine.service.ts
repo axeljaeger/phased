@@ -13,10 +13,12 @@ import { Scene } from '@babylonjs/core/scene';
 import { AbstractMesh  } from '@babylonjs/core/Meshes/abstractMesh';
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 
-
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { RayleighMaterial } from './materials/rayleigh.material';
 import { TransducerMaterial } from './materials/transducer.material';
+import { createExcitationBuffer, excitationBufferInclude, excitationBufferMaxElements, setExcitationElement } from 'src/app/utils/excitationbuffer';
+import { Effect } from '@babylonjs/core/Materials/effect';
+import { MAT4_ELEMENT_COUNT, VEC4_ELEMENT_COUNT } from 'src/app/utils/webgl.utils';
 
 
 export interface Transducer {
@@ -24,12 +26,6 @@ export interface Transducer {
   pos: Vector3;
   enabled: boolean;
   selected: boolean;
-}
-
-export interface ExcitationElement {
-  pos: Vector3;
-  phase: number;
-  amplitude: number;
 }
 
 @Injectable({
@@ -58,6 +54,8 @@ export class EngineService {
   }
 
   createScene(canvas: ElementRef<HTMLCanvasElement>) {
+    Effect.IncludesShadersStore["ExcitationBuffer"] = excitationBufferInclude as unknown as string;
+
     let scene = new Scene(this.engine);
     let camera = new ArcRotateCamera("Camera", Math.PI / 4, Math.PI / 4, 4, Vector3.Zero(), scene);
     camera.lowerRadiusLimit = 0.01;
@@ -113,10 +111,12 @@ export class EngineService {
     });
 
     const excitationBuffer = new UniformBuffer(this.engine);
-    // Unclear why we need to pass 16 here, 2x vec4 should be either
-    // 1) 8 -> if a float counts as 1
-    // 2) 32 -> if a float counts as 4: 2*4*4 
-    excitationBuffer.addUniform('elements', 4, this.transducersSubject.value.length * 2);
+    
+    // Babylons only supports element sizes of 1,2,3,4 and 16.
+    // Use 4 here, although it is 8 in reality (VEC4_ELEMENT_COUNT * 2) and multiply the number
+    // of elements by 2 to correct the final size:
+    // 8 * maxElementSize becomes 4 * maxElementSize * 2
+    excitationBuffer.addUniform('elements', VEC4_ELEMENT_COUNT /* *2 */, excitationBufferMaxElements * 2);
 
     this.rayleighMaterial.onBind = ((mesh:AbstractMesh) => {
       this.rayleighMaterial.getEffect().bindUniformBuffer(excitationBuffer.getBuffer()!, 'excitation');
@@ -135,40 +135,28 @@ export class EngineService {
         this.rayleighMaterial.setInt('viewmode', 0);
         this.rayleighMaterial.setFloat('dynamicRange', 10);
     
-        const elementSize = 8;
-
-        const buffers = transducers.reduce((buffer, transducer, index) => {
+        const bufferCollection = transducers.reduce((buffers, transducer, index) => {
           Matrix.Translation(
             transducer.pos.x, 
             transducer.pos.y, 
             transducer.pos.z
-          ).copyToArray(buffer.matrixBuffer, index * 16);
+          ).copyToArray(buffers.matrixBuffer, index * MAT4_ELEMENT_COUNT);
 
-          const elementOffset = elementSize * index;
-          transducer.pos.toArray(buffer.excitationBuffer, elementOffset);
-          
-          buffer.excitationBuffer[elementOffset + 4] = 1; // amplitude
-          buffer.excitationBuffer[elementOffset + 5] = 1; // area
-          buffer.excitationBuffer[elementOffset + 6] = 0; // phase
-          buffer.excitationBuffer[elementOffset + 7] = 0; // zero  
-
-          return buffer;
+          setExcitationElement(transducer.pos, buffers.excitationBuffer, index);
+          return buffers;
         }, { 
-          matrixBuffer: new Float32Array(16 * transducers.length),
-          excitationBuffer: new Float32Array(elementSize * transducers.length) 
+          matrixBuffer: new Float32Array(MAT4_ELEMENT_COUNT * transducers.length),
+          excitationBuffer: createExcitationBuffer()
         } );
 
-        this.transducerPrototype.thinInstanceSetBuffer('matrix', buffers.matrixBuffer, 16, false);
-        excitationBuffer.updateUniformArray('elements', buffers.excitationBuffer, buffers.excitationBuffer.length);
+        this.transducerPrototype.thinInstanceSetBuffer('matrix', bufferCollection.matrixBuffer, MAT4_ELEMENT_COUNT, false);
+        excitationBuffer.updateUniformArray('elements', bufferCollection.excitationBuffer, bufferCollection.excitationBuffer.length);
         excitationBuffer.update();
       });
     return scene;
   }
 
   start() {
-
-    // ... you can add content to the Scene
-
     // ignore the change events from the Engine in the Angular ngZone
     this.ngZone.runOutsideAngular(() => {
       // start the render loop and therefore start the Engine
