@@ -63,14 +63,24 @@ Default.args = {
   
 };
 
-export const OpenAndClose = Template.bind({});
-OpenAndClose.play = async ({ canvasElement }) => {
+export const Environment = Template.bind({});
+Environment.play = async ({ canvasElement }) => {
+  // Starts querying the component from its root element
+  const canvas = within(canvasElement);
+  await userEvent.click(canvas.getByTestId('section-environment'));
+};
+
+export const ArrayConfig = Template.bind({});
+ArrayConfig.play = async ({ canvasElement }) => {
   // Starts querying the component from its root element
   const canvas = within(canvasElement);
 
-  await userEvent.click(canvas.getByTestId('section-environment'));
   await userEvent.click(canvas.getByTestId('section-arrayconfig'));
-  await userEvent.click(canvas.getByTestId('section-beamforming'));
-
 };
 
+export const Beamforming = Template.bind({});
+Beamforming.play = async ({ canvasElement }) => {
+  // Starts querying the component from its root element
+  const canvas = within(canvasElement);
+  await userEvent.click(canvas.getByTestId('section-beamforming'));
+};
