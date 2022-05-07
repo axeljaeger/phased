@@ -14,15 +14,17 @@ import { AbstractMesh  } from '@babylonjs/core/Meshes/abstractMesh';
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 
 import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { RayleighMaterial } from './materials/rayleigh.material';
 import { TransducerMaterial } from './materials/transducer.material';
 import { createExcitationBuffer, excitationBufferInclude, excitationBufferMaxElements, setExcitationElement } from './utils/excitationbuffer';
 import { Effect } from '@babylonjs/core/Materials/effect';
 import { MAT4_ELEMENT_COUNT, VEC4_ELEMENT_COUNT } from './utils/webgl.utils';
 import { Transducer } from './store/selectors/arrayConfig.selector';
-import { ArrayConfig } from './store/reducers/arrayConfig.reducer';
+import { selectArrayConfig } from './store/selectors/arrayConfig.selector';
 import { Store } from '@ngrx/store';
 import { selectTransducers } from './store/selectors/arrayConfig.selector';
+import { selectEnvironment } from 'src/app/store/selectors/environment.selector';
 
 
 @Injectable({
@@ -42,7 +44,7 @@ export class EngineService {
   
   public transducers$ : Observable<Array<Transducer>>;
 
-  constructor(private store: Store<{ environment: number, arrayConfig: ArrayConfig }>, private ngZone: NgZone) {
+  constructor(private store: Store, private ngZone: NgZone) {
     this.transducers$ = store.select(selectTransducers);
   }
 
@@ -123,7 +125,7 @@ export class EngineService {
     this.rayleighMaterial.setInt('viewmode', 0);
     this.rayleighMaterial.setFloat('dynamicRange', 10);
 
-    this.store.select('environment').subscribe(speedOfSound => {
+    this.store.select(selectEnvironment).subscribe(speedOfSound => {
       const omega = 2.0 * Math.PI * 40000;
         
       this.rayleighMaterial.setFloat('omega', omega);

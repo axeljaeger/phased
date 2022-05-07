@@ -1,4 +1,5 @@
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { ArrayConfig } from "../reducers/arrayConfig.reducer";
 
 export interface Transducer {
@@ -7,15 +8,18 @@ export interface Transducer {
     enabled: boolean;
     selected: boolean;
 }
-  
-export const selectTransducers = 
-  (state: { arrayConfig: ArrayConfig } ) => {
+
+export const selectArrayConfig = createFeatureSelector<ArrayConfig>('arrayConfig');
+
+export const selectTransducers = createSelector(
+  selectArrayConfig,
+  (arrayConfig: ArrayConfig ) => {
     const excitation : Array<Transducer> = [];
-    if (state.arrayConfig.arrayType === 'ura') {
-      const countX: number = state.arrayConfig.uraConfig.elementsX;
-      const countY: number = state.arrayConfig.uraConfig.elementsY;
-      const pitchX: number = state.arrayConfig.uraConfig.pitchX;
-      const pitchY: number = state.arrayConfig.uraConfig.pitchY;
+    if (arrayConfig.arrayType === 'ura') {
+      const countX: number = arrayConfig.uraConfig.elementsX;
+      const countY: number = arrayConfig.uraConfig.elementsY;
+      const pitchX: number = arrayConfig.uraConfig.pitchX;
+      const pitchY: number = arrayConfig.uraConfig.pitchY;
 
       const sizeXH = (countX - 1) * pitchX / 2.0;
       const sizeYH = (countY - 1) * pitchY / 2.0;
@@ -34,4 +38,4 @@ export const selectTransducers =
       }
     }
     return excitation;
-  };
+  });

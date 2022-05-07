@@ -5,7 +5,11 @@ import { EngineService } from '../engine.service';
 import { Store } from '@ngrx/store';
 import { ArrayConfig } from '../store/reducers/arrayConfig.reducer'
 import { setConfig } from '../store/actions/arrayConfig.actions';
+import { selectArrayConfig } from '../store/selectors/arrayConfig.selector';
+
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+
 import { selectTransducers, Transducer } from '../store/selectors/arrayConfig.selector';
 @Component({
   selector: 'app-menu-left',
@@ -17,7 +21,7 @@ export class MenuLeftComponent implements OnInit {
   public transducers$ : Observable<Array<Transducer>>;
 
   constructor(
-    private store: Store<{ environment: number, arrayConfig: ArrayConfig }>, 
+    private store: Store, 
     public engineService: EngineService, 
     private fb: FormBuilder) { 
       this.transducers$ = store.select(selectTransducers);
@@ -38,7 +42,7 @@ export class MenuLeftComponent implements OnInit {
       }),
     });
     
-    this.store.select('arrayConfig').subscribe(config => {
+    this.store.select(selectArrayConfig).subscribe(config => {
       this.arrayConfig.patchValue(config, 
         { 
           emitEvent: false, // Avoid infinite recursion

@@ -5,5 +5,5 @@ export const initialState = 343;
 
 export const environmentReducer = createReducer(
   initialState,
-  on(setSpeedOfSound, (state) => state),
+  on(setSpeedOfSound, (state) : number => state),
 );

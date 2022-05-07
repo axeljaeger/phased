@@ -31,7 +31,7 @@ export const initialState : ArrayConfig = {
 
 export const arrayConfigReducer = createReducer(
   initialState,
-  on(setConfig, (state, newConfig) => {
+  on(setConfig, (state: ArrayConfig, newConfig) : ArrayConfig => {
       return {
         ...newConfig
       }
