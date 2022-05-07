@@ -38,7 +38,7 @@
     "@angular/platform-browser": "~13.3.6",
     "@angular/platform-browser-dynamic": "~13.3.6",
     "@angular/router": "~13.3.6",
-    "@babylonjs/core": "^5.4.0",
+    "@babylonjs/core": "^5.5.5",
     "@types/offscreencanvas": "^2019.6.4",
     "rxjs": "~7.5.5",
     "tslib": "^2.4.0",
