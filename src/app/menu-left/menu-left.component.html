@@ -73,17 +73,18 @@
     <div class="mat-title">Results</div>
     <mat-accordion>
 
-        <mat-expansion-panel hideToggle>
+        <mat-expansion-panel hideToggle
+                             *ngrxLet="transducers$ as transducers">
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     Tranducers
                 </mat-panel-title>
                 <mat-panel-description>
-                    {{(engineService.transducers$ | async)?.length}}
+                    {{ transducers.length}}
                 </mat-panel-description>
             </mat-expansion-panel-header>
             <mat-selection-list #shoes [multiple]="false">
-                <mat-list-option *ngFor="let transducer of engineService.transducers$ | async">
+                <mat-list-option *ngFor="let transducer of transducers">
                     {{transducer.name}}
                 </mat-list-option>
             </mat-selection-list>

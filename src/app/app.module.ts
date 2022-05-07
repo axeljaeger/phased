@@ -18,8 +18,13 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { ToolbarComponent } from './toolbar/toolbar.component';
+import { StoreModule } from '@ngrx/store';
+import {ReactiveComponentModule} from '@ngrx/component'
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
-
+import { environmentReducer } from './store/reducers/environment.reducer'
+import { arrayConfigReducer } from './store/reducers/arrayConfig.reducer'
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -40,6 +45,15 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     MatListModule,
     MatSidenavModule,
     ReactiveFormsModule,
+    ReactiveComponentModule,
+    StoreModule.forRoot({
+      environment: environmentReducer,
+      arrayConfig: arrayConfigReducer
+    }, {}),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production, // Restrict extension to log-only mode
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]
