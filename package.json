@@ -15,13 +15,17 @@
   },
   "jest": {
     "preset": "jest-preset-angular",
+    "globalSetup": "jest-preset-angular/global-setup",
     "setupFiles": [
       "jest-canvas-mock"
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/setup-jest.ts"
     ],
-    "transformIgnorePatterns": []
+    "transformIgnorePatterns": [],
+    "reporters": [
+      "default"
+    ]
   },
   "private": true,
   "overrides": {
@@ -72,7 +76,7 @@
     "chromatic": "^6.5.4",
     "eslint": "^8.14.0",
     "eslint-plugin-storybook": "^0.5.11",
-    "jest": "^28.0.3",
+    "jest": "^27.5.1",
     "jest-canvas-mock": "^2.4.0",
     "jest-preset-angular": "^11.1.2",
     "ng-mocks": "^13.4.2",

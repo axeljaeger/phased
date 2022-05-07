@@ -64,6 +64,8 @@ export class EngineService {
     camera.attachControl(canvas, true);
     camera.minZ = 0.001;
     camera.inertia = 0;
+    camera.wheelDeltaPercentage = 0.1;
+    // camera.zoomToMouseLocation = true;
 
     let light = new HemisphericLight("light1", new Vector3(0, 1, 0), scene);
 
