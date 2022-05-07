@@ -1,4 +1,4 @@
-import { ArrayConfig } from "src/app/store/reducers/arrayConfig.reducer";
+import { ArrayConfig } from "./reducers/arrayConfig.reducer";
 
 export type AppState = {
     environment: {

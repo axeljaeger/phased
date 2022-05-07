@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { setConfig } from 'src/app/store/actions/arrayConfig.actions';
+import { setConfig } from '../actions/arrayConfig.actions';
 
 export interface ArrayConfig {
     arrayType: string;

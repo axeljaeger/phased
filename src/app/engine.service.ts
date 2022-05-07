@@ -22,7 +22,7 @@ import { MAT4_ELEMENT_COUNT, VEC4_ELEMENT_COUNT } from './utils/webgl.utils';
 import { Transducer } from './store/selectors/arrayConfig.selector';
 import { Store } from '@ngrx/store';
 import { selectTransducers } from './store/selectors/arrayConfig.selector';
-import { selectEnvironment } from 'src/app/store/selectors/environment.selector';
+import { selectEnvironment } from './store/selectors/environment.selector';
 
 @Injectable({
   providedIn: 'root'
