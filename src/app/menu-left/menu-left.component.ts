@@ -8,7 +8,6 @@ import { setConfig } from '../store/actions/arrayConfig.actions';
 import { selectArrayConfig } from '../store/selectors/arrayConfig.selector';
 
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 
 import { selectTransducers, Transducer } from '../store/selectors/arrayConfig.selector';
 @Component({
