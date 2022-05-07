@@ -16,13 +16,13 @@ import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { RayleighMaterial } from './materials/rayleigh.material';
 import { TransducerMaterial } from './materials/transducer.material';
-import { createExcitationBuffer, excitationBufferInclude, excitationBufferMaxElements, setExcitationElement } from 'src/app/utils/excitationbuffer';
+import { createExcitationBuffer, excitationBufferInclude, excitationBufferMaxElements, setExcitationElement } from './utils/excitationbuffer';
 import { Effect } from '@babylonjs/core/Materials/effect';
-import { MAT4_ELEMENT_COUNT, VEC4_ELEMENT_COUNT } from 'src/app/utils/webgl.utils';
+import { MAT4_ELEMENT_COUNT, VEC4_ELEMENT_COUNT } from './utils/webgl.utils';
 import { Transducer } from './store/selectors/arrayConfig.selector';
-import { ArrayConfig } from 'src/app/store/reducers/arrayConfig.reducer';
+import { ArrayConfig } from './store/reducers/arrayConfig.reducer';
 import { Store } from '@ngrx/store';
-import { selectTransducers } from 'src/app/store/selectors/arrayConfig.selector';
+import { selectTransducers } from './store/selectors/arrayConfig.selector';
 
 
 @Injectable({

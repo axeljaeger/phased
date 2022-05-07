@@ -19,7 +19,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { StoreModule } from '@ngrx/store';
-import {ReactiveComponentModule} from '@ngrx/component'
+import { ReactiveComponentModule } from '@ngrx/component'
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { environmentReducer } from './store/reducers/environment.reducer'

@@ -2,8 +2,8 @@ import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { Scene } from '@babylonjs/core/scene';
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
 
-import { glsl } from 'src/app/utils/webgl.utils';
-import { excitationBufferMaxElementsDefine } from 'src/app/utils/excitationbuffer';
+import { glsl } from '../utils/webgl.utils';
+import { excitationBufferMaxElementsDefine } from '../utils/excitationbuffer';
 
 const rayleighVertexShaderCode = glsl`
   precision highp float;

@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { ReactiveComponentModule } from '@ngrx/component'
+
 import { FormBuilder } from '@angular/forms';
 
 import { MenuLeftComponent } from './menu-left.component';
@@ -16,6 +19,22 @@ describe('MenuLeftComponent', () => {
   let component: MenuLeftComponent;
   let fixture: ComponentFixture<MenuLeftComponent>;
 
+  const initialState = {
+    arrayConfig: {
+      arrayType: 'ura',
+      uraConfig: {
+        elementsX: 2,
+        elementsY: 2,
+        pitchX: 0.0043,
+        pitchY: 0.0043
+      },
+      circularConfig: {
+        radius: 2,
+        elements: 2,
+      }
+    }
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ MenuLeftComponent ],
@@ -27,10 +46,13 @@ describe('MenuLeftComponent', () => {
         MatInputModule,
         MatListModule,
         NoopAnimationsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        ReactiveComponentModule
       ],
       providers: [
-        { provide: FormBuilder, useClass: FormBuilder}
+        { provide: FormBuilder, useClass: FormBuilder},
+        provideMockStore({ initialState }),
+
       ]
     })
     .compileComponents();

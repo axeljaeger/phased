@@ -4,9 +4,9 @@ import { EngineService } from '../engine.service';
 
 import { Store } from '@ngrx/store';
 import { ArrayConfig } from '../store/reducers/arrayConfig.reducer'
-import { setConfig } from 'src/app/store/actions/arrayConfig.actions';
+import { setConfig } from '../store/actions/arrayConfig.actions';
 import { Observable } from 'rxjs';
-import { selectTransducers, Transducer } from 'src/app/store/selectors/arrayConfig.selector';
+import { selectTransducers, Transducer } from '../store/selectors/arrayConfig.selector';
 @Component({
   selector: 'app-menu-left',
   templateUrl: './menu-left.component.html',
