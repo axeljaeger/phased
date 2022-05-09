@@ -11,7 +11,8 @@
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "storybook": "ng run aua:storybook",
     "build-storybook": "ng run aua:build-storybook",
-    "chromatic": "npx chromatic --project-token=137f9b2a9d87"
+    "chromatic": "npx chromatic --project-token=137f9b2a9d87",
+    "playwright": "npx playwright test"
   },
   "jest": {
     "preset": "jest-preset-angular",
@@ -25,7 +26,8 @@
     "transformIgnorePatterns": [],
     "reporters": [
       "default"
-    ]
+    ],
+    "roots": ["<rootDir>/src/"]
   },
   "private": true,
   "overrides": {
@@ -63,6 +65,7 @@
     "@babel/core": "^7.17.10",
     "@compodoc/compodoc": "^1.1.19",
     "@ngrx/store-devtools": "^13.2.0",
+    "@playwright/test": "^1.21.1",
     "@storybook/addon-actions": "^6.4.22",
     "@storybook/addon-essentials": "^6.4.22",
     "@storybook/addon-interactions": "^6.4.22",
