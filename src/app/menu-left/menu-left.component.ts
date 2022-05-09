@@ -1,9 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Vector3 } from '@babylonjs/core/Maths/math.vector';
-import { EngineService, Transducer } from '../engine.service';
+import { EngineService } from '../engine.service';
 
+import { Store } from '@ngrx/store';
+import { ArrayConfig } from '../store/reducers/arrayConfig.reducer'
+import { setConfig } from '../store/actions/arrayConfig.actions';
+import { selectArrayConfig } from '../store/selectors/arrayConfig.selector';
 
+import { Observable } from 'rxjs';
+
+import { selectTransducers, Transducer } from '../store/selectors/arrayConfig.selector';
 @Component({
   selector: 'app-menu-left',
   templateUrl: './menu-left.component.html',
@@ -11,8 +17,14 @@ import { EngineService, Transducer } from '../engine.service';
 })
 export class MenuLeftComponent implements OnInit {
   public arrayConfig: any;
+  public transducers$ : Observable<Array<Transducer>>;
 
-  constructor(public engineService: EngineService, private fb: FormBuilder) { }
+  constructor(
+    private store: Store, 
+    public engineService: EngineService, 
+    private fb: FormBuilder) { 
+      this.transducers$ = store.select(selectTransducers);
+    }
 
   ngOnInit(): void {
     this.arrayConfig = this.fb.group({
@@ -28,48 +40,18 @@ export class MenuLeftComponent implements OnInit {
         elements: this.fb.control(0),
       }),
     });
-    // memleak
-    this.arrayConfig.valueChanges.subscribe((val:any) => {
-      console.log("Array config update");
-      const excitation : Array<Transducer> = [];
-      if (val.arrayType === 'ura') {
-        const countX: number = val.uraConfig.elementsX;
-        const countY: number = val.uraConfig.elementsY;
-        const pitchX: number = val.uraConfig.pitchX;
-        const pitchY: number = val.uraConfig.pitchY;
-
-        const sizeXH = (countX - 1) * pitchX / 2.0;
-        const sizeYH = (countY - 1) * pitchY / 2.0;
-
-        for (let x = 0; x < countX; x++) {
-          for (let y = 0; y < countY; y++) {
-            const xpos = -sizeXH + x * pitchX;
-            const ypos = -sizeYH + y * pitchY;
-            excitation.push({ 
-              name: `Transducer ${y * countY + x}`,
-              pos: new Vector3(xpos, ypos), 
-              enabled: false,
-              selected: false
-            });
-          }
-        }
-      }
-
-      this.engineService.setTransducerPositions(excitation);
+    
+    this.store.select(selectArrayConfig).subscribe(config => {
+      this.arrayConfig.patchValue(config, 
+        { 
+          emitEvent: false, // Avoid infinite recursion
+          emitModelToViewChange: true, 
+          emitViewToModelChange: true 
+        });
     });
 
-    this.arrayConfig.patchValue({
-      arrayType: 'ura',
-      uraConfig: {
-        elementsX: 2,
-        elementsY: 2,
-        pitchX: 0.043,
-        pitchY: 0.0043,
-      },
-      circularConfig: {
-        radius: 2,
-        elements: 2,
-      }
-    });
+    this.arrayConfig.valueChanges.subscribe(
+      (val : ArrayConfig) => this.store.dispatch(setConfig(val))
+    );
   }
 }

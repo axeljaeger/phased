@@ -5,8 +5,6 @@ import { View3dComponent } from './view3d/view3d.component';
 import { MenuLeftComponent } from './menu-left/menu-left.component';
 import { MockComponent } from 'ng-mocks';
 
-
-import { FormBuilder } from '@angular/forms';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -34,12 +32,9 @@ describe('AppComponent', () => {
       ],
       declarations: [
         AppComponent,
-        MenuLeftComponent,
+        MockComponent(MenuLeftComponent),
         MockComponent(View3dComponent)
       ],
-      providers: [
-        { provide: FormBuilder, useClass: FormBuilder}
-      ]
     }).compileComponents();
   });
 

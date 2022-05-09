@@ -1,5 +1,5 @@
 import { Vector3 } from '@babylonjs/core';
-import { glsl } from 'src/app/utils/webgl.utils';
+import { glsl } from './webgl.utils';
 
 export const excitationBufferMaxElements = 20;
 export const excitationBufferMaxElementsDefine = `#define MAX_ELEMENTS ${excitationBufferMaxElements}`;

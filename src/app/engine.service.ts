@@ -13,20 +13,16 @@ import { Scene } from '@babylonjs/core/scene';
 import { AbstractMesh  } from '@babylonjs/core/Meshes/abstractMesh';
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { RayleighMaterial } from './materials/rayleigh.material';
 import { TransducerMaterial } from './materials/transducer.material';
-import { createExcitationBuffer, excitationBufferInclude, excitationBufferMaxElements, setExcitationElement } from 'src/app/utils/excitationbuffer';
+import { createExcitationBuffer, excitationBufferInclude, excitationBufferMaxElements, setExcitationElement } from './utils/excitationbuffer';
 import { Effect } from '@babylonjs/core/Materials/effect';
-import { MAT4_ELEMENT_COUNT, VEC4_ELEMENT_COUNT } from 'src/app/utils/webgl.utils';
-
-
-export interface Transducer {
-  name: string;
-  pos: Vector3;
-  enabled: boolean;
-  selected: boolean;
-}
+import { MAT4_ELEMENT_COUNT, VEC4_ELEMENT_COUNT } from './utils/webgl.utils';
+import { Transducer } from './store/selectors/arrayConfig.selector';
+import { Store } from '@ngrx/store';
+import { selectTransducers } from './store/selectors/arrayConfig.selector';
+import { selectEnvironment } from './store/selectors/environment.selector';
 
 @Injectable({
   providedIn: 'root'
@@ -43,10 +39,11 @@ export class EngineService {
   private speedOfSoundSubject: BehaviorSubject<number> = new BehaviorSubject(343);
   public speedOfSound$ = this.speedOfSoundSubject.asObservable();
   
-  private transducersSubject = new BehaviorSubject<Array<Transducer>>([]);
-  public transducers$ = this.transducersSubject.asObservable();
+  public transducers$ : Observable<Array<Transducer>>;
 
-  constructor(private ngZone: NgZone) {}
+  constructor(private store: Store, private ngZone: NgZone) {
+    this.transducers$ = store.select(selectTransducers);
+  }
 
   initEngine(canvas: ElementRef<HTMLCanvasElement>) {
     this.engine = new Engine(canvas.nativeElement, true);
@@ -122,37 +119,36 @@ export class EngineService {
       this.rayleighMaterial.getEffect().bindUniformBuffer(excitationBuffer.getBuffer()!, 'excitation');
     })
     
-    combineLatest([this.speedOfSound$, this.transducers$]).subscribe(
-      ([speedOfSound, transducers]) => {
+    this.rayleighMaterial.setInt('viewmode', 0);
+    this.rayleighMaterial.setFloat('dynamicRange', 10);
 
-        this.rayleighMaterial.setInt('numElements', this.transducersSubject.value.length);
-      
-        const omega = 2.0 * Math.PI * 40000;
+    this.store.select(selectEnvironment).subscribe(speedOfSound => {
+      const omega = 2.0 * Math.PI * 40000;
         
-        this.rayleighMaterial.setFloat('omega', omega);
-        this.rayleighMaterial.setFloat('k', omega / speedOfSound);
-        
-        this.rayleighMaterial.setInt('viewmode', 0);
-        this.rayleighMaterial.setFloat('dynamicRange', 10);
-    
-        const bufferCollection = transducers.reduce((buffers, transducer, index) => {
-          Matrix.Translation(
-            transducer.pos.x, 
-            transducer.pos.y, 
-            transducer.pos.z
-          ).copyToArray(buffers.matrixBuffer, index * MAT4_ELEMENT_COUNT);
+      this.rayleighMaterial.setFloat('omega', omega);
+      this.rayleighMaterial.setFloat('k', omega / speedOfSound);
+    });
+    this.store.select(selectTransducers).subscribe(transducers => {
+      this.rayleighMaterial.setInt('numElements', transducers.length);
 
-          setExcitationElement(transducer.pos, buffers.excitationBuffer, index);
-          return buffers;
-        }, { 
-          matrixBuffer: new Float32Array(MAT4_ELEMENT_COUNT * transducers.length),
-          excitationBuffer: createExcitationBuffer()
-        } );
+      const bufferCollection = transducers.reduce((buffers, transducer, index) => {
+        Matrix.Translation(
+          transducer.pos.x, 
+          transducer.pos.y, 
+          transducer.pos.z
+        ).copyToArray(buffers.matrixBuffer, index * MAT4_ELEMENT_COUNT);
 
-        this.transducerPrototype.thinInstanceSetBuffer('matrix', bufferCollection.matrixBuffer, MAT4_ELEMENT_COUNT, false);
-        excitationBuffer.updateUniformArray('elements', bufferCollection.excitationBuffer, bufferCollection.excitationBuffer.length);
-        excitationBuffer.update();
-      });
+        setExcitationElement(transducer.pos, buffers.excitationBuffer, index);
+        return buffers;
+      }, { 
+        matrixBuffer: new Float32Array(MAT4_ELEMENT_COUNT * transducers.length),
+        excitationBuffer: createExcitationBuffer()
+      } );
+
+      this.transducerPrototype.thinInstanceSetBuffer('matrix', bufferCollection.matrixBuffer, MAT4_ELEMENT_COUNT, false);
+      excitationBuffer.updateUniformArray('elements', bufferCollection.excitationBuffer, bufferCollection.excitationBuffer.length);
+      excitationBuffer.update();
+    });
     return scene;
   }
 
@@ -162,9 +158,5 @@ export class EngineService {
       // start the render loop and therefore start the Engine
       this.engine.runRenderLoop(() => this.scene.render())
     });
-  }
-
-  setTransducerPositions(positions: Array<Transducer>) {
-    this.transducersSubject.next(positions);
   }
 }

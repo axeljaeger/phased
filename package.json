@@ -11,7 +11,8 @@
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "storybook": "ng run aua:storybook",
     "build-storybook": "ng run aua:build-storybook",
-    "chromatic": "npx chromatic --project-token=137f9b2a9d87"
+    "chromatic": "npx chromatic --project-token=137f9b2a9d87",
+    "playwright": "npx playwright test"
   },
   "jest": {
     "preset": "jest-preset-angular",
@@ -25,7 +26,8 @@
     "transformIgnorePatterns": [],
     "reporters": [
       "default"
-    ]
+    ],
+    "roots": ["<rootDir>/src/"]
   },
   "private": true,
   "overrides": {
@@ -43,6 +45,8 @@
     "@angular/platform-browser-dynamic": "~13.3.6",
     "@angular/router": "~13.3.6",
     "@babylonjs/core": "^5.5.5",
+    "@ngrx/component": "^13.2.0",
+    "@ngrx/store": "^13.2.0",
     "@types/offscreencanvas": "^2019.6.4",
     "rxjs": "~7.5.5",
     "tslib": "^2.4.0",
@@ -60,6 +64,8 @@
     "@angular/compiler-cli": "~13.3.6",
     "@babel/core": "^7.17.10",
     "@compodoc/compodoc": "^1.1.19",
+    "@ngrx/store-devtools": "^13.2.0",
+    "@playwright/test": "^1.21.1",
     "@storybook/addon-actions": "^6.4.22",
     "@storybook/addon-essentials": "^6.4.22",
     "@storybook/addon-interactions": "^6.4.22",
@@ -75,6 +81,7 @@
     "babel-loader": "^8.2.5",
     "chromatic": "^6.5.4",
     "eslint": "^8.14.0",
+    "eslint-plugin-ngrx": "^2.0.0",
     "eslint-plugin-storybook": "^0.5.11",
     "jest": "^27.5.1",
     "jest-canvas-mock": "^2.4.0",
