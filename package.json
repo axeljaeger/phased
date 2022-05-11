@@ -61,7 +61,7 @@
     "@angular-eslint/schematics": "13.2.1",
     "@angular-eslint/template-parser": "13.2.1",
     "@angular/cli": "13.3.5",
-    "@angular/compiler-cli": "~13.3.6",
+    "@angular/compiler-cli": "~13.3.7",
     "@babel/core": "^7.17.10",
     "@compodoc/compodoc": "^1.1.19",
     "@ngrx/store-devtools": "^13.2.0",
