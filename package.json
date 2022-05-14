@@ -34,7 +34,7 @@
     "webpack": "5.70.0"
   },
   "dependencies": {
-    "@angular/animations": "~13.3.6",
+    "@angular/animations": "~13.3.8",
     "@angular/cdk": "^13.3.7",
     "@angular/common": "~13.3.6",
     "@angular/compiler": "~13.3.7",
@@ -83,7 +83,7 @@
     "eslint": "^8.14.0",
     "eslint-plugin-ngrx": "^2.0.0",
     "eslint-plugin-storybook": "^0.5.11",
-    "jest": "^27.5.1",
+    "jest": "^28.1.0",
     "jest-canvas-mock": "^2.4.0",
     "jest-preset-angular": "^11.1.2",
     "ng-mocks": "^13.5.1",
