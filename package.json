@@ -83,7 +83,7 @@
     "eslint": "^8.14.0",
     "eslint-plugin-ngrx": "^2.0.0",
     "eslint-plugin-storybook": "^0.5.11",
-    "jest": "^27.5.1",
+    "jest": "^28.1.0",
     "jest-canvas-mock": "^2.4.0",
     "jest-preset-angular": "^11.1.2",
     "ng-mocks": "^13.5.1",
