@@ -70,7 +70,7 @@
     "@storybook/addon-essentials": "^6.5.4",
     "@storybook/addon-interactions": "^6.5.4",
     "@storybook/addon-links": "^6.5.4",
-    "@storybook/angular": "^6.5.4",
+    "@storybook/angular": "^6.5.5",
     "@storybook/builder-webpack5": "^6.5.4",
     "@storybook/manager-webpack5": "^6.5.4",
     "@storybook/testing-library": "^0.0.11",
