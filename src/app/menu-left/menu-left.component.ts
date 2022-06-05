@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { EngineService } from '../engine.service';
 
 import { Store } from '@ngrx/store';
@@ -22,7 +22,7 @@ export class MenuLeftComponent implements OnInit {
   constructor(
     private store: Store, 
     public engineService: EngineService, 
-    private fb: UntypedFormBuilder) { 
+    private fb: FormBuilder) { 
       this.transducers$ = store.select(selectTransducers);
     }
 
