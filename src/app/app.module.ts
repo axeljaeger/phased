@@ -25,13 +25,15 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environmentReducer } from './store/reducers/environment.reducer'
 import { arrayConfigReducer } from './store/reducers/arrayConfig.reducer'
 import { environment } from 'src/environments/environment';
+import { StorybookTestbedComponent } from './storybook-testbed/storybook-testbed.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MenuLeftComponent,
     View3dComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    StorybookTestbedComponent
   ],
   imports: [
     BrowserModule,

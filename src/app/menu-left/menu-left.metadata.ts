@@ -43,7 +43,7 @@ export const moduleMetaData = {
       ReactiveComponentModule
     ],
     providers: [
-      {provide: FormBuilder, useClass: FormBuilder},
+      FormBuilder,
       provideMockStore({ initialState }),  
   ]
 };
