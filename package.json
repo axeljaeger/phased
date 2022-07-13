@@ -47,7 +47,7 @@
     "@angular/platform-browser-dynamic": "^14.0.4",
     "@angular/router": "^14.0.4",
     "@babylonjs/core": "^5.13.3",
-    "@ngrx/component": "^14.0.1",
+    "@ngrx/component": "^14.0.2",
     "@ngrx/store": "^14.0.1",
     "@types/offscreencanvas": "^2019.7.0",
     "react-dom": "^17.0.2",
