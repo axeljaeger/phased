@@ -46,7 +46,7 @@
     "@angular/platform-browser": "^14.1.0",
     "@angular/platform-browser-dynamic": "^14.1.0",
     "@angular/router": "^14.1.0",
-    "@babylonjs/core": "^5.16.0",
+    "@babylonjs/core": "^5.17.0",
     "@ngrx/component": "^14.0.2",
     "@ngrx/store": "^14.0.2",
     "@types/offscreencanvas": "^2019.7.0",
