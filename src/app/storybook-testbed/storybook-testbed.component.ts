@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ArrayRendererService } from 'src/app/array-renderer.service';
-import { NoOpRendererService } from 'src/app/no-op-renderer.service';
+import { NoOpRendererService } from '../no-op-renderer.service';
 
 @Component({
   selector: 'app-storybook-testbed',
@@ -8,14 +7,12 @@ import { NoOpRendererService } from 'src/app/no-op-renderer.service';
   styleUrls: ['./storybook-testbed.component.css'],
 })
 export class StorybookTestbedComponent implements OnInit {
-
   constructor(private rendererService: NoOpRendererService) {
-    console.log("constructor");
+    console.log('constructor');
   }
 
   ngOnInit(): void {
-    console.log("ngOnInit");
+    console.log('ngOnInit');
     this.rendererService.doIt();
   }
-
 }
