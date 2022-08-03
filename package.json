@@ -67,6 +67,8 @@
     "@angular/cli": "14.1.0",
     "@angular/compiler-cli": "^14.1.0",
     "@babel/core": "^7.18.9",
+    "@babylonjs/inspector": "^5.17.1",
+    "@babylonjs/loaders": "^5.16.0",
     "@compodoc/compodoc": "^1.1.19",
     "@ngrx/store-devtools": "^14.0.2",
     "@playwright/test": "^1.24.0",
