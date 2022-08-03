@@ -18,7 +18,11 @@ import { RayleighMaterial } from './materials/rayleigh.material';
 import { TransducerMaterial } from './materials/transducer.material';
 import { createExcitationBuffer, excitationBufferInclude, excitationBufferMaxElements, setExcitationElement } from './utils/excitationbuffer';
 import { Effect } from '@babylonjs/core/Materials/effect';
-import { MAT4_ELEMENT_COUNT, VEC4_ELEMENT_COUNT } from './utils/webgl.utils';
+import {
+  MAT4_ELEMENT_COUNT,
+  VEC3_ELEMENT_COUNT,
+  VEC4_ELEMENT_COUNT,
+} from './utils/webgl.utils';
 import { Store } from '@ngrx/store';
 import {
   Transducer,
@@ -37,7 +41,6 @@ import '@babylonjs/core/Debug/debugLayer';
 import '@babylonjs/inspector';
 
 interface Edge {
-  // triangles: Array<Triangle>;
   indices: Array<number>;
   midpointIndex: number;
 }
@@ -49,9 +52,7 @@ interface EdgeReference {
 
 interface Triangle {
   indices: [number, number, number];
-  neighbours: Array<Triangle>;
   edges: Array<EdgeReference>;
-  edgeForward: Array<boolean>;
 }
 
 @Injectable({
@@ -241,10 +242,6 @@ export class EngineService {
       'assets/halfsphere.glb'
     );
     this.farfield = result.meshes[1];
-    console.log('Vertices:');
-
-    console.table(this.farfield.getVerticesData(VertexBuffer.PositionKind));
-    console.log('Indices:');
 
     const vertices = this.farfield.getVerticesData(VertexBuffer.PositionKind);
     const indices = this.farfield.getIndices() ?? [];
@@ -252,14 +249,12 @@ export class EngineService {
 
     let triangles: Array<Triangle> = [];
     let edges: Array<Edge> = [];
-    let vertexArray: Array<Vector3> = [];
 
+    // Build up triangles from index buffer
     for (let i = 0; i < indexCount; i += 3) {
       triangles.push({
         indices: [indices[i], indices[i + 1], indices[i + 2]],
-        neighbours: [],
         edges: [],
-        edgeForward: [],
       });
     }
 
@@ -297,77 +292,53 @@ export class EngineService {
       });
     });
 
-    // Find neighbours
-    for (let a = 0; a < triangles.length; a++) {
-      const triangleA = triangles[a];
-      for (let b = a + 1; b < triangles.length; b++) {
-        const triangleB = triangles[b];
-        console.assert(triangleA !== triangleB);
-        console.assert(!triangleA.neighbours.includes(triangleB));
-        let matchcount = 0;
-        triangleA.indices.forEach((indexA) => {
-          if (triangleB.indices.some((indexB) => indexA === indexB)) {
-            matchcount++;
-          }
-        });
-        console.assert([0, 1, 2].includes(matchcount));
-        if (matchcount == 2) {
-          triangleA.neighbours.push(triangleB);
-          triangleB.neighbours.push(triangleA);
-        }
-      }
-    }
-    console.table(triangles);
-    console.table(edges);
-
     // Subdivide edges:
     const subdividedVertices = [...(vertices as FloatArray)];
     edges.forEach((edge) => {
-      const indexA = edge.indices[0];
-      const indexB = edge.indices[1];
-
-      const a = Vector3.FromArray(subdividedVertices, indexA * 3);
-      const b = Vector3.FromArray(subdividedVertices, indexB * 3);
+      const a = Vector3.FromArray(
+        subdividedVertices,
+        edge.indices[0] * VEC3_ELEMENT_COUNT
+      );
+      const b = Vector3.FromArray(
+        subdividedVertices,
+        edge.indices[1] * VEC3_ELEMENT_COUNT
+      );
       const subdividedVertex = Vector3.Lerp(a, b, 0.5);
       subdividedVertex.normalize();
-      edge.midpointIndex = subdividedVertices.length / 3;
-
-      subdividedVertices.push(subdividedVertex.x);
-      subdividedVertices.push(subdividedVertex.y);
-      subdividedVertices.push(subdividedVertex.z);
+      edge.midpointIndex = subdividedVertices.length / VEC3_ELEMENT_COUNT;
+      subdividedVertices.push(
+        ...[subdividedVertex.x, subdividedVertex.y, subdividedVertex.z]
+      );
     });
 
+    // Create 4 new triangles from each new old triangle
     const subdividedIndices: Array<number> = [];
     triangles.forEach((triangle) => {
-      subdividedIndices.push(
-        this.indexFromEdge(
-          triangle.edges[0].edge,
-          0,
-          !triangle.edges[0].forward
-        )
-      );
-      subdividedIndices.push(triangle.edges[2].edge.midpointIndex);
-      subdividedIndices.push(triangle.edges[0].edge.midpointIndex);
+      const tedges = triangle.edges;
 
-      subdividedIndices.push(triangle.edges[0].edge.midpointIndex);
-      subdividedIndices.push(triangle.edges[1].edge.midpointIndex);
       subdividedIndices.push(
-        this.indexFromEdge(
-          triangle.edges[0].edge,
-          1,
-          !triangle.edges[0].forward
-        )
-      );
+        ...[
+          // Triangle 1
+          this.indexFromEdge(tedges[0].edge, 0, !tedges[0].forward),
+          tedges[2].edge.midpointIndex,
+          tedges[0].edge.midpointIndex,
 
-      subdividedIndices.push(triangle.edges[2].edge.midpointIndex);
-      subdividedIndices.push(
-        this.indexFromEdge(triangle.edges[2].edge, 1, triangle.edges[2].forward)
-      );
-      subdividedIndices.push(triangle.edges[1].edge.midpointIndex);
+          // Triangle 2
+          tedges[0].edge.midpointIndex,
+          tedges[1].edge.midpointIndex,
+          this.indexFromEdge(tedges[0].edge, 1, !tedges[0].forward),
 
-      subdividedIndices.push(triangle.edges[0].edge.midpointIndex);
-      subdividedIndices.push(triangle.edges[2].edge.midpointIndex);
-      subdividedIndices.push(triangle.edges[1].edge.midpointIndex);
+          // Triangle 3
+          tedges[2].edge.midpointIndex,
+          this.indexFromEdge(tedges[2].edge, 1, tedges[2].forward),
+          tedges[1].edge.midpointIndex,
+
+          // Triangle 4
+          tedges[0].edge.midpointIndex,
+          tedges[2].edge.midpointIndex,
+          tedges[1].edge.midpointIndex,
+        ]
+      );
     });
 
     const subdividedMesh = new Mesh('subdividedMesh', this.scene);
