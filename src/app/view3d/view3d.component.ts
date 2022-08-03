@@ -12,8 +12,8 @@ export class View3dComponent implements AfterViewInit {
 
   constructor(private readonly engineService: EngineService) { }
 
-  ngAfterViewInit(): void {
-    this.engineService.initEngine(this.canvasRef);
+  async ngAfterViewInit(): Promise<void> {
+    await this.engineService.initEngine(this.canvasRef);
     this.engineService.start();
   }
 }
