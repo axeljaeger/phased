@@ -7,18 +7,16 @@ import { userEvent, within } from '@storybook/testing-library';
 export default {
   title: 'Menu Left',
   component: MenuLeftComponent,
-  argTypes: {
-
-  },
-  decorators: [ moduleMetadata(menuLeft.moduleMetaData) ]
-} as Meta;
+  argTypes: {},
+  decorators: [moduleMetadata(menuLeft.moduleMetaData)],
+} as Meta<MenuLeftComponent>;
 
 // More on component templates: https://storybook.js.org/docs/angular/writing-stories/introduction#using-args
 const Template: Story<MenuLeftComponent> = (args: MenuLeftComponent) => ({
   props: args,
 });
 
-export const Default = Template.bind({});
+export const Default: Story<MenuLeftComponent> = Template.bind({});
 // More on args: https://storybook.js.org/docs/angular/writing-stories/args
 Default.args = {
   

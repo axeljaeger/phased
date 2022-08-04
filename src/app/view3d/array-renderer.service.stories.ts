@@ -13,14 +13,15 @@ export default {
   component: StorybookTestbedComponent,
   // More on argTypes: https://storybook.js.org/docs/angular/api/argtypes
   decorators: [
-      moduleMetadata( 
-        {
-        declarations: [StorybookTestbedComponent, ],
-        imports: [],
-        providers: [{ provide: NoOpRendererService, useClass: ArrayRendererService}]
-    })
-  ]
-} as Meta;
+    moduleMetadata({
+      declarations: [StorybookTestbedComponent],
+      imports: [],
+      providers: [
+        { provide: NoOpRendererService, useClass: ArrayRendererService },
+      ],
+    }),
+  ],
+} as Meta<StorybookTestbedComponent>;
 
 // More on component templates: https://storybook.js.org/docs/angular/writing-stories/introduction#using-args
 const Template: Story<StorybookTestbedComponent> = (args: StorybookTestbedComponent) => ({
