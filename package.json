@@ -71,7 +71,7 @@
     "@babel/core": "^7.18.10",
     "@compodoc/compodoc": "^1.1.19",
     "@ngrx/store-devtools": "^14.1.0",
-    "@playwright/test": "^1.24.2",
+    "@playwright/test": "^1.25.0",
     "@storybook/addon-actions": "^6.5.10",
     "@storybook/addon-essentials": "^6.5.10",
     "@storybook/addon-interactions": "^6.5.10",
