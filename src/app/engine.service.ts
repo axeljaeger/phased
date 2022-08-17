@@ -232,19 +232,39 @@ export class EngineService {
     });
   }
 
-  indexFromEdge(edge: Edge, whichEnd: number, flip: boolean): number {
-    return flip ? edge.indices[1 - whichEnd] : edge.indices[whichEnd];
-  }
-
   async prepareSphere(): Promise<void> {
     const result = await SceneLoader.ImportMeshAsync(
       null,
       'assets/halfsphere.glb'
     );
     this.farfield = result.meshes[1];
+    this.farfield.setEnabled(false);
 
-    const vertices = this.farfield.getVerticesData(VertexBuffer.PositionKind);
-    const indices = this.farfield.getIndices() ?? [];
+    const orignalVertexData = new VertexData();
+    orignalVertexData.positions = this.farfield.getVerticesData(
+      VertexBuffer.PositionKind
+    );
+    orignalVertexData.indices = this.farfield.getIndices();
+
+    const ssphere = this.subdivideSphere(orignalVertexData, true);
+    const sssphere = this.subdivideSphere(ssphere, false);
+    const ssssphere = this.subdivideSphere(sssphere, false);
+
+    const subdividedMesh = new Mesh('subdividedMesh', this.scene);
+    ssssphere.applyToMesh(subdividedMesh);
+    subdividedMesh.scaling = new Vector3(-1, 1, 1);
+  }
+
+  indexFromEdge(edge: Edge, whichEnd: number, flip: boolean): number {
+    return flip ? edge.indices[1 - whichEnd] : edge.indices[whichEnd];
+  }
+
+  private subdivideSphere(
+    meshDataIn: VertexData,
+    invertNormals: boolean
+  ): VertexData {
+    const vertices = meshDataIn.positions;
+    const indices = meshDataIn.indices ?? [];
     const indexCount = indices?.length ?? 0;
 
     let triangles: Array<Triangle> = [];
@@ -253,7 +273,9 @@ export class EngineService {
     // Build up triangles from index buffer
     for (let i = 0; i < indexCount; i += 3) {
       triangles.push({
-        indices: [indices[i], indices[i + 1], indices[i + 2]],
+        indices: invertNormals
+          ? [indices[i], indices[i + 2], indices[i + 1]]
+          : [indices[i], indices[i + 1], indices[i + 2]],
         edges: [],
       });
     }
@@ -320,31 +342,30 @@ export class EngineService {
         ...[
           // Triangle 1
           this.indexFromEdge(tedges[0].edge, 0, !tedges[0].forward),
+          tedges[0].edge.midpointIndex,
           tedges[2].edge.midpointIndex,
-          tedges[0].edge.midpointIndex,
 
-          // Triangle 2
-          tedges[0].edge.midpointIndex,
+          // // Triangle 2
           tedges[1].edge.midpointIndex,
+          tedges[0].edge.midpointIndex,
           this.indexFromEdge(tedges[0].edge, 1, !tedges[0].forward),
 
-          // Triangle 3
-          tedges[2].edge.midpointIndex,
+          // // Triangle 3
           this.indexFromEdge(tedges[2].edge, 1, tedges[2].forward),
+          tedges[2].edge.midpointIndex,
           tedges[1].edge.midpointIndex,
 
-          // Triangle 4
+          // // Triangle 4
           tedges[0].edge.midpointIndex,
-          tedges[2].edge.midpointIndex,
           tedges[1].edge.midpointIndex,
+          tedges[2].edge.midpointIndex,
         ]
       );
     });
 
-    const subdividedMesh = new Mesh('subdividedMesh', this.scene);
     const vertexData = new VertexData();
     vertexData.positions = subdividedVertices;
     vertexData.indices = subdividedIndices;
-    vertexData.applyToMesh(subdividedMesh);
+    return vertexData;
   }
 }
