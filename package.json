@@ -49,7 +49,7 @@
     "@babylonjs/core": "^5.19.0",
     "@babylonjs/inspector": "^5.19.0",
     "@babylonjs/loaders": "^5.19.0",
-    "@ngrx/component": "^14.1.0",
+    "@ngrx/component": "^14.2.0",
     "@ngrx/store": "^14.1.0",
     "@types/offscreencanvas": "^2019.7.0",
     "react-dom": "^17.0.2",
