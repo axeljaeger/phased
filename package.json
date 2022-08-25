@@ -68,7 +68,7 @@
     "@angular-eslint/template-parser": "14.0.3",
     "@angular/cli": "14.1.3",
     "@angular/compiler-cli": "^14.1.3",
-    "@babel/core": "^7.18.10",
+    "@babel/core": "^7.18.13",
     "@compodoc/compodoc": "^1.1.19",
     "@ngrx/store-devtools": "^14.3.0",
     "@playwright/test": "^1.25.0",
