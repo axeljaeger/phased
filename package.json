@@ -85,7 +85,7 @@
     "@typescript-eslint/eslint-plugin": "^5.35.1",
     "@typescript-eslint/parser": "^5.35.1",
     "babel-loader": "^8.2.5",
-    "chromatic": "^6.8.0",
+    "chromatic": "^6.9.0",
     "eslint": "^8.22.0",
     "eslint-plugin-ngrx": "^2.1.4",
     "eslint-plugin-storybook": "^0.6.4",
