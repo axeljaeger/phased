@@ -46,7 +46,7 @@
     "@angular/platform-browser": "^14.2.2",
     "@angular/platform-browser-dynamic": "^14.2.2",
     "@angular/router": "^14.2.2",
-    "@babylonjs/core": "^5.23.0",
+    "@babylonjs/core": "^5.27.1",
     "@babylonjs/inspector": "^5.26.1",
     "@babylonjs/loaders": "^5.26.1",
     "@ngrx/component": "^14.3.2",
