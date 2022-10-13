@@ -48,7 +48,7 @@
     "@angular/router": "^14.2.6",
     "@babylonjs/core": "^5.28.0",
     "@babylonjs/inspector": "^5.26.1",
-    "@babylonjs/loaders": "^5.26.1",
+    "@babylonjs/loaders": "^5.28.0",
     "@ngrx/component": "^14.3.2",
     "@ngrx/store": "^14.3.1",
     "@types/offscreencanvas": "^2019.7.0",
