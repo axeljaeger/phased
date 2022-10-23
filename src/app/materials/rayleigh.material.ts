@@ -89,7 +89,6 @@ export class RayleighMaterial extends ShaderMaterial {
         'world3',
       ],
       uniforms: [
-        'excitation',
         "world",
         "worldView",
         "worldViewProjection",
