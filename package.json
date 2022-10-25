@@ -48,7 +48,7 @@
     "@angular/router": "^14.2.7",
     "@babylonjs/core": "5.27.0",
     "@babylonjs/inspector": "5.27.0",
-    "@babylonjs/loaders": "5.27.0",
+    "@babylonjs/loaders": "5.29.0",
     "@ngrx/component": "^14.3.2",
     "@ngrx/effects": "^14.3.2",
     "@ngrx/store": "^14.3.2",
