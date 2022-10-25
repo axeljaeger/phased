@@ -6,12 +6,11 @@ import { setConfig } from './store/actions/arrayConfig.actions';
 import { initializeResources } from './babylon-lifecycle.actions';
 import { EngineService } from './engine.service';
 
-import {
-  FloatArray,
-  SceneLoader,
-  VertexBuffer,
-  VertexData,
-} from '@babylonjs/core';
+import { FloatArray } from '@babylonjs/core/'
+import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader'
+import { VertexBuffer } from '@babylonjs/core/Buffers/buffer'
+import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData'
+
 
 import { AbstractMesh  } from '@babylonjs/core/Meshes/abstractMesh';
 
