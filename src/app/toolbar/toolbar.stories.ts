@@ -1,4 +1,4 @@
-import { Story, Meta } from '@storybook/angular';
+import { StoryFn, Meta } from '@storybook/angular';
 import { ToolbarComponent } from './toolbar.component';
 
 // More on default export: https://storybook.js.org/docs/angular/writing-stories/introduction#default-export
@@ -12,7 +12,7 @@ export default {
 } as Meta<ToolbarComponent>;
 
 // More on component templates: https://storybook.js.org/docs/angular/writing-stories/introduction#using-args
-const Template: Story<ToolbarComponent> = (args: ToolbarComponent) => ({
+const Template: StoryFn<ToolbarComponent> = (args: ToolbarComponent) => ({
   props: args,
 });
 

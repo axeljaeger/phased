@@ -1,5 +1,5 @@
 // also exported from '@storybook/angular' if you can deal with breaking changes in 6.1
-import { Story, Meta, moduleMetadata, componentWrapperDecorator } from '@storybook/angular';
+import { StoryFn, Meta, moduleMetadata, componentWrapperDecorator } from '@storybook/angular';
 import { ArrayRendererService } from 'src/app/array-renderer.service';
 import { NoOpRendererService } from 'src/app/no-op-renderer.service';
 
@@ -24,7 +24,7 @@ export default {
 } as Meta<StorybookTestbedComponent>;
 
 // More on component templates: https://storybook.js.org/docs/angular/writing-stories/introduction#using-args
-const Template: Story<StorybookTestbedComponent> = (args: StorybookTestbedComponent) => ({
+const Template: StoryFn<StorybookTestbedComponent> = (args: StorybookTestbedComponent) => ({
   props: args,
 });
 

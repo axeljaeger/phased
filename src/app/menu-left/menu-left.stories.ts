@@ -1,7 +1,7 @@
 import { MenuLeftComponent } from './menu-left.component';
 import * as menuLeft from './menu-left.metadata' ;
 
-import { Story, Meta, moduleMetadata } from '@storybook/angular';
+import { StoryFn, Meta, moduleMetadata } from '@storybook/angular';
 import { userEvent, within } from '@storybook/testing-library';
 
 export default {
@@ -12,11 +12,11 @@ export default {
 } as Meta<MenuLeftComponent>;
 
 // More on component templates: https://storybook.js.org/docs/angular/writing-stories/introduction#using-args
-const Template: Story<MenuLeftComponent> = (args: MenuLeftComponent) => ({
+const Template: StoryFn<MenuLeftComponent> = (args: MenuLeftComponent) => ({
   props: args,
 });
 
-export const Default: Story<MenuLeftComponent> = Template.bind({});
+export const Default: StoryFn<MenuLeftComponent> = Template.bind({});
 // More on args: https://storybook.js.org/docs/angular/writing-stories/args
 Default.args = {
   
