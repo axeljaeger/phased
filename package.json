@@ -10,7 +10,7 @@
     "e2e": "ng e2e",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "storybook": "ng run aua:storybook",
-    "build-storybook": "ng run aua:storybook build",
+    "build-storybook": "ng run aua:build-storybook",
     "chromatic": "npx chromatic --project-token=137f9b2a9d87",
     "playwright": "npx playwright test"
   },
