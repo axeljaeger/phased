@@ -36,7 +36,10 @@
             "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "allowedCommonJsDependencies": [
+              "@babylonjs/inspector"
+           ]
           },
           "configurations": {
             "production": {
@@ -127,6 +130,7 @@
     "schematicCollections": [
       "@angular-eslint/schematics"
     ],
+    "defaultCollection": "@ngrx/schematics",
     "analytics": false
   }
 }

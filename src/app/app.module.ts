@@ -20,12 +20,17 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { StoreModule } from '@ngrx/store';
 import { ReactiveComponentModule } from '@ngrx/component'
+import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { environmentReducer } from './store/reducers/environment.reducer'
 import { arrayConfigReducer } from './store/reducers/arrayConfig.reducer'
 import { environment } from 'src/environments/environment';
 import { StorybookTestbedComponent } from './storybook-testbed/storybook-testbed.component';
+
+import { ExcitationRendererEffects } from './excitation-renderer.effects';
+import { RayleighRendererEffects } from './rayleigh-renderer.effects';
+import { FarfieldRendererEffects } from './farfield-renderer.effects';
 
 @NgModule({
   declarations: [
@@ -56,6 +61,12 @@ import { StorybookTestbedComponent } from './storybook-testbed/storybook-testbed
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production, // Restrict extension to log-only mode
     }),
+    EffectsModule.forRoot([
+      ExcitationRendererEffects,
+    //  RayleighRendererEffects,
+      FarfieldRendererEffects
+    ])
+
   ],
   providers: [],
   bootstrap: [AppComponent]
