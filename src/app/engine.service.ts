@@ -8,7 +8,7 @@ import '@babylonjs/core/Meshes/thinInstanceMesh'
 import { Scene } from '@babylonjs/core/scene';
 
 import { BehaviorSubject, Observable } from 'rxjs';
-import { excitationBufferInclude, excitationBufferMaxElements, setExcitationElement } from './utils/excitationbuffer';
+import { excitationBufferInclude } from './utils/excitationbuffer';
 import { Effect } from '@babylonjs/core/Materials/effect';
 import { Store } from '@ngrx/store';
 import {
@@ -42,6 +42,11 @@ export class EngineService {
 
   async initEngine(canvas: ElementRef<HTMLCanvasElement>) {
     this.engine = new Engine(canvas.nativeElement, true);
+
+    // Uniform buffers are disabled per default in Chrome on MacOS
+    // Re-enable this.
+    this.engine.disableUniformBuffers = false;
+
     this.scene = await this.createScene(canvas);
     this.store.dispatch(initializeResources());
     //this.scene.debugLayer.show();
