@@ -24,8 +24,6 @@ export class ExcitationRendererEffects {
     return this.actions$.pipe(
     ofType(initializeResources.type),
     tap(() => {
-      console.log("Initalize 3D resources");
-
       this.transducerMaterial = new TransducerMaterial(this.engine.scene);
 
       const origin = new Vector3(0, 0, 0);

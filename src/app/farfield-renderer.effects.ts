@@ -42,7 +42,6 @@ export class FarfieldRendererEffects {
     return this.actions$.pipe(
     ofType(initializeResources.type),
     tap(() => {
-      console.log("Initalize 3D resources");
       this.prepareSphere().then(() => {});
     }),
   )}, 

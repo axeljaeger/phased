@@ -12,7 +12,7 @@ import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { selectTransducers } from './store/selectors/arrayConfig.selector';
 import { RayleighMaterial } from './materials/rayleigh.material';
 import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
-import { UniformBuffer } from '@babylonjs/core';
+import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 
 import { VEC4_ELEMENT_COUNT } from './utils/webgl.utils';
 import { createExcitationBuffer, excitationBufferMaxElements, setExcitationElement } from './utils/excitationbuffer';
@@ -106,6 +106,7 @@ export class RayleighRendererEffects {
       ofType(setConfig.type),
       concatLatestFrom(action => this.store.select(selectEnvironment)),
       tap((args) => {
+        console.log("Update env");
         const speedOfSound = args[1];
         const omega = 2.0 * Math.PI * 40000;
 
