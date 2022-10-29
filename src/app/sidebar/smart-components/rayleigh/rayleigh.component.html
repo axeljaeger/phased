@@ -7,10 +7,10 @@
     </mat-expansion-panel-header>
     <mat-checkbox [formControl]="rayleighVisible">Visible</mat-checkbox>
     <mat-divider></mat-divider>
-    <mat-radio-group aria-label="Select an option" class="example-radio-group">
-        <mat-radio-button value="1" class="example-radio-button">Elongation</mat-radio-button>
-        <mat-radio-button value="2" class="example-radio-button">Amplitude</mat-radio-button>
-        <mat-radio-button value="3" class="example-radio-button">Phase</mat-radio-button>
+    <mat-radio-group aria-label="Select an option" class="example-radio-group" [formControl]="rayleighAspect">
+        <mat-radio-button [value]="ResultAspect.Elongation" class="example-radio-button">Elongation</mat-radio-button>
+        <mat-radio-button [value]="ResultAspect.Amplitude" class="example-radio-button">Amplitude</mat-radio-button>
+        <mat-radio-button [value]="ResultAspect.Phase" class="example-radio-button">Phase</mat-radio-button>
     </mat-radio-group>
 </mat-expansion-panel>
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { distinctUntilChanged, take, tap } from 'rxjs';
+import { take, tap } from 'rxjs';
 import { setConfig } from '../actions/arrayConfig.actions';
 import { setResultVisible } from '../actions/viewportConfig.actions';
 import { initializeResources } from '../actions/babylon-lifecycle.actions';
@@ -11,7 +11,7 @@ import { Plane } from '@babylonjs/core/Maths/math.plane';
 import { CreatePlane } from '@babylonjs/core/Meshes/Builders/planeBuilder';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { selectTransducers, Transducer } from '../selectors/arrayConfig.selector';
-import { RayleighMaterial } from '../../materials/rayleigh.material';
+import { RayleighMaterial, ResultAspect } from '../../materials/rayleigh.material';
 import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 
@@ -21,6 +21,8 @@ import { selectEnvironment } from '../selectors/environment.selector';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { selectResultEnabled } from '../selectors/viewportConfig.selector';
 import { Results } from '..';
+import { setResultAspect } from '../actions/rayleigh.actions';
+import { selectRayleigh } from '../selectors/rayleigh.selector';
 
 @Injectable()
 export class RayleighRendererEffects {
@@ -33,8 +35,6 @@ export class RayleighRendererEffects {
     return this.actions$.pipe(
     ofType(initializeResources.type),
     tap(() => {
-      console.log("Initalize 3D resources");
-
     // Result
     this.rayleighMaterial = new RayleighMaterial(this.engine.scene);
 
@@ -72,7 +72,6 @@ export class RayleighRendererEffects {
         .bindUniformBuffer(this.uniformExcitationBuffer.getBuffer()!, 'excitation');
     };
 
-    this.rayleighMaterial.setInt('viewmode', 0);
     this.rayleighMaterial.setFloat('dynamicRange', 10);
 
     // Initialize buffers for the first time
@@ -90,8 +89,12 @@ export class RayleighRendererEffects {
     .select(selectResultEnabled(Results.RayleighIntegral))
     .pipe(take(1))
     .subscribe(enabled => this.plane.setEnabled(enabled));
-  }),
 
+    this.store
+    .select(selectRayleigh)
+    .pipe(take(1))
+    .subscribe(aspect => this.rayleighMaterial.setResultAspect(aspect));
+  }),
 
   )}, 
   { dispatch: false} );
@@ -113,11 +116,19 @@ export class RayleighRendererEffects {
     )
   }, { dispatch: false } );
 
-  updateToggleVisibility$ = createEffect(() => {
+  updateSetEnabled$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(setResultVisible.type),
       concatLatestFrom(action => this.store.select(selectResultEnabled(Results.RayleighIntegral))),
       tap((args) => this.plane.setEnabled(args[1]))
+    )
+  }, { dispatch: false } );
+
+  updateResultAspect$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(setResultAspect.type),
+      concatLatestFrom(action => this.store.select(selectRayleigh)),
+      tap((args) => this.rayleighMaterial.setResultAspect(args[1]))
     )
   }, { dispatch: false } );
 
@@ -127,7 +138,6 @@ export class RayleighRendererEffects {
     private engine: EngineService) {}
 
     private uploadEnvironment(speedOfSound : number) : void {
-      console.log("Update env");
       const omega = 2.0 * Math.PI * 40000;
 
       this.rayleighMaterial.setFloat('omega', omega);

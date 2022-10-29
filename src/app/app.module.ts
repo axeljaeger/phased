@@ -26,6 +26,7 @@ import { ExcitationRendererEffects } from './store/effects/excitation-renderer.e
 import { RayleighRendererEffects } from './store/effects/rayleigh-renderer.effects';
 import { FarfieldRendererEffects } from './store/effects/farfield-renderer.effects';
 import { viewportConfigReducer } from './store/reducers/viewportConfig.reducer';
+import { rayleighReducer } from './store/reducers/rayleigh.reducer';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { viewportConfigReducer } from './store/reducers/viewportConfig.reducer';
     StoreModule.forRoot({
       environment: environmentReducer,
       arrayConfig: arrayConfigReducer,
-      visibleResults: viewportConfigReducer
+      visibleResults: viewportConfigReducer,
+      rayleigh: rayleighReducer
     }, {}),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
@@ -52,7 +54,7 @@ import { viewportConfigReducer } from './store/reducers/viewportConfig.reducer';
     EffectsModule.forRoot([
       ExcitationRendererEffects,
       RayleighRendererEffects,
-      FarfieldRendererEffects
+      FarfieldRendererEffects,
     ])
 
   ],

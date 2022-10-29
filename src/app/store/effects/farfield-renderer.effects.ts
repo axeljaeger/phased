@@ -72,7 +72,7 @@ export class FarfieldRendererEffects {
     )
   }, { dispatch: false} );
 
-  updateToggleVisibility$ = createEffect(() => {
+  updateSetEnabled$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(setResultVisible.type),
       concatLatestFrom(action => this.store.select(selectResultEnabled(Results.Farfield))),
