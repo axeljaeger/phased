@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { tap } from 'rxjs';
-import { setConfig } from './store/actions/arrayConfig.actions';
-import { initializeResources } from './babylon-lifecycle.actions';
-import { EngineService } from './engine.service';
+import { distinctUntilChanged, take, tap } from 'rxjs';
+import { setConfig } from '../actions/arrayConfig.actions';
+import { initializeResources } from '../actions/babylon-lifecycle.actions';
+import { EngineService } from '../../engine.service';
 
 import { FloatArray } from '@babylonjs/core/'
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader'
@@ -16,8 +16,11 @@ import { AbstractMesh  } from '@babylonjs/core/Meshes/abstractMesh';
 
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
-import { selectTransducers } from './store/selectors/arrayConfig.selector';
-import { VEC3_ELEMENT_COUNT } from './utils/webgl.utils';
+import { selectTransducers } from '../selectors/arrayConfig.selector';
+import { VEC3_ELEMENT_COUNT } from '../../utils/webgl.utils';
+import { selectResultEnabled } from '../selectors/viewportConfig.selector';
+import { Results } from '..';
+import { setResultVisible } from '../actions/viewportConfig.actions';
 
 interface Edge {
   indices: Array<number>;
@@ -38,11 +41,21 @@ interface Triangle {
 export class FarfieldRendererEffects {
   private farfield: AbstractMesh;
 
+  private subdividedMesh : Mesh;
+
   initialize3DResources$ = createEffect(() => {
     return this.actions$.pipe(
     ofType(initializeResources.type),
     tap(() => {
       this.prepareSphere().then(() => {});
+
+      this.subdividedMesh = new Mesh('subdividedMesh', this.engine.scene);
+
+      this.store
+      .select(selectResultEnabled(Results.RayleighIntegral))
+      .pipe(take(1))
+      .subscribe(enabled => this.subdividedMesh.setEnabled(enabled));
+
     }),
   )}, 
   { dispatch: false} );
@@ -58,6 +71,16 @@ export class FarfieldRendererEffects {
       })
     )
   }, { dispatch: false} );
+
+  updateToggleVisibility$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(setResultVisible.type),
+      concatLatestFrom(action => this.store.select(selectResultEnabled(Results.Farfield))),
+      distinctUntilChanged(),
+      tap((args) => this.subdividedMesh.setEnabled(args[1]))
+    )
+  }, { dispatch: false } );
+
 
   constructor(
     private actions$: Actions, 
@@ -82,9 +105,8 @@ export class FarfieldRendererEffects {
     const sssphere = this.subdivideSphere(ssphere, false);
     const ssssphere = this.subdivideSphere(sssphere, false);
 
-    const subdividedMesh = new Mesh('subdividedMesh', this.engine.scene);
-    ssssphere.applyToMesh(subdividedMesh);
-    subdividedMesh.scaling = new Vector3(-1, 1, 1);
+    ssssphere.applyToMesh(this.subdividedMesh);
+    this.subdividedMesh.scaling = new Vector3(-1, 1, 1);
   }
 
   indexFromEdge(edge: Edge, whichEnd: number, flip: boolean): number {

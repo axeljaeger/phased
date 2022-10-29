@@ -1,0 +1,25 @@
+<div class="mat-title">Simulation setup</div>
+<mat-accordion>
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title data-testid="section-environment">
+                Environment
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>Air, c = 434 m/s</p>
+    </mat-expansion-panel>
+    <app-array-config></app-array-config>
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title data-testid="section-beamforming">
+                Beamforming
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>Algorithm: Fourier | Pick on plane</p>
+    </mat-expansion-panel>
+    <div class="mat-title">Results</div>
+    <mat-accordion>
+        <app-transducer-list></app-transducer-list>
+        <app-rayleigh></app-rayleigh>        
+        <app-farfield></app-farfield>
+    </mat-accordion>

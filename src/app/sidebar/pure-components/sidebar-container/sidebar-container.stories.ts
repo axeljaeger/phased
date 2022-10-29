@@ -1,5 +1,5 @@
-import { MenuLeftComponent } from './menu-left.component';
-import * as menuLeft from './menu-left.metadata' ;
+import { MenuLeftComponent } from './sidebar-container';
+import * as menuLeft from './sidebar-container.metadata' ;
 
 import { StoryFn, Meta, moduleMetadata } from '@storybook/angular';
 import { userEvent, within } from '@storybook/testing-library';

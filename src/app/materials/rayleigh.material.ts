@@ -57,7 +57,7 @@ const rayleighFragmentShaderCode = glsl`
     } 
   
     glFragColor = vec4(.5 + elongation.x, .5-elongation.x, 0.5,1);
-
+    // glFragColor = vec4(1.0 - float(numElements) / 10.0,float(numElements) / 10.0,0,1);  
     // float intensity;
     // if (viewmode == 0) { // Elongation
     //   intensity = 0.5 + (.5*elongation.x + .25) / (float(numElements)*dynamicRange);
@@ -99,7 +99,8 @@ export class RayleighMaterial extends ShaderMaterial {
         "t",
         "omega",
         "viewmode",
-        "dynamicRange"
+        "dynamicRange",
+        "numElements",
       ],
       uniformBuffers: [
         'excitation'

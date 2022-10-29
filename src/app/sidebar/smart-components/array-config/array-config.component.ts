@@ -1,30 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
-import { EngineService } from '../engine.service';
+
+import { FormBuilder } from '@angular/forms';
+import { EngineService } from '../../../engine.service';
 
 import { Store } from '@ngrx/store';
-import { ArrayConfig } from '../store/reducers/arrayConfig.reducer'
-import { setConfig } from '../store/actions/arrayConfig.actions';
-import { selectArrayConfig } from '../store/selectors/arrayConfig.selector';
+import { ArrayConfig } from '../../../store/reducers/arrayConfig.reducer'
+import { setConfig } from '../../../store/actions/arrayConfig.actions';
+import { selectArrayConfig } from '../../../store/selectors/arrayConfig.selector';
 
-import { Observable } from 'rxjs';
-
-import { selectTransducers, Transducer } from '../store/selectors/arrayConfig.selector';
 @Component({
-  selector: 'app-menu-left',
-  templateUrl: './menu-left.component.html',
-  styleUrls: ['./menu-left.component.css']
+  selector: 'app-array-config',
+  templateUrl: './array-config.component.html',
+  styleUrls: ['./array-config.component.css']
 })
-export class MenuLeftComponent implements OnInit {
+export class ArrayConfigComponent implements OnInit {
   public arrayConfig: any;
-  public transducers$ : Observable<Array<Transducer>>;
 
   constructor(
     private store: Store, 
     public engineService: EngineService, 
-    private fb: UntypedFormBuilder) { 
-      this.transducers$ = store.select(selectTransducers);
-    }
+    private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.arrayConfig = this.fb.group({

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MenuLeftComponent } from './menu-left.component';
-import * as menuLeft from './menu-left.metadata' ;
+import { MenuLeftComponent } from './sidebar-container';
+import * as menuLeft from './sidebar-container.metadata' ;
 
 describe('MenuLeftComponent', () => {
   let component: MenuLeftComponent;

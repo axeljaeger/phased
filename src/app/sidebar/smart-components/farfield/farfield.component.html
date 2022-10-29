@@ -1,0 +1,11 @@
+<mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            Far field 3D
+        </mat-panel-title>
+    <mat-icon *ngIf="(farfieldVisible$ | async) === false"  aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off"></mat-icon>
+</mat-expansion-panel-header>
+<mat-checkbox [formControl]="farfieldVisible">Visible</mat-checkbox>
+<mat-divider></mat-divider>
+<p>Deform mesh | Logarithmic scale</p>
+</mat-expansion-panel>

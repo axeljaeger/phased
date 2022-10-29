@@ -17,7 +17,7 @@ import {
 } from './store/selectors/arrayConfig.selector';
 
 import '@babylonjs/loaders/glTF';
-import { initializeResources } from './babylon-lifecycle.actions';
+import { initializeResources } from './store/actions/babylon-lifecycle.actions';
 
 // import '@babylonjs/core/Debug/debugLayer';
 // import '@babylonjs/inspector';
