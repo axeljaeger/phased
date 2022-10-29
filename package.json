@@ -81,7 +81,7 @@
     "@storybook/angular": "^7.0.0-alpha.46",
     "@storybook/builder-webpack5": "^7.0.0-alpha.43",
     "@storybook/manager-webpack5": "^7.0.0-alpha.10",
-    "@storybook/testing-library": "^0.0.14-next.0",
+    "@storybook/testing-library": "^0.0.14--canary.23.ac6b056.0",
     "@types/jest": "^28.1.7",
     "@types/node": "^18.8.5",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
