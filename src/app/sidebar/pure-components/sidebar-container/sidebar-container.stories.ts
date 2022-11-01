@@ -1,22 +1,29 @@
-import { MenuLeftComponent } from './sidebar-container';
+import { SidebarContainerComponent } from './sidebar-container';
 import * as menuLeft from './sidebar-container.metadata' ;
 
 import { StoryFn, Meta, moduleMetadata } from '@storybook/angular';
 import { userEvent, within } from '@storybook/testing-library';
 
+import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
+
 export default {
-  title: 'Menu Left',
-  component: MenuLeftComponent,
+  title: 'Sidebar Container',
+  component: SidebarContainerComponent,
   argTypes: {},
   decorators: [moduleMetadata(menuLeft.moduleMetaData)],
-} as Meta<MenuLeftComponent>;
+  parameters: {
+    viewport: {
+      defaultViewport: 'sidebarPanel',
+    },
+  },
+} as Meta<SidebarContainerComponent>;
 
 // More on component templates: https://storybook.js.org/docs/angular/writing-stories/introduction#using-args
-const Template: StoryFn<MenuLeftComponent> = (args: MenuLeftComponent) => ({
+const Template: StoryFn<SidebarContainerComponent> = (args: SidebarContainerComponent) => ({
   props: args,
 });
 
-export const Default: StoryFn<MenuLeftComponent> = Template.bind({});
+export const Default: StoryFn<SidebarContainerComponent> = Template.bind({});
 // More on args: https://storybook.js.org/docs/angular/writing-stories/args
 Default.args = {
   

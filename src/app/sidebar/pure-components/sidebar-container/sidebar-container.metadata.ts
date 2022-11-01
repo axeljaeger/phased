@@ -5,9 +5,9 @@ import { MatListModule } from '@angular/material/list';
 import { NoopAnimationsModule  } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ReactiveComponentModule } from '@ngrx/component'
+import { LetModule } from '@ngrx/component'
 
-import { MenuLeftComponent } from './sidebar-container';
+import { SidebarContainerComponent } from './sidebar-container';
 
 import { MatInputModule } from '@angular/material/input';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -30,7 +30,7 @@ export const initialState = {
   }; 
 
 export const moduleMetaData = {
-    declarations: [ MenuLeftComponent ],
+    declarations: [ SidebarContainerComponent ],
     imports: [
       MatExpansionModule,
       MatButtonToggleModule,
@@ -40,7 +40,7 @@ export const moduleMetaData = {
       MatListModule,
       NoopAnimationsModule,
       ReactiveFormsModule,
-      ReactiveComponentModule
+      LetModule
     ],
     providers: [
       FormBuilder,
