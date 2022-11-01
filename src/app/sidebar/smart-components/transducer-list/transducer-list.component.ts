@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { setTransducerHovered, clearHover } from 'src/app/store/actions/selection.actions';
 
 import { selectTransducers } from '../../../store/selectors/arrayConfig.selector';
 
@@ -16,4 +17,11 @@ export class TransducerListComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  public setTransducerHovered(index : number) : void {
+    this.store.dispatch(setTransducerHovered({transducerId: index}));
+  }
+
+  public clearTransducerHighlight() : void {
+    this.store.dispatch(clearHover());
+  }
 }

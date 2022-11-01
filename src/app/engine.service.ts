@@ -18,6 +18,7 @@ import {
 
 import '@babylonjs/loaders/glTF';
 import { initializeResources } from './store/actions/babylon-lifecycle.actions';
+import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
 
 // import '@babylonjs/core/Debug/debugLayer';
 // import '@babylonjs/inspector';
@@ -88,6 +89,10 @@ export class EngineService {
       phase += 6;
       phase %= 360;
     });
+
+    new AxesViewer(scene, 0.005);
+
+
     return scene;
   }
 

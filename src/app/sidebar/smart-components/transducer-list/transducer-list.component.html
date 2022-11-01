@@ -7,8 +7,8 @@
             {{ transducers.length}}
         </mat-panel-description>
     </mat-expansion-panel-header>
-    <mat-selection-list #shoes [multiple]="false">
-        <mat-list-option *ngFor="let transducer of transducers">
+    <mat-selection-list [multiple]="false">
+        <mat-list-option *ngFor="let transducer of transducers; index as index" (mouseover)="setTransducerHovered(index)" mouseleave="clearTransducerHighlight()">
             {{transducer.name}}
         </mat-list-option>
     </mat-selection-list>

@@ -12,6 +12,7 @@ const transducerVertexShaderCode = glsl`
   // Attributes
   attribute vec3 position;
   attribute vec2 uv;
+  attribute float selected;
 
   #include<instancesDeclaration>
 
@@ -20,11 +21,14 @@ const transducerVertexShaderCode = glsl`
 
   // Varying
   varying vec2 vUV;
+  varying float vSelected;
+
 
   void main(void) {
   #include<instancesVertex>
     gl_Position = worldViewProjection * finalWorld* vec4(position, 1.0);
     vUV = uv;
+    vSelected = selected;
   }
 `;
 
@@ -32,6 +36,7 @@ const transducerFragmentShaderCode = glsl`
   precision highp float;
 
   varying vec2 vUV;
+  varying float vSelected;
 
   uniform sampler2D textureSampler;
   uniform float globalPhase;
@@ -42,7 +47,7 @@ const transducerFragmentShaderCode = glsl`
         discard;
     }
 
-    gl_FragColor = vec4(0.5*(1.0 + sin(globalPhase)), 0, 0.5*(1.0 - sin(globalPhase)),1);
+    gl_FragColor = vec4(0.5*(1.0 + sin(globalPhase)), vSelected, 0.5*(1.0 - sin(globalPhase)),1);
   }
 `;
 
@@ -56,7 +61,8 @@ export class TransducerMaterial extends ShaderMaterial {
         attributes: [
           "position",
           "normal",
-          "uv"
+          "uv",
+          "selected"
         ],
         uniforms: [
           "world",

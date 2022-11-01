@@ -27,6 +27,7 @@ import { RayleighRendererEffects } from './store/effects/rayleigh-renderer.effec
 import { FarfieldRendererEffects } from './store/effects/farfield-renderer.effects';
 import { viewportConfigReducer } from './store/reducers/viewportConfig.reducer';
 import { rayleighReducer } from './store/reducers/rayleigh.reducer';
+import { selectionReducer } from './store/reducers/selection.reducer';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { rayleighReducer } from './store/reducers/rayleigh.reducer';
       environment: environmentReducer,
       arrayConfig: arrayConfigReducer,
       visibleResults: viewportConfigReducer,
-      rayleigh: rayleighReducer
+      rayleigh: rayleighReducer,
+      selection: selectionReducer
     }, {}),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states

@@ -24,8 +24,8 @@ export const selectTransducers = createSelector(
       const sizeXH = (countX - 1) * pitchX / 2.0;
       const sizeYH = (countY - 1) * pitchY / 2.0;
 
-      for (let x = 0; x < countX; x++) {
-        for (let y = 0; y < countY; y++) {
+      for (let y = 0; y < countY; y++) {
+        for (let x = 0; x < countX; x++) {
           const xpos = -sizeXH + x * pitchX;
           const ypos = -sizeYH + y * pitchY;
           excitation.push({ 

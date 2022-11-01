@@ -11,7 +11,7 @@ import { Plane } from '@babylonjs/core/Maths/math.plane';
 import { CreatePlane } from '@babylonjs/core/Meshes/Builders/planeBuilder';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { selectTransducers, Transducer } from '../selectors/arrayConfig.selector';
-import { RayleighMaterial, ResultAspect } from '../../materials/rayleigh.material';
+import { RayleighMaterial } from '../../materials/rayleigh.material';
 import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 
