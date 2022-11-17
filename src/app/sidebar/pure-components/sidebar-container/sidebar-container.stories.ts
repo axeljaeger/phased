@@ -4,8 +4,6 @@ import * as menuLeft from './sidebar-container.metadata' ;
 import { StoryFn, Meta, moduleMetadata } from '@storybook/angular';
 import { userEvent, within } from '@storybook/testing-library';
 
-import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
-
 export default {
   title: 'Sidebar Container',
   component: SidebarContainerComponent,
