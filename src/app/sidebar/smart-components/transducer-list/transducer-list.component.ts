@@ -9,13 +9,10 @@ import { selectTransducers } from '../../../store/selectors/arrayConfig.selector
   templateUrl: './transducer-list.component.html',
   styleUrls: ['./transducer-list.component.css']
 })
-export class TransducerListComponent implements OnInit {
+export class TransducerListComponent {
   public transducers$ = this.store.select(selectTransducers);
 
   constructor(private store: Store) { }
-
-  ngOnInit(): void {
-  }
 
   public setTransducerHovered(index : number) : void {
     this.store.dispatch(setTransducerHovered({transducerId: index}));
