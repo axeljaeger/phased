@@ -51,9 +51,14 @@
     {
       "files": [
         "*.ts"
+      ]
+    },
+    {
+      "files": [
+        "*.ts"
       ],
       "extends": [
-        "plugin:ngrx/recommended"
+        "plugin:@ngrx/all-requiring-type-checking"
       ]
     }
   ]

@@ -8,5 +8,8 @@ module.exports = {
   "core": {},
   features: {
     interactionsDebugger: true
+  },
+  docsPage: {
+    docs: "automatic"
   }
 };
