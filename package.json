@@ -75,7 +75,7 @@
     "@ngrx/store-devtools": "^14.3.2",
     "@playwright/test": "^1.25.2",
     "@storybook/addon-actions": "^7.0.0-alpha.48",
-    "@storybook/addon-essentials": "^7.0.0-alpha.43",
+    "@storybook/addon-essentials": "^7.0.0-alpha.55",
     "@storybook/addon-interactions": "^7.0.0-alpha.48",
     "@storybook/addon-links": "^7.0.0-alpha.43",
     "@storybook/angular": "^7.0.0-alpha.46",
