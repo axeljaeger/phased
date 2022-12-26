@@ -22,17 +22,22 @@ import { arrayConfigReducer } from './store/reducers/arrayConfig.reducer'
 import { environment } from 'src/environments/environment';
 import { StorybookTestbedComponent } from './storybook-testbed/storybook-testbed.component';
 
-import { ExcitationRendererEffects } from './store/effects/excitation-renderer.effects';
-import { RayleighRendererEffects } from './store/effects/rayleigh-renderer.effects';
 import { FarfieldRendererEffects } from './store/effects/farfield-renderer.effects';
 import { viewportConfigReducer } from './store/reducers/viewportConfig.reducer';
 import { rayleighReducer } from './store/reducers/rayleigh.reducer';
 import { selectionReducer } from './store/reducers/selection.reducer';
 
+import { ExcitationComponent } from './view3d/excitation/excitation.component';
+import { RayleighIntegralComponent } from './view3d/rayleigh-integral/rayleigh-renderer.component';
+
+import { LetModule } from '@ngrx/component';
+
 @NgModule({
   declarations: [
     AppComponent,
     View3dComponent,
+    ExcitationComponent,
+    RayleighIntegralComponent,
     ToolbarComponent,
     StorybookTestbedComponent
   ],
@@ -40,6 +45,7 @@ import { selectionReducer } from './store/reducers/selection.reducer';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    LetModule,
     MatSidenavModule,
     SidebarModule,
     StoreModule.forRoot({
@@ -54,8 +60,6 @@ import { selectionReducer } from './store/reducers/selection.reducer';
       logOnly: environment.production, // Restrict extension to log-only mode
     }),
     EffectsModule.forRoot([
-      ExcitationRendererEffects,
-      RayleighRendererEffects,
       FarfieldRendererEffects,
     ])
 

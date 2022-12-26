@@ -3,7 +3,21 @@
         <app-sidebar-container></app-sidebar-container>
     </mat-sidenav>
     <mat-sidenav-content>
-        <app-view3d></app-view3d>
+        <app-view3d *ngrxLet="{ 
+            transducers: transducers$, 
+            environment: environment$ 
+        } as shared">
+            <app-excitation 
+                [transducers]="shared.transducers" 
+                [selection]="selection$ | async"
+                (hovered)="setHovered($event)"></app-excitation>
+            <app-rayleigh-integral 
+                *ngIf="rayleighEnabled$ | async"    
+                [transducers]="shared.transducers" 
+                [environment]="shared.environment" 
+                [aspect]="rayleighAspect$ | async" 
+                ></app-rayleigh-integral>
+        </app-view3d>
     </mat-sidenav-content>
 </mat-sidenav-container>
 <router-outlet></router-outlet>

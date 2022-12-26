@@ -125,7 +125,9 @@ export class RayleighMaterial extends ShaderMaterial {
     this.setTexture('coolwarmSampler', coolWarmTexture);
   }
 
-  public setResultAspect(aspect : ResultAspect) : void {
-    this.setInt('viewmode', aspect);
+  public setResultAspect(aspect : ResultAspect | null) : void {
+    if (aspect !== null) {
+      this.setInt('viewmode', aspect);
+    }
   }
 }
