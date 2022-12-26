@@ -85,7 +85,7 @@
     "@storybook/testing-library": "^0.0.14--canary.30.5f44d14.0",
     "@types/jest": "^28.1.7",
     "@types/node": "^18.11.9",
-    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.43.0",
     "babel-loader": "^9.0.0",
     "chromatic": "^6.14.0",
