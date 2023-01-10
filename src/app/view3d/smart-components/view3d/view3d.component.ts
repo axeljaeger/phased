@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ContentChildren, ElementRef, HostListener, NgZone, QueryList, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, NgZone, ViewChild } from '@angular/core';
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
 import { Engine } from '@babylonjs/core/Engines/engine';
