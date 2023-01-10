@@ -1,26 +1,16 @@
-import { Injectable } from '@angular/core';
-import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
-import { distinctUntilChanged, take, tap } from 'rxjs';
-import { setConfig } from '../actions/arrayConfig.actions';
-import { initializeResources } from '../actions/babylon-lifecycle.actions';
-import { EngineService } from '../../engine.service';
+import { Component, OnDestroy } from '@angular/core';
 
-import { FloatArray } from '@babylonjs/core/'
+import { FloatArray, Scene } from '@babylonjs/core/'
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader'
 import { VertexBuffer } from '@babylonjs/core/Buffers/buffer'
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData'
-
 
 import { AbstractMesh  } from '@babylonjs/core/Meshes/abstractMesh';
 
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
-import { selectTransducers } from '../selectors/arrayConfig.selector';
-import { VEC3_ELEMENT_COUNT } from '../../utils/webgl.utils';
-import { selectResultEnabled } from '../selectors/viewportConfig.selector';
-import { Results } from '..';
-import { setResultVisible } from '../actions/viewportConfig.actions';
+import { Renderer } from '../../interfaces/renderer';
+import { VEC3_ELEMENT_COUNT } from 'src/app/utils/webgl.utils';
 
 interface Edge {
   indices: Array<number>;
@@ -37,55 +27,25 @@ interface Triangle {
   edges: Array<EdgeReference>;
 }
 
-@Injectable()
-export class FarfieldRendererEffects {
+@Component({
+  selector: 'app-farfield-renderer',
+  template: '<ng-content></ng-content>',
+})
+export class FarfieldRendererComponent implements Renderer, OnDestroy {
   private farfield: AbstractMesh;
 
   private subdividedMesh : Mesh;
+  initialized: boolean;
 
-  initialize3DResources$ = createEffect(() => {
-    return this.actions$.pipe(
-    ofType(initializeResources.type),
-    tap(() => {
-      this.prepareSphere().then(() => {});
+  constructor() {}
+  ngOnDestroy(): void {
+    this.subdividedMesh.dispose();
+  }
 
-      this.subdividedMesh = new Mesh('subdividedMesh', this.engine.scene);
-
-      this.store
-      .select(selectResultEnabled(Results.RayleighIntegral))
-      .pipe(take(1))
-      .subscribe(enabled => this.subdividedMesh.setEnabled(enabled));
-
-    }),
-  )}, 
-  { dispatch: false} );
-
-
-  updateExcitationBuffer$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(setConfig.type),
-      concatLatestFrom(action => this.store.select(selectTransducers)),
-      tap((args) => {
-        console.log("Set config effect");
-        
-      })
-    )
-  }, { dispatch: false} );
-
-  updateSetEnabled$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(setResultVisible.type),
-      concatLatestFrom(action => this.store.select(selectResultEnabled(Results.Farfield))),
-      distinctUntilChanged(),
-      tap((args) => this.subdividedMesh.setEnabled(args[1]))
-    )
-  }, { dispatch: false } );
-
-
-  constructor(
-    private actions$: Actions, 
-    private store: Store, 
-    private engine: EngineService) {}
+  initialize3D(scene: Scene) : void {
+    this.subdividedMesh = new Mesh('subdividedMesh', scene);
+    this.prepareSphere().then(() => {});
+  }
 
   async prepareSphere(): Promise<void> {
     const result = await SceneLoader.ImportMeshAsync(

@@ -9,12 +9,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSidenavModule } from '@angular/material/sidenav';
 
 import { SidebarModule } from './sidebar/sidebar.module';
-import { View3dComponent } from './view3d/view3d.component';
+import { View3dComponent } from './view3d/smart-components/view3d/view3d.component';
 
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { StoreModule } from '@ngrx/store';
 
-import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { environmentReducer } from './store/reducers/environment.reducer'
@@ -22,22 +21,23 @@ import { arrayConfigReducer } from './store/reducers/arrayConfig.reducer'
 import { environment } from 'src/environments/environment';
 import { StorybookTestbedComponent } from './storybook-testbed/storybook-testbed.component';
 
-import { FarfieldRendererEffects } from './store/effects/farfield-renderer.effects';
 import { viewportConfigReducer } from './store/reducers/viewportConfig.reducer';
 import { rayleighReducer } from './store/reducers/rayleigh.reducer';
 import { selectionReducer } from './store/reducers/selection.reducer';
 
-import { ExcitationComponent } from './view3d/excitation/excitation.component';
-import { RayleighIntegralComponent } from './view3d/rayleigh-integral/rayleigh-renderer.component';
 
 import { LetModule } from '@ngrx/component';
+import { FarfieldRendererComponent } from './view3d/renderers/farfield/farfield-renderer.component';
+import { ExcitationRendererComponent } from './view3d/renderers/excitation/excitation.component';
+import { RayleighIntegralRendererComponent } from './view3d/renderers/rayleigh-integral/rayleigh-renderer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     View3dComponent,
-    ExcitationComponent,
-    RayleighIntegralComponent,
+    ExcitationRendererComponent,
+    RayleighIntegralRendererComponent,
+    FarfieldRendererComponent,
     ToolbarComponent,
     StorybookTestbedComponent
   ],
@@ -58,11 +58,7 @@ import { LetModule } from '@ngrx/component';
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: environment.production, // Restrict extension to log-only mode
-    }),
-    EffectsModule.forRoot([
-      FarfieldRendererEffects,
-    ])
-
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

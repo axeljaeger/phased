@@ -1,23 +1,31 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 
 import { Plane } from '@babylonjs/core/Maths/math.plane';
 import { CreatePlane } from '@babylonjs/core/Meshes/Builders/planeBuilder';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
-import { RayleighMaterial } from '../../materials/rayleigh.material';
+import { RayleighMaterial } from '../../../materials/rayleigh.material';
 import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 
-import { VEC4_ELEMENT_COUNT } from '../../utils/webgl.utils';
-import { createExcitationBuffer, excitationBufferMaxElements, setExcitationElement } from '../../utils/excitationbuffer';
+import { VEC4_ELEMENT_COUNT } from '../../../utils/webgl.utils';
+import { createExcitationBuffer, excitationBufferMaxElements, setExcitationElement } from '../../../utils/excitationbuffer';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Scene } from '@babylonjs/core/scene';
 import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
+import { Renderer } from '../../interfaces/renderer';
 
 @Component({
-  selector: 'app-rayleigh-integral',
+  selector: 'app-rayleigh-integral-renderer',
   template: '<ng-content></ng-content>',
 })
-export class RayleighIntegralComponent implements OnChanges {
+export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy, Renderer {
+
+  ngOnDestroy(): void {
+    this.rayleighMaterial.dispose();
+    this.uniformExcitationBuffer.dispose();
+    this.plane.dispose();
+  }
+  initialized: boolean;
   @Input() transducers : Array<Transducer> | null = null;
   @Input() aspect : number | null = null;
   @Input() environment : number | null = null;
@@ -28,12 +36,14 @@ export class RayleighIntegralComponent implements OnChanges {
   private plane : Mesh;
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.uploadEnvironment(this.environment);
-    this.uploadArrayConfig(this.transducers);
-    this.rayleighMaterial.setResultAspect(this.aspect);
+    if (this.rayleighMaterial) {
+      this.uploadEnvironment(this.environment);
+      this.uploadArrayConfig(this.transducers);
+      this.rayleighMaterial.setResultAspect(this.aspect);
+    }
   }
 
-  public initialize3DResources(scene: Scene) {
+  public initialize3D(scene: Scene) : void {    
     // Result
     this.rayleighMaterial = new RayleighMaterial(scene);
 
@@ -72,6 +82,9 @@ export class RayleighIntegralComponent implements OnChanges {
     };
 
     this.rayleighMaterial.setFloat('dynamicRange', 10);
+    this.rayleighMaterial.setResultAspect(this.aspect);
+    this.uploadArrayConfig(this.transducers);
+    this.uploadEnvironment(this.environment);
   }
 
   private uploadEnvironment(speedOfSound : number | null) : void {
@@ -81,7 +94,7 @@ export class RayleighIntegralComponent implements OnChanges {
       this.rayleighMaterial.setFloat('omega', omega);
       this.rayleighMaterial.setFloat('k', omega / speedOfSound);
     }
-}
+  }
 
   private uploadArrayConfig(transducers: Transducer[] | null) : void {
     if (transducers) {

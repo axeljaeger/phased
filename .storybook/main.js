@@ -11,5 +11,8 @@ module.exports = {
   },
   docsPage: {
     docs: "automatic"
+  },
+  docs: {
+    autodocs: true
   }
 };

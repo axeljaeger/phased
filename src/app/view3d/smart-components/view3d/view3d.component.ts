@@ -1,44 +1,62 @@
-import { ElementRef, Injectable, NgZone } from '@angular/core';
-
+import { AfterViewInit, Component, ContentChildren, ElementRef, HostListener, NgZone, QueryList, ViewChild } from '@angular/core';
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
+import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
-import { Vector3 } from '@babylonjs/core/Maths/math.vector';
-import '@babylonjs/core/Meshes/thinInstanceMesh'
-import { Scene } from '@babylonjs/core/scene';
-
-import { BehaviorSubject, Observable } from 'rxjs';
-import { excitationBufferInclude } from './utils/excitationbuffer';
 import { Effect } from '@babylonjs/core/Materials/effect';
-import { Store } from '@ngrx/store';
-import {
-  Transducer,
-  selectTransducers,
-} from './store/selectors/arrayConfig.selector';
+import { Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { Scene } from '@babylonjs/core/scene';
+import { excitationBufferInclude } from 'src/app/utils/excitationbuffer';
+import { Renderer } from '../../interfaces/renderer';
 
 import '@babylonjs/loaders/glTF';
-import { initializeResources } from './store/actions/babylon-lifecycle.actions';
-import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
 
-// import '@babylonjs/core/Debug/debugLayer';
-// import '@babylonjs/inspector';
-
-@Injectable({
-  providedIn: 'root',
+@Component({
+  selector: 'app-view3d',
+  templateUrl: './view3d.component.html',
+  styleUrls: ['./view3d.component.css'],
 })
-export class EngineService {
+export class View3dComponent implements AfterViewInit {
+  @ViewChild('view3dcanvas', { static: true })
+  canvasRef: ElementRef<HTMLCanvasElement>;
+
+  @ContentChildren('renderer') 
+  contentChildren: QueryList<Renderer>;
+
+  initializedChildren : Array<Renderer> = [];
+
   engine: Engine;
   public scene: Scene;
 
-  private speedOfSoundSubject: BehaviorSubject<number> = new BehaviorSubject(
-    343
-  );
-  public speedOfSound$ = this.speedOfSoundSubject.asObservable();
+  constructor(private ngZone: NgZone) { }
 
-  public transducers$: Observable<Array<Transducer>>;
+  async ngAfterViewInit(): Promise<void> {
+    await this.initEngine(this.canvasRef);
+    this.start();
 
-  constructor(private store: Store, private ngZone: NgZone) {
-    this.transducers$ = store.select(selectTransducers);
+    this.contentChildren.changes.subscribe((val) => {
+      this.initializeChildren();
+    });
+
+    this.initializeChildren();
+    window.setTimeout(() => this.engine.resize(), 100);  
+  }
+
+  private initializeChildren() : void {
+    this.contentChildren.forEach((child) => {
+      // Initialize new children
+      if (!this.initializedChildren.includes(child)) {
+        child.initialize3D(this.scene);
+        this.initializedChildren.push(child);
+      }
+    });
+    // Cleanup children that are no longer part of the scene.
+    this.initializedChildren = this.initializedChildren.filter((child) => this.contentChildren.toArray().includes(child));
+  }
+
+  @HostListener('window:resize', ['$event'])
+  resize() : void {
+    this.engine.resize();
   }
 
   async initEngine(canvas: ElementRef<HTMLCanvasElement>) {
@@ -49,7 +67,6 @@ export class EngineService {
     this.engine.disableUniformBuffers = false;
 
     this.scene = await this.createScene(canvas);
-    this.store.dispatch(initializeResources());
     //this.scene.debugLayer.show();
   }
 
@@ -71,7 +88,7 @@ export class EngineService {
     camera.minZ = 0.001;
     camera.inertia = 0;
     camera.wheelDeltaPercentage = 0.1;
-    // camera.zoomToMouseLocation = true;
+    camera.zoomToMouseLocation = true;
 
     let light = new HemisphericLight('light1', new Vector3(0, 1, 0), scene);
 
@@ -91,7 +108,6 @@ export class EngineService {
     });
 
     new AxesViewer(scene, 0.005);
-
 
     return scene;
   }

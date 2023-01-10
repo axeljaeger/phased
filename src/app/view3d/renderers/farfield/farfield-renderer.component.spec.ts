@@ -4,7 +4,7 @@ import { provideMockStore, MockStore } from '@ngrx/store/testing';
 
 import { Observable } from 'rxjs';
 
-import { FarfieldRendererEffects } from './farfield-renderer.effects';
+import { FarfieldRendererEffects } from './farfield-renderer.component';
 
 describe('FarfieldRendererEffects', () => {
   let actions$: Observable<any>;

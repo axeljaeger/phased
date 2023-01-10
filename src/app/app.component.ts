@@ -23,9 +23,11 @@ export class AppComponent {
   rayleighEnabled$ = this.store.select(selectResultEnabled(Results.RayleighIntegral));
   rayleighAspect$ = this.store.select(selectRayleigh);
 
+  farfieldEnabled$ = this.store.select(selectResultEnabled(Results.Farfield));
+  
   constructor(private store: Store) {}
 
-  public setHovered(transducerId : number) : void {
+  public transducerHovered(transducerId : number) : void {
     this.store.dispatch(setTransducerHovered({transducerId }));
   }
 
