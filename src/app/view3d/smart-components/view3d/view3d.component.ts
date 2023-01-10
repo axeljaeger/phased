@@ -30,8 +30,8 @@ export class View3dComponent implements AfterViewInit {
 
   constructor(private ngZone: NgZone) { }
 
-  async ngAfterViewInit(): Promise<void> {
-    await this.initEngine(this.canvasRef);
+  ngAfterViewInit(): void {
+    this.initEngine(this.canvasRef);
     this.start();
 
     this.contentChildren.changes.subscribe((val) => {
@@ -59,18 +59,18 @@ export class View3dComponent implements AfterViewInit {
     this.engine.resize();
   }
 
-  async initEngine(canvas: ElementRef<HTMLCanvasElement>) {
+  initEngine(canvas: ElementRef<HTMLCanvasElement>) {
     this.engine = new Engine(canvas.nativeElement, true);
 
     // Uniform buffers are disabled per default in Chrome on MacOS
     // Re-enable this.
     this.engine.disableUniformBuffers = false;
 
-    this.scene = await this.createScene(canvas);
+    this.scene = this.createScene(canvas);
     //this.scene.debugLayer.show();
   }
 
-  async createScene(canvas: ElementRef<HTMLCanvasElement>) {
+  createScene(canvas: ElementRef<HTMLCanvasElement>) {
     Effect.IncludesShadersStore['ExcitationBuffer'] =
       excitationBufferInclude as unknown as string;
 
