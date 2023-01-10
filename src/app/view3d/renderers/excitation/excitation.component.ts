@@ -14,13 +14,17 @@ import { SelectionState } from 'src/app/store/reducers/selection.reducer';
 import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
 import { Scene } from '@babylonjs/core/scene';
 import { Renderer } from '../../interfaces/renderer';
+import { View3dComponent } from '../../smart-components/view3d/view3d.component';
 
 @Component({
   selector: 'app-excitation-renderer',
   template: '<ng-content></ng-content>',
 })
-export class ExcitationRendererComponent implements OnChanges, Renderer {
-  initialized: boolean = false;
+export class ExcitationRendererComponent extends Renderer implements OnChanges {
+  constructor(view3d: View3dComponent) {
+    super(view3d);
+  }
+  
   @Input() transducers : Array<Transducer> | null = null;
   @Input() selection : SelectionState | null = null;
 

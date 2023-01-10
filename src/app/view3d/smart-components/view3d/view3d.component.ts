@@ -7,9 +7,8 @@ import { Effect } from '@babylonjs/core/Materials/effect';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Scene } from '@babylonjs/core/scene';
 import { excitationBufferInclude } from 'src/app/utils/excitationbuffer';
-import { Renderer } from '../../interfaces/renderer';
-
 import '@babylonjs/loaders/glTF';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-view3d',
@@ -19,11 +18,7 @@ import '@babylonjs/loaders/glTF';
 export class View3dComponent implements AfterViewInit {
   @ViewChild('view3dcanvas', { static: true })
   canvasRef: ElementRef<HTMLCanvasElement>;
-
-  @ContentChildren('renderer') 
-  contentChildren: QueryList<Renderer>;
-
-  initializedChildren : Array<Renderer> = [];
+  view3DInitialized = new Subject<void>();
 
   engine: Engine;
   public scene: Scene;
@@ -32,26 +27,9 @@ export class View3dComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initEngine(this.canvasRef);
+    this.view3DInitialized.next();
     this.start();
-
-    this.contentChildren.changes.subscribe((val) => {
-      this.initializeChildren();
-    });
-
-    this.initializeChildren();
     window.setTimeout(() => this.engine.resize(), 100);  
-  }
-
-  private initializeChildren() : void {
-    this.contentChildren.forEach((child) => {
-      // Initialize new children
-      if (!this.initializedChildren.includes(child)) {
-        child.initialize3D(this.scene);
-        this.initializedChildren.push(child);
-      }
-    });
-    // Cleanup children that are no longer part of the scene.
-    this.initializedChildren = this.initializedChildren.filter((child) => this.contentChildren.toArray().includes(child));
   }
 
   @HostListener('window:resize', ['$event'])

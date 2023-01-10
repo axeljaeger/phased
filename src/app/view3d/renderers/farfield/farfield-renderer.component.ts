@@ -11,6 +11,7 @@ import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Renderer } from '../../interfaces/renderer';
 import { VEC3_ELEMENT_COUNT } from 'src/app/utils/webgl.utils';
+import { View3dComponent } from '../../smart-components/view3d/view3d.component';
 
 interface Edge {
   indices: Array<number>;
@@ -31,13 +32,14 @@ interface Triangle {
   selector: 'app-farfield-renderer',
   template: '<ng-content></ng-content>',
 })
-export class FarfieldRendererComponent implements Renderer, OnDestroy {
+export class FarfieldRendererComponent extends Renderer implements OnDestroy {
   private farfield: AbstractMesh;
-
   private subdividedMesh : Mesh;
-  initialized: boolean;
 
-  constructor() {}
+  constructor(view3d: View3dComponent) {
+    super(view3d);
+  }
+  
   ngOnDestroy(): void {
     this.subdividedMesh.dispose();
   }

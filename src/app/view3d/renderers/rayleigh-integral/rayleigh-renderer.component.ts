@@ -13,12 +13,16 @@ import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Scene } from '@babylonjs/core/scene';
 import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
 import { Renderer } from '../../interfaces/renderer';
+import { View3dComponent } from '../../smart-components/view3d/view3d.component';
 
 @Component({
   selector: 'app-rayleigh-integral-renderer',
   template: '<ng-content></ng-content>',
 })
-export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy, Renderer {
+export class RayleighIntegralRendererComponent extends Renderer implements OnChanges, OnDestroy {
+  constructor(private view3d: View3dComponent) {
+    super(view3d);
+  }
 
   ngOnDestroy(): void {
     this.rayleighMaterial.dispose();
