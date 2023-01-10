@@ -79,7 +79,7 @@
     "@storybook/addon-essentials": "^7.0.0-alpha.55",
     "@storybook/addon-interactions": "^7.0.0-alpha.55",
     "@storybook/addon-links": "^7.0.0-beta.15",
-    "@storybook/angular": "^7.0.0-beta.13",
+    "@storybook/angular": "^7.0.0-beta.24",
     "@storybook/builder-webpack5": "^7.0.0-alpha.55",
     "@storybook/manager-webpack5": "^7.0.0-alpha.10",
     "@storybook/testing-library": "^0.0.14--canary.30.5f44d14.0",
