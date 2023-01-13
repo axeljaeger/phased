@@ -20,11 +20,12 @@ import { View3dComponent } from '../../smart-components/view3d/view3d.component'
   selector: 'app-excitation-renderer',
   template: '<ng-content></ng-content>',
 })
-export class ExcitationRendererComponent extends Renderer implements OnChanges {
-  constructor(view3d: View3dComponent) {
-    super(view3d);
+export class ExcitationRendererComponent implements OnChanges {
+
+  @Input() set scene(scenex: Scene) {
+    this.initialize3D(scenex);
   }
-  
+
   @Input() transducers : Array<Transducer> | null = null;
   @Input() selection : SelectionState | null = null;
 

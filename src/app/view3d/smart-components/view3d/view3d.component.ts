@@ -10,20 +10,45 @@ import { excitationBufferInclude } from 'src/app/utils/excitationbuffer';
 import '@babylonjs/loaders/glTF';
 import { Subject } from 'rxjs';
 
+import { Store } from '@ngrx/store';
+import { Results } from 'src/app/store';
+import { setTransducerHovered } from 'src/app/store/actions/selection.actions';
+import { selectTransducers } from 'src/app/store/selectors/arrayConfig.selector';
+import { selectEnvironment } from 'src/app/store/selectors/environment.selector';
+import { selectRayleigh } from 'src/app/store/selectors/rayleigh.selector';
+import { selectSelection } from 'src/app/store/selectors/selection.selector';
+import { selectResultEnabled } from 'src/app/store/selectors/viewportConfig.selector';
+
 @Component({
   selector: 'app-view3d',
   templateUrl: './view3d.component.html',
   styleUrls: ['./view3d.component.css'],
 })
 export class View3dComponent implements AfterViewInit {
-  @ViewChild('view3dcanvas', { static: true })
+  @ViewChild('view3dcanvas', { static: false })
   canvasRef: ElementRef<HTMLCanvasElement>;
   view3DInitialized = new Subject<void>();
 
   engine: Engine;
   public scene: Scene;
 
-  constructor(private ngZone: NgZone) { }
+  title = 'Air coupled Ultrasound Array';
+
+  transducers$ = this.store.select(selectTransducers);
+  selection$ = this.store.select(selectSelection);
+  environment$ = this.store.select(selectEnvironment);
+
+  rayleighEnabled$ = this.store.select(selectResultEnabled(Results.RayleighIntegral));
+  rayleighAspect$ = this.store.select(selectRayleigh);
+
+  farfieldEnabled$ = this.store.select(selectResultEnabled(Results.Farfield));
+  
+  constructor(private store: Store, private ngZone: NgZone) {}
+
+  public transducerHovered(transducerId : number) : void {
+    this.store.dispatch(setTransducerHovered({transducerId }));
+  }
+
 
   ngAfterViewInit(): void {
     this.initEngine(this.canvasRef);
@@ -34,7 +59,7 @@ export class View3dComponent implements AfterViewInit {
 
   @HostListener('window:resize', ['$event'])
   resize() : void {
-    this.engine.resize();
+    // this.engine.resize();
   }
 
   initEngine(canvas: ElementRef<HTMLCanvasElement>) {

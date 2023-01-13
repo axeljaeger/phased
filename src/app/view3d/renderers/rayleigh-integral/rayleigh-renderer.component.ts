@@ -19,9 +19,9 @@ import { View3dComponent } from '../../smart-components/view3d/view3d.component'
   selector: 'app-rayleigh-integral-renderer',
   template: '<ng-content></ng-content>',
 })
-export class RayleighIntegralRendererComponent extends Renderer implements OnChanges, OnDestroy {
-  constructor(private view3d: View3dComponent) {
-    super(view3d);
+export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy {
+  @Input() set scene(scenex: Scene) {
+    this.initialize3D(scenex);
   }
 
   ngOnDestroy(): void {

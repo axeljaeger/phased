@@ -30,6 +30,7 @@ import { LetModule } from '@ngrx/component';
 import { FarfieldRendererComponent } from './view3d/renderers/farfield/farfield-renderer.component';
 import { ExcitationRendererComponent } from './view3d/renderers/excitation/excitation.component';
 import { RayleighIntegralRendererComponent } from './view3d/renderers/rayleigh-integral/rayleigh-renderer.component';
+import { BabylonSceneDirective } from './view3d/directives/babylon-scene.directive';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { RayleighIntegralRendererComponent } from './view3d/renderers/rayleigh-i
     RayleighIntegralRendererComponent,
     FarfieldRendererComponent,
     ToolbarComponent,
-    StorybookTestbedComponent
+    StorybookTestbedComponent,
+    BabylonSceneDirective
   ],
   imports: [
     BrowserModule,
