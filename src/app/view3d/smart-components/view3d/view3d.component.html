@@ -7,15 +7,13 @@
         [scene]="scene"
         [transducers]="shared.transducers" 
         [selection]="selection$ | async"
-        (hovered)="transducerHovered($event)"></app-excitation-renderer>
+        (hovered)="transducerHovered($event)" />
     <app-rayleigh-integral-renderer *ngIf="rayleighEnabled$ | async"
         [scene]="scene"
         [transducers]="shared.transducers" 
         [environment]="shared.environment" 
-        [aspect]="rayleighAspect$ | async" 
-        ></app-rayleigh-integral-renderer>
-    <!-- <app-farfield-renderer *ngIf="farfieldEnabled$ | async"></app-farfield-renderer> -->
-
+        [aspect]="rayleighAspect$ | async" />
+    <app-farfield-renderer *ngIf="farfieldEnabled$ | async" />
         <ng-content></ng-content>
     </canvas>
 </div>
