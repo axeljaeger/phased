@@ -13,17 +13,16 @@ import '@babylonjs/core/Culling/ray';
 import { SelectionState } from 'src/app/store/reducers/selection.reducer';
 import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
 import { Scene } from '@babylonjs/core/scene';
-import { Renderer } from '../../interfaces/renderer';
-import { View3dComponent } from '../../smart-components/view3d/view3d.component';
 
 @Component({
   selector: 'app-excitation-renderer',
   template: '<ng-content></ng-content>',
 })
 export class ExcitationRendererComponent implements OnChanges {
-
   @Input() set scene(scenex: Scene) {
-    this.initialize3D(scenex);
+    if (scenex) {
+      this.initialize3D(scenex);
+    }
   }
 
   @Input() transducers : Array<Transducer> | null = null;
@@ -36,7 +35,11 @@ export class ExcitationRendererComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.transducerMaterial) {
-      this.uploadArrayConfig(this.transducers, this.selection);
+      if (changes.selection) {
+        if (changes.selection.previousValue !== changes.selection.currentValue || changes.transducers) {
+          this.uploadArrayConfig(this.transducers, this.selection);
+        }
+      }
     }
   }
 

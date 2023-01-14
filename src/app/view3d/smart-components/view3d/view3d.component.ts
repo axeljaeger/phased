@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, NgZone, ViewChild } from '@angular/core';
+
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
 import { Engine } from '@babylonjs/core/Engines/engine';
@@ -8,10 +9,11 @@ import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Scene } from '@babylonjs/core/scene';
 import { excitationBufferInclude } from 'src/app/utils/excitationbuffer';
 import '@babylonjs/loaders/glTF';
-import { Subject } from 'rxjs';
 
 import { Store } from '@ngrx/store';
+
 import { Results } from 'src/app/store';
+
 import { setTransducerHovered } from 'src/app/store/actions/selection.actions';
 import { selectTransducers } from 'src/app/store/selectors/arrayConfig.selector';
 import { selectEnvironment } from 'src/app/store/selectors/environment.selector';
@@ -27,7 +29,6 @@ import { selectResultEnabled } from 'src/app/store/selectors/viewportConfig.sele
 export class View3dComponent implements AfterViewInit {
   @ViewChild('view3dcanvas', { static: false })
   canvasRef: ElementRef<HTMLCanvasElement>;
-  view3DInitialized = new Subject<void>();
 
   engine: Engine;
   public scene: Scene;
@@ -49,12 +50,9 @@ export class View3dComponent implements AfterViewInit {
     this.store.dispatch(setTransducerHovered({transducerId }));
   }
 
-
   ngAfterViewInit(): void {
     this.initEngine(this.canvasRef);
-    this.view3DInitialized.next();
-    this.start();
-    window.setTimeout(() => this.engine.resize(), 100);  
+
   }
 
   @HostListener('window:resize', ['$event'])
@@ -69,7 +67,12 @@ export class View3dComponent implements AfterViewInit {
     // Re-enable this.
     this.engine.disableUniformBuffers = false;
 
-    this.scene = this.createScene(canvas);
+    const scene = this.createScene(canvas);
+    window.setTimeout(() => {
+      this.scene = scene;
+      this.start();
+      window.setTimeout(() => this.engine.resize(), 100);  
+    }, 0);
     //this.scene.debugLayer.show();
   }
 

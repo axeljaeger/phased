@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 
 import { FloatArray, Scene } from '@babylonjs/core/'
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader'
@@ -9,9 +9,7 @@ import { AbstractMesh  } from '@babylonjs/core/Meshes/abstractMesh';
 
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
-import { Renderer } from '../../interfaces/renderer';
 import { VEC3_ELEMENT_COUNT } from 'src/app/utils/webgl.utils';
-import { View3dComponent } from '../../smart-components/view3d/view3d.component';
 
 interface Edge {
   indices: Array<number>;
@@ -32,14 +30,14 @@ interface Triangle {
   selector: 'app-farfield-renderer',
   template: '<ng-content></ng-content>',
 })
-export class FarfieldRendererComponent extends Renderer implements OnDestroy {
+export class FarfieldRendererComponent implements OnDestroy {
   private farfield: AbstractMesh;
   private subdividedMesh : Mesh;
-
-  constructor(view3d: View3dComponent) {
-    super(view3d);
-  }
   
+  @Input() set scene(scenex: Scene) {
+    this.initialize3D(scenex);
+  }
+
   ngOnDestroy(): void {
     this.subdividedMesh.dispose();
   }

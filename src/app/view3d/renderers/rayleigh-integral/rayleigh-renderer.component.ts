@@ -12,8 +12,6 @@ import { createExcitationBuffer, excitationBufferMaxElements, setExcitationEleme
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Scene } from '@babylonjs/core/scene';
 import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
-import { Renderer } from '../../interfaces/renderer';
-import { View3dComponent } from '../../smart-components/view3d/view3d.component';
 
 @Component({
   selector: 'app-rayleigh-integral-renderer',
