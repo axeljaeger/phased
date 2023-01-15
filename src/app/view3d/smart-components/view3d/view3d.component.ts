@@ -15,6 +15,7 @@ import { Store } from '@ngrx/store';
 import { Results } from 'src/app/store';
 
 import { setTransducerHovered } from 'src/app/store/actions/selection.actions';
+
 import { selectTransducers } from 'src/app/store/selectors/arrayConfig.selector';
 import { selectEnvironment } from 'src/app/store/selectors/environment.selector';
 import { selectRayleigh } from 'src/app/store/selectors/rayleigh.selector';

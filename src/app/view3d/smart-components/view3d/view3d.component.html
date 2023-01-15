@@ -3,20 +3,21 @@
         transducers: transducers$, 
         environment: environment$ 
     } as shared" #view3dcanvas>
-    <ng-container *appTransducerBuffer>
+    <ng-container *appTransducerBuffer="scene; transducers: shared.transducers, let buffer = ueb;">
         <app-excitation-renderer
             [scene]="scene"
             [transducers]="shared.transducers" 
             [selection]="selection$ | async"
             (hovered)="transducerHovered($event)" />
         <app-rayleigh-integral-renderer *ngIf="rayleighEnabled$ | async"
+            [UEB]="buffer"
             [scene]="scene"
             [transducers]="shared.transducers" 
             [environment]="shared.environment" 
             [aspect]="rayleighAspect$ | async" />
         <app-farfield-renderer *ngIf="farfieldEnabled$ | async"
             [scene]="scene" />
-            <ng-content></ng-content>
+        <ng-content></ng-content>
     </ng-container>
     </canvas>
 </div>

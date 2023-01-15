@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 
-import { TransducerMaterial } from '../../../materials/transducer.material';
+import { TransducerMaterial } from '../../materials/transducer.material';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Plane } from '@babylonjs/core/Maths/math.plane';
 import { CreatePlane } from '@babylonjs/core/Meshes/Builders/planeBuilder';

@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { ResultAspect } from 'src/app/materials/rayleigh.material';
+import { ResultAspect } from 'src/app/view3d/materials/rayleigh.material';
 import { setResultAspect } from '../actions/rayleigh.actions';
 
 export const initialState = ResultAspect.Elongation;

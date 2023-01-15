@@ -2,8 +2,8 @@ import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { Scene } from '@babylonjs/core/scene';
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
 
-import { glsl } from '../utils/webgl.utils';
-import { excitationBufferMaxElementsDefine } from '../utils/excitationbuffer';
+import { glsl } from '../../utils/webgl.utils';
+import { excitationBufferMaxElementsDefine } from '../../utils/excitationbuffer';
 
 const rayleighVertexShaderCode = glsl`
   precision highp float;
@@ -33,7 +33,6 @@ const rayleighFragmentShaderCode = glsl`
   uniform float t;
   uniform float omega;
 
-  uniform int viewmode;
   uniform float dynamicRange;
 
   uniform int numElements;
@@ -59,26 +58,10 @@ const rayleighFragmentShaderCode = glsl`
     //glFragColor = vec4(.5 + elongation.x, .5-elongation.x, 0.5,1);
     glFragColor = vec4(1.0 - float(numElements) / 10.0,float(numElements) / 10.0,0,1);  
     float intensity;
-    if (viewmode == 0) { // Elongation
-      intensity = 0.5 + (.5*elongation.x + .25) / (float(numElements)*dynamicRange);
-      glFragColor = texture(coolwarmSampler, vec2(intensity, 0.375));
-    } else if (viewmode == 1) { // Magnitude
-      //intensity = 0.25*length(elongation) / numsources;
-      intensity = log(length(elongation) / float(numElements))/log(10.0f);
-      glFragColor = texture(coolwarmSampler, vec2(intensity, 1));
-    } else if (viewmode == 2) { // Phase
-      intensity = (atan(elongation.y,elongation.x)/(3.14) + .25);
-      glFragColor = texture(coolwarmSampler, vec2(intensity, 1));
-    }
+    intensity = 0.5 + (.5*elongation.x + .25) / (float(numElements)*dynamicRange);
+    glFragColor = texture(coolwarmSampler, vec2(intensity, 0.375));
   }
 `;
-
-export enum ResultAspect {
-  Elongation = 0,
-  Amplitude = 1,
-  Phase = 2
-}
-
 
 export class RayleighMaterial extends ShaderMaterial {
   constructor(scene: Scene) {
@@ -105,7 +88,6 @@ export class RayleighMaterial extends ShaderMaterial {
         "k",
         "t",
         "omega",
-        "viewmode",
         "dynamicRange",
         "numElements",
       ],
@@ -123,11 +105,5 @@ export class RayleighMaterial extends ShaderMaterial {
     const coolWarmTexture = new Texture('assets/coolwarm.png', scene);
     coolWarmTexture.wrapU = Texture.CLAMP_ADDRESSMODE;
     this.setTexture('coolwarmSampler', coolWarmTexture);
-  }
-
-  public setResultAspect(aspect : ResultAspect | null) : void {
-    if (aspect !== null) {
-      this.setInt('viewmode', aspect);
-    }
   }
 }

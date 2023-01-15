@@ -1,6 +1,10 @@
-import { AfterContentInit, AfterViewInit, Directive, ElementRef, EmbeddedViewRef, HostListener, NgZone, OnChanges, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
-import { ArcRotateCamera, AxesViewer, Effect, HemisphericLight, Vector3 } from '@babylonjs/core';
+import { AfterContentInit, Directive, ElementRef, EmbeddedViewRef, HostListener, NgZone, OnChanges, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
+import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
+import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
 import { Engine } from '@babylonjs/core/Engines/engine';
+import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
+import { Effect } from '@babylonjs/core/Materials/effect';
+import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Scene } from '@babylonjs/core/scene';
 import { excitationBufferInclude } from 'src/app/utils/excitationbuffer';
 
