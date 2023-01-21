@@ -16,35 +16,36 @@ import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
   template: '<ng-content></ng-content>',
 })
 export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy {
-  @Input() set scene(scenex: Scene) {
-    this.initialize3D(scenex);
-  }
-
-  ngOnDestroy(): void {
-    this.rayleighMaterial.dispose();
-    this.plane.dispose();
-  }
-  initialized: boolean;
+  @Input() scene : Scene;
   @Input() transducers : Array<Transducer> | null = null;
   @Input() UEB : UniformBuffer | null = null;
-  @Input() aspect : number | null = null;
   @Input() environment : number | null = null;
 
-  private rayleighMaterial: RayleighMaterial;
+  @Input() aspect : number | null = null;
+  
+  private material: RayleighMaterial;
 
   private plane : Mesh;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.rayleighMaterial) {
+    if (this.scene) {
+      if (!this.material) {
+        this.initialize3D(this.scene);
+      }
       this.uploadEnvironment(this.environment);
       this.uploadArrayConfig(this.transducers);
-      this.rayleighMaterial.setResultAspect(this.aspect);
+      this.material.setResultAspect(this.aspect);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.material.dispose();
+    this.plane.dispose();
   }
 
   public initialize3D(scene: Scene) : void {    
     // Result
-    this.rayleighMaterial = new RayleighMaterial(scene);
+    this.material = new RayleighMaterial(scene);
 
     // Setup Aperture
     const origin = new Vector3(0, 0, 0);
@@ -58,20 +59,20 @@ export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy {
     };
 
     this.plane = CreatePlane('plane', planeOptions, scene);
-    this.plane.material = this.rayleighMaterial;
+    this.plane.material = this.material;
     this.plane.position = new Vector3(0, 0, 0.5);
     this.plane.bakeCurrentTransformIntoVertices();
 
-    this.rayleighMaterial.onBind = (mesh: AbstractMesh) => {
+    this.material.onBind = (mesh: AbstractMesh) => {
       if (this.UEB) {
-        this.rayleighMaterial
+        this.material
         .getEffect()
         .bindUniformBuffer(this.UEB.getBuffer()!, 'excitation');
       }
     };
 
-    this.rayleighMaterial.setFloat('dynamicRange', 10);
-    this.rayleighMaterial.setResultAspect(this.aspect);
+    this.material.setFloat('dynamicRange', 10);
+    this.material.setResultAspect(this.aspect);
     this.uploadArrayConfig(this.transducers);
     this.uploadEnvironment(this.environment);
   }
@@ -80,14 +81,14 @@ export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy {
     if (speedOfSound) {
       const omega = 2.0 * Math.PI * 40000;
 
-      this.rayleighMaterial.setFloat('omega', omega);
-      this.rayleighMaterial.setFloat('k', omega / speedOfSound);
+      this.material.setFloat('omega', omega);
+      this.material.setFloat('k', omega / speedOfSound);
     }
   }
 
   private uploadArrayConfig(transducers: Transducer[] | null) : void {
     if (transducers) {
-      this.rayleighMaterial.setInt('numElements', transducers.length);
+      this.material.setInt('numElements', transducers.length);
     }
   }
 }

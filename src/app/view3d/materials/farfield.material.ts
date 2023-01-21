@@ -7,6 +7,10 @@ import { excitationBufferMaxElementsDefine } from '../../utils/excitationbuffer'
 
 const rayleighVertexShaderCode = glsl`
   precision highp float;
+  #include<ExcitationBuffer>
+  uniform highp int numElements;
+  uniform float dynamicRange;
+  uniform sampler2D coolwarmSampler;
 
   // Uniforms
   uniform mat4 worldViewProjection;
@@ -18,13 +22,56 @@ const rayleighVertexShaderCode = glsl`
   out highp vec3 r;
 
   void main(void) {
-    gl_Position = worldViewProjection * vec4(position, 1.0);
+    vec3 samplePosition = position;
+
+    float az = atan(samplePosition.x,samplePosition.z);
+    float el = atan(samplePosition.y, length(samplePosition.xz));
+    vec2 uv = vec2(cos(el)* sin(az), sin(el));
+
+    vec2 result = vec2(0,0);
+
+    float pi = 3.141;
+    float f = 40000.0;
+    float c = 343.0;
+
+    float omega = 2.0*pi*f;
+    float k = omega / c;
+
+    for (int i = 0; i < numElements; ++i) {
+        ExcitationElement element = excitation.elements[i];
+        vec2 argv = element.position.xy*uv;
+        //float argument = k*(argv.x+argv.y) + element.delay*omega;
+        float argument = k*(argv.x+argv.y); // + element.delay*omega;
+        result += vec2(cos(argument), sin(argument));
+    }
+
+    //float tf = abs(2*(texture(transducerFactor,.25*uv+vec2(.5,.5)).x)-.5);
+    float tf = 1.0;
+    float af = length(result);
+
+    float db_val = 10.0*log((af*tf)/float(numElements));
+    float shifted_val = db_val+dynamicRange;
+    float absresult = clamp(shifted_val/dynamicRange,0.0,1.0);
+
+    float phi = atan(uv.y,uv.x);
+    float theta = asin(length(uv));
+
+    vec2 angles = vec2(theta,phi);
+    vec2 sins = sin(angles);
+    vec2 coss = cos(angles);
+
+    vec4 spherepos = vec4(absresult*vec3(sins.x*coss.y,sins.y*sins.x,coss.x),1);
+//    vec4 spherepos = vec4(uv.x,uv.y,tf,1);
+
+    samplePosition.z = absresult;
+    gl_Position = worldViewProjection * spherepos;
     r = position;
   }
 `;
 const rayleighFragmentShaderCode = glsl`
   precision highp float;
   #include<ExcitationBuffer>
+  uniform highp int numElements;
 
   uniform sampler2D coolwarmSampler;
   uniform float globalPhase;
@@ -34,8 +81,6 @@ const rayleighFragmentShaderCode = glsl`
   uniform float omega;
 
   uniform float dynamicRange;
-
-  uniform int numElements;
 
   in highp vec3 r;
 
@@ -63,9 +108,9 @@ const rayleighFragmentShaderCode = glsl`
   }
 `;
 
-export class RayleighMaterial extends ShaderMaterial {
+export class FarfieldMaterial extends ShaderMaterial {
   constructor(scene: Scene) {
-    super('RayleighMaterial', scene, {
+    super('FarfieldMaterial', scene, {
       vertexSource: rayleighVertexShaderCode,
       fragmentSource: rayleighFragmentShaderCode
     }, {

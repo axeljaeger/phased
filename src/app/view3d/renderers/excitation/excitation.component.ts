@@ -19,12 +19,7 @@ import { Scene } from '@babylonjs/core/scene';
   template: '<ng-content></ng-content>',
 })
 export class ExcitationRendererComponent implements OnChanges {
-  @Input() set scene(scenex: Scene) {
-    if (scenex) {
-      this.initialize3D(scenex);
-    }
-  }
-
+  @Input() scene: Scene;
   @Input() transducers : Array<Transducer> | null = null;
   @Input() selection : SelectionState | null = null;
 
@@ -34,7 +29,10 @@ export class ExcitationRendererComponent implements OnChanges {
   private transducerMesh: Mesh;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.transducerMaterial) {
+    if (this.scene) {
+      if (!this.transducerMaterial) {
+        this.initialize3D(this.scene);
+      }
       if (changes.selection) {
         if (changes.selection.previousValue !== changes.selection.currentValue || changes.transducers) {
           this.uploadArrayConfig(this.transducers, this.selection);
@@ -42,10 +40,9 @@ export class ExcitationRendererComponent implements OnChanges {
       }
     }
   }
-
+  
   public initialize3D(scene : Scene) : void {
     this.transducerMaterial = new TransducerMaterial(scene);
-    //this.transducerMaterial = new StandardMaterial("transmat", this.engine.scene);
 
     const origin = new Vector3(0, 0, 0);
     const zPositive = new Vector3(0, 0, -1);

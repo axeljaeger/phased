@@ -1,15 +1,19 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 
-import { FloatArray, Scene } from '@babylonjs/core/'
+import { AbstractMesh  } from '@babylonjs/core/Meshes/abstractMesh';
+import { FloatArray } from '@babylonjs/core/types';
+import { Mesh } from '@babylonjs/core/Meshes/mesh';
+import { Scene } from '@babylonjs/core/scene';
 import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader'
+import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
+import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
+import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { VertexBuffer } from '@babylonjs/core/Buffers/buffer'
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData'
 
-import { AbstractMesh  } from '@babylonjs/core/Meshes/abstractMesh';
-
-import { Mesh } from '@babylonjs/core/Meshes/mesh';
-import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { VEC3_ELEMENT_COUNT } from 'src/app/utils/webgl.utils';
+import { FarfieldMaterial } from '../../materials/farfield.material';
+
 
 interface Edge {
   indices: Array<number>;
@@ -30,12 +34,24 @@ interface Triangle {
   selector: 'app-farfield-renderer',
   template: '<ng-content></ng-content>',
 })
-export class FarfieldRendererComponent implements OnDestroy {
+export class FarfieldRendererComponent implements OnChanges, OnDestroy {
+  @Input() scene :Scene;
+  @Input() transducers : Array<Transducer> | null = null;
+  @Input() UEB : UniformBuffer | null = null;
+  @Input() environment : number | null = null;
+
+  private material : FarfieldMaterial;
   private farfield: AbstractMesh;
   private subdividedMesh : Mesh;
-  
-  @Input() set scene(scenex: Scene) {
-    this.initialize3D(scenex);
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.scene) {
+      if (!this.material) {
+        this.initialize3D(this.scene);
+      }
+      this.uploadEnvironment(this.environment);
+      this.uploadArrayConfig(this.transducers);
+    }
   }
 
   ngOnDestroy(): void {
@@ -43,8 +59,35 @@ export class FarfieldRendererComponent implements OnDestroy {
   }
 
   initialize3D(scene: Scene) : void {
+    this.material = new FarfieldMaterial(scene);
     this.subdividedMesh = new Mesh('subdividedMesh', scene);
+    this.subdividedMesh.material = this.material;
     this.prepareSphere().then(() => {});
+
+    this.material.onBind = (mesh: AbstractMesh) => {
+      if (this.UEB) {
+        this.material
+        .getEffect()
+        .bindUniformBuffer(this.UEB.getBuffer()!, 'excitation');
+      }
+    };
+
+    this.material.setFloat('dynamicRange', 1);
+  }
+
+  private uploadEnvironment(speedOfSound : number | null) : void {
+    if (speedOfSound) {
+      const omega = 2.0 * Math.PI * 40000;
+
+      this.material.setFloat('omega', omega);
+      this.material.setFloat('k', omega / speedOfSound);
+    }
+  }
+
+  private uploadArrayConfig(transducers: Transducer[] | null) : void {
+    if (transducers) {
+      this.material.setInt('numElements', transducers.length);
+    }
   }
 
   async prepareSphere(): Promise<void> {

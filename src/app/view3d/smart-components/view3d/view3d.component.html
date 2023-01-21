@@ -16,7 +16,10 @@
             [environment]="shared.environment" 
             [aspect]="rayleighAspect$ | async" />
         <app-farfield-renderer *ngIf="farfieldEnabled$ | async"
-            [scene]="scene" />
+            [UEB]="buffer"
+            [scene]="scene"
+            [transducers]="shared.transducers" 
+            [environment]="shared.environment" />
         <ng-content></ng-content>
     </ng-container>
     </canvas>
