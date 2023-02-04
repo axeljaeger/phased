@@ -7,6 +7,7 @@ import { excitationBufferMaxElementsDefine } from '../../utils/excitationbuffer'
 
 const rayleighVertexShaderCode = glsl`
   precision highp float;
+  #define M_PI 3.1415926535897932384626433832795
   #include<ExcitationBuffer>
   uniform highp int numElements;
   uniform float dynamicRange;
@@ -24,9 +25,10 @@ const rayleighVertexShaderCode = glsl`
   void main(void) {
     vec3 samplePosition = position;
 
-    float az = atan(samplePosition.x,samplePosition.z);
-    float el = atan(samplePosition.y, length(samplePosition.xz));
-    vec2 uv = vec2(cos(el)* sin(az), sin(el));
+
+    highp float az = atan(samplePosition.x,samplePosition.z + 0.000000001);
+    highp float el = atan(samplePosition.y, length(samplePosition.xz));
+    vec2 uv = vec2(cos(el)* sin(az), sin(el) + 0.000000001);
 
     vec2 result = vec2(0,0);
 
@@ -65,6 +67,14 @@ const rayleighVertexShaderCode = glsl`
 
     samplePosition.z = absresult;
     gl_Position = worldViewProjection * spherepos;
+    
+    highp vec3 backtransformed = vec3(
+      cos(el)*sin(az),
+      sin(el),
+      cos(el)*cos(az)
+    );
+
+    //gl_Position = worldViewProjection * vec4(backtransformed,1.0);
     r = position;
   }
 `;

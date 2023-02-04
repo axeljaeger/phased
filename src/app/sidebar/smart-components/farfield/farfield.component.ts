@@ -21,6 +21,7 @@ export class FarfieldComponent implements OnInit {
     private fb: FormBuilder) { }
 
   ngOnInit(): void {
+
     this.farfieldVisible.valueChanges.subscribe(val => {
       this.store.dispatch(setResultVisible({result: Results.Farfield, visible: val!}));
     });

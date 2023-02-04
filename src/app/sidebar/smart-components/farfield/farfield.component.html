@@ -7,5 +7,13 @@
 </mat-expansion-panel-header>
 <mat-checkbox [formControl]="farfieldVisible">Visible</mat-checkbox>
 <mat-divider></mat-divider>
+Tesselation level
+<mat-slider
+[max]="0"
+[min]="10"
+[step]="1"
+[showTickMarks]="true">
+<input matSliderThumb [(ngModel)]="value">
+</mat-slider>
 <p>Deform mesh | Logarithmic scale</p>
 </mat-expansion-panel>
