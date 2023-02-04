@@ -5,7 +5,6 @@ module.exports = {
     name: "@storybook/angular",
     options: {}
   },
-  "core": {},
   features: {
     interactionsDebugger: true
   },
