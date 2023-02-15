@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { setConfig } from '../actions/arrayConfig.actions';
+import { setConfig, setPitchX } from '../actions/arrayConfig.actions';
 
 export interface ArrayConfig {
     arrayType: string;
@@ -35,5 +35,16 @@ export const arrayConfigReducer = createReducer(
       return {
         ...newConfig
       }
-    })
+    }),
+  on(setPitchX, (state: ArrayConfig, pitch) : ArrayConfig => {
+    console.log(pitch);
+    return {
+        ...state,
+        uraConfig: {
+            ...state.uraConfig,
+            pitchX: pitch.pitch
+        }
+    }
+})
+
 );

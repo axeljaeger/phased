@@ -21,6 +21,7 @@ import { selectEnvironment } from 'src/app/store/selectors/environment.selector'
 import { selectRayleigh } from 'src/app/store/selectors/rayleigh.selector';
 import { selectSelection } from 'src/app/store/selectors/selection.selector';
 import { selectResultEnabled } from 'src/app/store/selectors/viewportConfig.selector';
+import { setPitchX } from 'src/app/store/actions/arrayConfig.actions';
 
 @Component({
   selector: 'app-view3d',
@@ -49,6 +50,10 @@ export class View3dComponent implements AfterViewInit {
 
   public transducerHovered(transducerId : number) : void {
     this.store.dispatch(setTransducerHovered({transducerId }));
+  }
+
+  public setPitch(pitch: number) : void {
+    this.store.dispatch(setPitchX({pitch}));
   }
 
   ngAfterViewInit(): void {

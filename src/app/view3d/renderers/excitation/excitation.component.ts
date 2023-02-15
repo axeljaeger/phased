@@ -13,6 +13,8 @@ import '@babylonjs/core/Culling/ray';
 import { SelectionState } from 'src/app/store/reducers/selection.reducer';
 import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
 import { Scene } from '@babylonjs/core/scene';
+import { CreateIcoSphere } from '@babylonjs/core/Meshes/Builders/icoSphereBuilder';
+import { PointerDragBehavior } from '@babylonjs/core/Behaviors/Meshes/pointerDragBehavior';
 
 @Component({
   selector: 'app-excitation-renderer',
@@ -24,20 +26,22 @@ export class ExcitationRendererComponent implements OnChanges {
   @Input() selection : SelectionState | null = null;
 
   @Output() hovered = new EventEmitter<number>();
+  @Output() pitchChange = new EventEmitter<number>();
 
   private transducerMaterial: TransducerMaterial;
   private transducerMesh: Mesh;
+
+  private arrayPitchHandle: Mesh;
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.scene) {
       if (!this.transducerMaterial) {
         this.initialize3D(this.scene);
       }
-      if (changes.selection) {
-        if (changes.selection.previousValue !== changes.selection.currentValue || changes.transducers) {
-          this.uploadArrayConfig(this.transducers, this.selection);
-        }
-      }
+      if (changes.selection || changes.transducers) {
+        this.uploadArrayConfig(this.transducers, this.selection);
+      } 
     }
   }
   
@@ -83,6 +87,31 @@ export class ExcitationRendererComponent implements OnChanges {
            (event) => this.hovered.next(-1)
         )
     )
+
+    this.arrayPitchHandle = CreateIcoSphere('arrayPitchHandle', {
+      radius: 0.00025,
+      subdivisions: 3,
+    })
+
+    this.arrayPitchHandle.position = new Vector3(0.0043 / 2, 0.0043 / 2,0);
+
+    const pointerDragBehavior = new PointerDragBehavior({dragAxis: new Vector3(1,0,0)});
+
+    pointerDragBehavior.onDragStartObservable.add((event)=>{
+      console.log("dragStart");
+      console.log(event);
+    })
+    pointerDragBehavior.onDragObservable.add((event)=>{
+      this.pitchChange.next(event.dragPlanePoint.x * 2);
+    })
+    pointerDragBehavior.onDragEndObservable.add((event)=>{
+      console.log("dragEnd");
+      console.log(event);
+    })
+
+    this.arrayPitchHandle.addBehavior(pointerDragBehavior);
+    
+    
     this.uploadArrayConfig(this.transducers, this.selection);
   }
 

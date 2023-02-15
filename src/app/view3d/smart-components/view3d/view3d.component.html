@@ -8,7 +8,8 @@
             [scene]="scene"
             [transducers]="shared.transducers" 
             [selection]="selection$ | async"
-            (hovered)="transducerHovered($event)" />
+            (hovered)="transducerHovered($event)" 
+            (pitchChange)="setPitch($event)" />
         <app-rayleigh-integral-renderer *ngIf="rayleighEnabled$ | async"
             [UEB]="buffer"
             [scene]="scene"
