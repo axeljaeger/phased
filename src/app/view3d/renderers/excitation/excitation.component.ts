@@ -96,6 +96,7 @@ export class ExcitationRendererComponent implements OnChanges {
     this.arrayPitchHandle.position = new Vector3(0.0043 / 2, 0.0043 / 2,0);
 
     const pointerDragBehavior = new PointerDragBehavior({dragAxis: new Vector3(1,0,0)});
+    pointerDragBehavior.dragDeltaRatio = 1.0;
 
     pointerDragBehavior.onDragStartObservable.add((event)=>{
       console.log("dragStart");
