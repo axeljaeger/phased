@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Results } from 'src/app/store';
-import { setResultVisible } from 'src/app/store/actions/viewportConfig.actions';
+import { Results } from '../../../store';
+import { setResultVisible } from '../../../store/actions/viewportConfig.actions';
 
 import { selectResultEnabled } from '../../../store/selectors/viewportConfig.selector';
 
@@ -15,6 +15,7 @@ import { selectResultEnabled } from '../../../store/selectors/viewportConfig.sel
 export class FarfieldComponent implements OnInit {
   public farfieldVisible$ = this.store.select(selectResultEnabled(Results.Farfield));
   public farfieldVisible = this.fb.control(false);
+  public tesselationLevel = this.fb.control(1);
 
   constructor(
     private store: Store,

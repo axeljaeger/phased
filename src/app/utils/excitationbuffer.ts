@@ -1,7 +1,7 @@
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { glsl } from './webgl.utils';
 
-export const excitationBufferMaxElements = 20;
+export const excitationBufferMaxElements = 256;
 export const excitationBufferMaxElementsDefine = `#define MAX_ELEMENTS ${excitationBufferMaxElements}`;
 export const excitationBufferElementSize = 8;
 

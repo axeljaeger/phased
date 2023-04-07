@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MenuLeftComponent } from './sidebar-container';
+import { SidebarContainerComponent } from './sidebar-container';
 import * as menuLeft from './sidebar-container.metadata' ;
 
-describe('MenuLeftComponent', () => {
-  let component: MenuLeftComponent;
-  let fixture: ComponentFixture<MenuLeftComponent>;
+describe('SidebarContainerComponent', () => {
+  let component: SidebarContainerComponent;
+  let fixture: ComponentFixture<SidebarContainerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule(menuLeft.moduleMetaData)
@@ -12,7 +12,7 @@ describe('MenuLeftComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MenuLeftComponent);
+    fixture = TestBed.createComponent(SidebarContainerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { setTransducerHovered, clearHover } from 'src/app/store/actions/selection.actions';
+import { setTransducerHovered, clearHover } from '../../../store/actions/selection.actions';
 
 import { selectTransducers } from '../../../store/selectors/arrayConfig.selector';
 

@@ -18,17 +18,13 @@ const rayleighVertexShaderCode = glsl`
 
   // Attributes
   attribute vec3 position;
+  attribute vec2 uv;
 
   // Varying
   out highp vec3 r;
+  out highp vec2 uvf;
 
   void main(void) {
-    vec3 samplePosition = position;
-
-
-    highp float az = atan(samplePosition.x,samplePosition.z + 0.000000001);
-    highp float el = atan(samplePosition.y, length(samplePosition.xz));
-    vec2 uv = vec2(cos(el)* sin(az), sin(el) + 0.000000001);
 
     vec2 result = vec2(0,0);
 
@@ -65,22 +61,24 @@ const rayleighVertexShaderCode = glsl`
     vec4 spherepos = vec4(absresult*vec3(sins.x*coss.y,sins.y*sins.x,coss.x),1);
 //    vec4 spherepos = vec4(uv.x,uv.y,tf,1);
 
-    samplePosition.z = absresult;
-    gl_Position = worldViewProjection * spherepos;
+    // samplePosition.z = absresult;
+    gl_Position = worldViewProjection * vec4(position.xy, af / float(numElements), 1.0);
     
-    highp vec3 backtransformed = vec3(
+    /*highp vec3 backtransformed = vec3(
       cos(el)*sin(az),
       sin(el),
       cos(el)*cos(az)
     );
-
-    //gl_Position = worldViewProjection * vec4(backtransformed,1.0);
+*/
+    // gl_Position = worldViewProjection * vec4(backtransformed,1.0);
     r = position;
+    uvf = uv;
   }
 `;
 const rayleighFragmentShaderCode = glsl`
   precision highp float;
   #include<ExcitationBuffer>
+ 
   uniform highp int numElements;
 
   uniform sampler2D coolwarmSampler;
@@ -93,28 +91,28 @@ const rayleighFragmentShaderCode = glsl`
   uniform float dynamicRange;
 
   in highp vec3 r;
+  in highp vec2 uvf;
 
   void main(void) {
-    vec2 elongation = vec2(0,0); // Complex number
+    vec2 result = vec2(0,0);
 
-    for (int j = 0; j < numElements; ++j) {
-      ExcitationElement elm = excitation.elements[j];
-      float d = distance(elm.position.xyz, r);
-      float oodd = 1.0/pow(d,2.0);
+    float pi = 3.141;
+    float f = 40000.0;
+    float c = 343.0;
 
-      float amplitude = elm.phasor.x;
-      float area = elm.phasor.y;
-      float delay = elm.phasor.z;
-      
-      float argz = (d*k - delay*omega - t);
-      elongation += vec2(cos(argz), sin(argz))*amplitude*area*oodd;
-    } 
-  
-    //glFragColor = vec4(.5 + elongation.x, .5-elongation.x, 0.5,1);
-    glFragColor = vec4(1.0 - float(numElements) / 10.0,float(numElements) / 10.0,0,1);  
+    float omega = 2.0*pi*f;
+    float k = omega / c;
+
+    for (int i = 0; i < numElements; ++i) {
+        ExcitationElement element = excitation.elements[i];
+        vec2 argv = element.position.xy*uvf;
+        float argument = k*(argv.x+argv.y); // + element.delay*omega;
+        result += vec2(cos(argument), sin(argument));
+    }
+    
     float intensity;
-    intensity = 0.5 + (.5*elongation.x + .25) / (float(numElements)*dynamicRange);
-    glFragColor = texture(coolwarmSampler, vec2(intensity, 0.375));
+    intensity = 0.5 + 0.5 * length(result) / (float(numElements));
+    glFragColor = texture(coolwarmSampler, vec2(intensity, 0.375)); 
   }
 `;
 

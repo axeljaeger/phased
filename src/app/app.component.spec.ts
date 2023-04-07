@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
-import { View3dComponent } from './view3d/view3d.component';
-import { MenuLeftComponent } from './menu-left/menu-left.component';
+import { View3dComponent } from './view3d/smart-components/view3d/view3d.component';
 import { MockComponent } from 'ng-mocks';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -14,6 +13,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { SidebarContainerComponent } from './sidebar/pure-components/sidebar-container/sidebar-container';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -32,7 +32,7 @@ describe('AppComponent', () => {
       ],
       declarations: [
         AppComponent,
-        MockComponent(MenuLeftComponent),
+        MockComponent(SidebarContainerComponent),
         MockComponent(View3dComponent)
       ],
     }).compileComponents();

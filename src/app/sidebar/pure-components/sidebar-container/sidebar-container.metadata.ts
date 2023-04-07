@@ -12,6 +12,7 @@ import { SidebarContainerComponent } from './sidebar-container';
 import { MatInputModule } from '@angular/material/input';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FormBuilder } from '@angular/forms';
+import { SidebarModule } from '../../sidebar.module';
 
 export const initialState = {
     arrayConfig: {
@@ -40,7 +41,8 @@ export const moduleMetaData = {
       MatListModule,
       NoopAnimationsModule,
       ReactiveFormsModule,
-      LetModule
+      LetModule,
+      SidebarModule
     ],
     providers: [
       FormBuilder,

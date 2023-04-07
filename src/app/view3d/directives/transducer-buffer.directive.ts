@@ -2,9 +2,9 @@ import { Directive, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, Template
 
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { Scene } from '@babylonjs/core/scene';
-import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
-import { createExcitationBuffer, excitationBufferMaxElements, setExcitationElement } from 'src/app/utils/excitationbuffer';
-import { VEC4_ELEMENT_COUNT } from 'src/app/utils/webgl.utils';
+import { Transducer } from '../../store/selectors/arrayConfig.selector';
+import { createExcitationBuffer, excitationBufferMaxElements, setExcitationElement } from '../../utils/excitationbuffer';
+import { VEC4_ELEMENT_COUNT } from '../../utils/webgl.utils';
 
 @Directive({ selector: '[appTransducerBuffer]'})
 export class TransducerBufferDirective implements OnInit, OnChanges, OnDestroy {

@@ -9,13 +9,16 @@ import { ArrayConfigComponent } from './smart-components/array-config/array-conf
 
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ReactiveFormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSliderModule } from '@angular/material/slider';
+
+import { ReactiveFormsModule } from '@angular/forms';
+
 
 import { LetModule } from '@ngrx/component';
 
@@ -30,14 +33,15 @@ import { LetModule } from '@ngrx/component';
   imports: [
     CommonModule,
     LetModule,
+    MatButtonToggleModule,
+    MatCheckboxModule,
     MatExpansionModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
     MatListModule,
     MatRadioModule,
-    MatButtonToggleModule,
-    MatCheckboxModule,
+    MatSliderModule,
     ReactiveFormsModule,
   ],
   exports: [

@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { LetModule } from '@ngrx/component';
+import { provideMockStore } from '@ngrx/store/testing';
+import { SidebarModule } from '../../sidebar.module';
 
 import { TransducerListComponent } from './transducer-list.component';
 
@@ -8,7 +11,11 @@ describe('TransducerListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TransducerListComponent ]
+      declarations: [ TransducerListComponent ],
+      imports: [ LetModule, SidebarModule ],
+      providers: [
+        provideMockStore({})
+      ]
     })
     .compileComponents();
 

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { ResultAspect } from 'src/app/view3d/materials/rayleigh.material';
-import { Results } from 'src/app/store';
-import { setResultAspect } from 'src/app/store/actions/rayleigh.actions';
-import { setResultVisible } from 'src/app/store/actions/viewportConfig.actions';
+import { ResultAspect } from '../../../view3d/materials/rayleigh.material';
+import { Results } from '../../../store';
+import { setResultAspect } from '../../../store/actions/rayleigh.actions';
+import { setResultVisible } from '../../../store/actions/viewportConfig.actions';
 
 import { selectResultEnabled } from '../../../store/selectors/viewportConfig.selector';
 

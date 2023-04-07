@@ -7,21 +7,22 @@ import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
 import { Effect } from '@babylonjs/core/Materials/effect';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Scene } from '@babylonjs/core/scene';
-import { excitationBufferInclude } from 'src/app/utils/excitationbuffer';
+import { excitationBufferInclude } from '../../../utils/excitationbuffer';
 import '@babylonjs/loaders/glTF';
 
 import { Store } from '@ngrx/store';
 
-import { Results } from 'src/app/store';
+import { Results } from '../../../store';
 
-import { setTransducerHovered } from 'src/app/store/actions/selection.actions';
+import { setTransducerHovered } from '../../../store/actions/selection.actions';
 
-import { selectTransducers } from 'src/app/store/selectors/arrayConfig.selector';
-import { selectEnvironment } from 'src/app/store/selectors/environment.selector';
-import { selectRayleigh } from 'src/app/store/selectors/rayleigh.selector';
-import { selectSelection } from 'src/app/store/selectors/selection.selector';
-import { selectResultEnabled } from 'src/app/store/selectors/viewportConfig.selector';
-import { setPitchX } from 'src/app/store/actions/arrayConfig.actions';
+import { selectTransducers } from '../../../store/selectors/arrayConfig.selector';
+import { selectEnvironment } from '../../../store/selectors/environment.selector';
+import { selectRayleigh } from '../../../store/selectors/rayleigh.selector';
+import { selectSelection } from '../../../store/selectors/selection.selector';
+import { selectResultEnabled } from '../../../store/selectors/viewportConfig.selector';
+import { setPitchX } from '../../../store/actions/arrayConfig.actions';
+import { NullEngine } from '@babylonjs/core';
 
 @Component({
   selector: 'app-view3d',
@@ -67,7 +68,11 @@ export class View3dComponent implements AfterViewInit {
   }
 
   initEngine(canvas: ElementRef<HTMLCanvasElement>) {
-    this.engine = new Engine(canvas.nativeElement, true);
+    if (window.WebGLRenderingContext) {
+      this.engine = new Engine(canvas.nativeElement, true);
+    } else {
+      this.engine = new NullEngine();
+    }
 
     // Uniform buffers are disabled per default in Chrome on MacOS
     // Re-enable this.
@@ -91,7 +96,7 @@ export class View3dComponent implements AfterViewInit {
       'Camera',
       Math.PI / 4,
       Math.PI / 4,
-      4,
+      0.05,
       Vector3.Zero(),
       scene
     );

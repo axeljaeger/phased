@@ -6,7 +6,7 @@ import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
 import { Effect } from '@babylonjs/core/Materials/effect';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Scene } from '@babylonjs/core/scene';
-import { excitationBufferInclude } from 'src/app/utils/excitationbuffer';
+import { excitationBufferInclude } from '../../utils/excitationbuffer';
 
 /**
  * Add the template content to the DOM unless the condition is true.

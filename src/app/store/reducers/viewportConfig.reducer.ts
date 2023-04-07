@@ -2,7 +2,7 @@ import { createReducer, on } from '@ngrx/store';
 import { Results } from '..';
 import { setResultVisible } from '../actions/viewportConfig.actions';
 
-const initialState : Array<Results> = [];
+const initialState : Array<Results> = [Results.RayleighIntegral];
 
 export const viewportConfigReducer = createReducer(
 initialState,

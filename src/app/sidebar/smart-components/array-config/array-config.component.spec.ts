@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { provideMockStore } from '@ngrx/store/testing';
+import { SidebarModule } from '../../sidebar.module';
 
 import { ArrayConfigComponent } from './array-config.component';
 
@@ -8,7 +11,11 @@ describe('ArrayConfigComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ArrayConfigComponent ]
+      declarations: [ ArrayConfigComponent ],
+      imports: [ NoopAnimationsModule, SidebarModule ],
+      providers: [
+        provideMockStore({})
+      ]
     })
     .compileComponents();
 
