@@ -9,7 +9,10 @@ import { MAT4_ELEMENT_COUNT, SCALAR_ELEMENT_COUNT } from '../../../utils/webgl.u
 
 import { ExecuteCodeAction } from '@babylonjs/core/Actions/directActions';
 import { ActionManager } from '@babylonjs/core/Actions/actionManager';
+
 import '@babylonjs/core/Culling/ray';
+import '@babylonjs/core/Meshes/thinInstanceMesh';
+
 import { SelectionState } from 'src/app/store/reducers/selection.reducer';
 import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
 import { Scene } from '@babylonjs/core/scene';

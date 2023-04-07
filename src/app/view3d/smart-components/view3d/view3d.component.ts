@@ -8,7 +8,6 @@ import { Effect } from '@babylonjs/core/Materials/effect';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Scene } from '@babylonjs/core/scene';
 import { excitationBufferInclude } from '../../../utils/excitationbuffer';
-import '@babylonjs/loaders/glTF';
 
 import { Store } from '@ngrx/store';
 
@@ -22,7 +21,7 @@ import { selectRayleigh } from '../../../store/selectors/rayleigh.selector';
 import { selectSelection } from '../../../store/selectors/selection.selector';
 import { selectResultEnabled } from '../../../store/selectors/viewportConfig.selector';
 import { setPitchX } from '../../../store/actions/arrayConfig.actions';
-import { NullEngine } from '@babylonjs/core';
+import { NullEngine } from '@babylonjs/core/Engines/nullEngine';
 
 @Component({
   selector: 'app-view3d',
