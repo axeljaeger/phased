@@ -80,7 +80,7 @@
     "@storybook/angular": "^7.0.2",
     "@storybook/testing-library": "^0.1.0",
     "@types/jest": "^28.1.7",
-    "@types/node": "^18.11.18",
+    "@types/node": "^18.15.11",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "babel-loader": "^9.0.0",
