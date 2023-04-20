@@ -45,7 +45,7 @@
     "@angular/material": "^15.2.6",
     "@angular/platform-browser": "^15.2.6",
     "@angular/platform-browser-dynamic": "^15.2.6",
-    "@angular/router": "^15.2.6",
+    "@angular/router": "^15.2.8",
     "@babylonjs/core": "^5.55.0",
     "@babylonjs/inspector": "^5.55.0",
     "@ngrx/component": "^15.4.0",
