@@ -8,7 +8,7 @@ import { FarfieldRendererComponent } from './renderers/farfield/farfield-rendere
 import { RayleighIntegralRendererComponent } from './renderers/rayleigh-integral/rayleigh-renderer.component';
 import { View3dComponent } from './smart-components/view3d/view3d.component';
 
-import { LetModule } from '@ngrx/component';
+import { LetDirective } from '@ngrx/component';
 
 @NgModule({
   declarations: [
@@ -21,7 +21,7 @@ import { LetModule } from '@ngrx/component';
   ],
   imports: [
     CommonModule,
-    LetModule
+    LetDirective
   ],
   exports: [
     View3dComponent

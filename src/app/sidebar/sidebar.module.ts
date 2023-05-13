@@ -20,7 +20,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
-import { LetModule } from '@ngrx/component';
+import { LetDirective } from '@ngrx/component';
 
 @NgModule({
   declarations: [
@@ -32,7 +32,7 @@ import { LetModule } from '@ngrx/component';
   ],
   imports: [
     CommonModule,
-    LetModule,
+    LetDirective,
     MatButtonToggleModule,
     MatCheckboxModule,
     MatExpansionModule,

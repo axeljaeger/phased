@@ -5,7 +5,7 @@ import { MatListModule } from '@angular/material/list';
 import { NoopAnimationsModule  } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LetModule } from '@ngrx/component'
+import { LetModule, LetDirective } from '@ngrx/component'
 
 import { SidebarContainerComponent } from './sidebar-container';
 
