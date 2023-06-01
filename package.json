@@ -50,7 +50,7 @@
     "@babylonjs/inspector": "6.1.0",
     "@ngrx/component": "^15.4.0",
     "@ngrx/effects": "^15.4.0",
-    "@ngrx/store": "^15.4.0",
+    "@ngrx/store": "^16.0.1",
     "@types/offscreencanvas": "^2019.7.0",
     "rxjs": "~7.5.6",
     "tslib": "^2.4.0",
