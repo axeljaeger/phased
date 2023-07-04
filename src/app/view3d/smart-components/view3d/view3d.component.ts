@@ -1,13 +1,5 @@
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone } from '@angular/core';
 
-import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
-import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
-import { Engine } from '@babylonjs/core/Engines/engine';
-import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
-import { Effect } from '@babylonjs/core/Materials/effect';
-import { Vector3 } from '@babylonjs/core/Maths/math.vector';
-import { Scene } from '@babylonjs/core/scene';
-import { excitationBufferInclude } from '../../../utils/excitationbuffer';
 
 import { Store } from '@ngrx/store';
 
@@ -21,19 +13,25 @@ import { selectRayleigh } from '../../../store/selectors/rayleigh.selector';
 import { selectSelection } from '../../../store/selectors/selection.selector';
 import { selectResultEnabled } from '../../../store/selectors/viewportConfig.selector';
 import { setPitchX } from '../../../store/actions/arrayConfig.actions';
-import { NullEngine } from '@babylonjs/core/Engines/nullEngine';
+import { Scene } from '@babylonjs/core/scene';
+import { distinctUntilSomeChanged } from '@rx-angular/state/selections';
+import { RxState } from '@rx-angular/state';
+import { combineLatest, map } from 'rxjs';
 
 @Component({
   selector: 'app-view3d',
   templateUrl: './view3d.component.html',
   styleUrls: ['./view3d.component.css'],
+  providers: [RxState],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class View3dComponent implements AfterViewInit {
-  @ViewChild('view3dcanvas', { static: false })
-  canvasRef: ElementRef<HTMLCanvasElement>;
+export class View3dComponent {
+  public scene : Scene;
 
-  engine: Engine;
-  public scene: Scene;
+  setScene(scene: Scene) {
+    this.scene = scene;
+    // this.cd.detectChanges();
+  }
 
   title = 'Air coupled Ultrasound Array';
 
@@ -41,98 +39,28 @@ export class View3dComponent implements AfterViewInit {
   selection$ = this.store.select(selectSelection);
   environment$ = this.store.select(selectEnvironment);
 
+  vm$ = this.state.select();
+ 
+
   rayleighEnabled$ = this.store.select(selectResultEnabled(Results.RayleighIntegral));
   rayleighAspect$ = this.store.select(selectRayleigh);
 
   farfieldEnabled$ = this.store.select(selectResultEnabled(Results.Farfield));
   
-  constructor(private store: Store, private ngZone: NgZone) {}
+  constructor(private store: Store, private ngZone: NgZone, private cd: ChangeDetectorRef, private state: RxState<{transducers: any, environment: any, selection: any}>) {
+
+  this.state.connect('transducers', this.store.select(selectTransducers));
+  this.state.connect('environment', this.store.select(selectEnvironment));
+  this.state.connect('selection', this.store.select(selectSelection));
+}
 
   public transducerHovered(transducerId : number) : void {
-    this.store.dispatch(setTransducerHovered({transducerId }));
+    //this.ngZone.run(() => {
+      this.store.dispatch(setTransducerHovered({ transducerId }));
+    // })      
   }
 
   public setPitch(pitch: number) : void {
     this.store.dispatch(setPitchX({pitch}));
-  }
-
-  ngAfterViewInit(): void {
-    this.initEngine(this.canvasRef);
-
-  }
-
-  @HostListener('window:resize', ['$event'])
-  resize() : void {
-    // this.engine.resize();
-  }
-
-  initEngine(canvas: ElementRef<HTMLCanvasElement>) {
-    if (window.WebGLRenderingContext) {
-      this.engine = new Engine(canvas.nativeElement, true);
-    } else {
-      this.engine = new NullEngine();
-    }
-
-    // Uniform buffers are disabled per default in Chrome on MacOS
-    // Re-enable this.
-    this.engine.disableUniformBuffers = false;
-
-    const scene = this.createScene(canvas);
-    window.setTimeout(() => {
-      this.scene = scene;
-      this.start();
-      window.setTimeout(() => this.engine.resize(), 100);  
-    }, 0);
-    //this.scene.debugLayer.show();
-  }
-
-  createScene(canvas: ElementRef<HTMLCanvasElement>) {
-    Effect.IncludesShadersStore['ExcitationBuffer'] =
-      excitationBufferInclude as unknown as string;
-
-    let scene = new Scene(this.engine);
-    let camera = new ArcRotateCamera(
-      'Camera',
-      Math.PI / 4,
-      Math.PI / 4,
-      0.05,
-      Vector3.Zero(),
-      scene
-    );
-    camera.lowerRadiusLimit = 0.01;
-    camera.attachControl(canvas, true);
-    camera.minZ = 0.001;
-    camera.inertia = 0;
-    camera.wheelDeltaPercentage = 0.1;
-    camera.zoomToMouseLocation = true;
-
-    let light = new HemisphericLight('light1', new Vector3(0, 1, 0), scene);
-
-    let phase = 0;
-    scene.registerBeforeRender(() => {
-      // this.transducerMaterial.setFloat(
-      //   'globalPhase',
-      //   Angle.FromDegrees(phase).radians()
-      // );
-      // this.rayleighMaterial.setFloat(
-      //   'globalPhase',
-      //   Angle.FromDegrees(phase).radians()
-      // );
-      // this.rayleighMaterial.setFloat('t', Angle.FromDegrees(phase).radians());
-      phase += 6;
-      phase %= 360;
-    });
-
-    new AxesViewer(scene, 0.005);
-
-    return scene;
-  }
-
-  start() {
-    // ignore the change events from the Engine in the Angular ngZone
-    this.ngZone.runOutsideAngular(() => {
-      // start the render loop and therefore start the Engine
-      this.engine.runRenderLoop(() => this.scene.render());
-    });
   }
 }

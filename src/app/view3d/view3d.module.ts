@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BabylonSceneDirective } from './directives/babylon-scene.directive';
-import { TransducerBufferDirective } from './directives/transducer-buffer.directive';
 
 import { ExcitationRendererComponent } from './renderers/excitation/excitation-renderer.component';
 import { FarfieldRendererComponent } from './renderers/farfield/farfield-renderer.component';
 import { RayleighIntegralRendererComponent } from './renderers/rayleigh-integral/rayleigh-renderer.component';
 import { View3dComponent } from './smart-components/view3d/view3d.component';
 
-import { LetModule } from '@ngrx/component';
+import { RxLet } from '@rx-angular/template/let';
+import { BabylonJSViewComponent } from './smart-components/babylon-jsview/babylon-jsview.component';
+import { TransducerBufferComponent } from './shared/transducer-buffer.component';
 
 @NgModule({
   declarations: [
@@ -16,12 +16,12 @@ import { LetModule } from '@ngrx/component';
     ExcitationRendererComponent,
     RayleighIntegralRendererComponent,
     FarfieldRendererComponent,
-    BabylonSceneDirective,
-    TransducerBufferDirective
+    BabylonJSViewComponent,
+    TransducerBufferComponent
   ],
   imports: [
     CommonModule,
-    LetModule
+    RxLet
   ],
   exports: [
     View3dComponent

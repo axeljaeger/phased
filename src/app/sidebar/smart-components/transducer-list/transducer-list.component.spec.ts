@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LetModule } from '@ngrx/component';
+import { LetModule, LetDirective } from '@ngrx/component';
 import { provideMockStore } from '@ngrx/store/testing';
 import { SidebarModule } from '../../sidebar.module';
 

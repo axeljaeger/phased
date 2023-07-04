@@ -1,30 +1,26 @@
 // also exported from '@storybook/angular' if you can deal with breaking changes in 6.1
-import { StoryFn, Meta, moduleMetadata, componentWrapperDecorator } from '@storybook/angular';
-import { ArrayRendererService } from 'src/app/array-renderer.service';
-import { NoOpRendererService } from 'src/app/no-op-renderer.service';
+import { StoryFn, Meta, moduleMetadata, componentWrapperDecorator, Story } from '@storybook/angular';
 
-
-import { StorybookTestbedComponent } from '../storybook-testbed/storybook-testbed.component';
+import { ExcitationRendererComponent } from './excitation-renderer.component';
+import { BabylonJSViewComponent } from '../../smart-components/babylon-jsview/babylon-jsview.component';
 
 
 // More on default export: https://storybook.js.org/docs/angular/writing-stories/introduction#default-export
 export default {
-  title: 'ArrayRenderer',
-  component: StorybookTestbedComponent,
+  title: 'ExcitationRendererComponent',
+  component: BabylonJSViewComponent,
   // More on argTypes: https://storybook.js.org/docs/angular/api/argtypes
   decorators: [
     moduleMetadata({
-      declarations: [StorybookTestbedComponent],
+      declarations: [BabylonJSViewComponent],
       imports: [],
-      providers: [
-        { provide: NoOpRendererService, useClass: ArrayRendererService },
-      ],
     }),
+    componentWrapperDecorator((story) => `<app-babylon-jsview>${story}</app-babylon-jsview>`),
   ],
-} as Meta<StorybookTestbedComponent>;
+} as Meta<ExcitationRendererComponent>;
 
 // More on component templates: https://storybook.js.org/docs/angular/writing-stories/introduction#using-args
-const Template: StoryFn<StorybookTestbedComponent> = (args: StorybookTestbedComponent) => ({
+const Template: Story<ExcitationRendererComponent> = (args: ExcitationRendererComponent) => ({
   props: args,
 });
 

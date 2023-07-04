@@ -1,57 +1,52 @@
-import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+} from '@angular/core';
 
-import { AbstractMesh  } from '@babylonjs/core/Meshes/abstractMesh';
+import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Scene } from '@babylonjs/core/scene';
 import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { FarfieldMaterial } from '../../materials/farfield.material';
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
+import { OnTransducerBufferCreated } from '../../shared/transducer-buffer.component';
 
-const uniformSquareXY : VertexData = (() => {
-  const positions = [
-    -0.5, -0.5, 0,
-    0.5, -0.5, 0,
-    -0.5, 0.5, 0,
-    0.5, 0.5, 0];
-  const uv = [
-    -1, -1, 
-    1, -1, 
-    -1, 1, 
-    1, 1
-  ];
+const uniformSquareXY: VertexData = (() => {
+  const positions = [-0.5, -0.5, 0, 0.5, -0.5, 0, -0.5, 0.5, 0, 0.5, 0.5, 0];
+  const uv = [-1, -1, 1, -1, -1, 1, 1, 1];
   const indices = [0, 1, 2, 1, 3, 2];
   const vertexData = new VertexData();
   vertexData.positions = positions;
   vertexData.indices = indices;
   vertexData.uvs = uv;
   return vertexData;
-}) ();
+})();
 
 @Component({
   selector: 'app-farfield-renderer',
   template: '<ng-content></ng-content>',
 })
-export class FarfieldRendererComponent implements OnChanges, OnDestroy {
-  @Input() scene :Scene;
-  @Input() transducers : Array<Transducer> | null = null;
-  @Input() UEB : UniformBuffer | null = null;
-  @Input() environment : number | null = null;
+export class FarfieldRendererComponent
+  implements OnChanges, OnDestroy, OnTransducerBufferCreated
+{
+  @Input() transducers: Array<Transducer> | null = null;
+  @Input() environment: number | null = null;
 
-  private material : FarfieldMaterial;
-  private farfieldMesh : Mesh;
+  private material: FarfieldMaterial;
+  private farfieldMesh: Mesh;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.scene) {
-      if (!this.material) {
-        this.initialize3D(this.scene);
-      }
+    if (this.material) {
       this.uploadEnvironment(this.environment);
       this.uploadArrayConfig(this.transducers);
     }
   }
 
-  initialize3D(scene: Scene) : void {
+  ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer): void {
     this.material = new FarfieldMaterial(scene);
 
     this.farfieldMesh = new Mesh('farfieldMesh', scene);
@@ -60,14 +55,12 @@ export class FarfieldRendererComponent implements OnChanges, OnDestroy {
     this.farfieldMesh.material = this.material;
 
     this.material.onBind = (mesh: AbstractMesh) => {
-      if (this.UEB) {
-        this.material
+      this.material
         .getEffect()
-        .bindUniformBuffer(this.UEB.getBuffer()!, 'excitation');
-      }
+        .bindUniformBuffer(buffer.getBuffer()!, 'excitation');
     };
 
-    this.material.setFloat('dynamicRange', 1);
+    this.material.setFloat('dynamicRange', 50.0);
   }
 
   ngOnDestroy(): void {
@@ -75,7 +68,7 @@ export class FarfieldRendererComponent implements OnChanges, OnDestroy {
     this.material.dispose();
   }
 
-  private uploadEnvironment(speedOfSound : number | null) : void {
+  private uploadEnvironment(speedOfSound: number | null): void {
     if (speedOfSound) {
       const omega = 2.0 * Math.PI * 40000;
 
@@ -84,7 +77,7 @@ export class FarfieldRendererComponent implements OnChanges, OnDestroy {
     }
   }
 
-  private uploadArrayConfig(transducers: Transducer[] | null) : void {
+  private uploadArrayConfig(transducers: Transducer[] | null): void {
     if (transducers) {
       this.material.setInt('numElements', transducers.length);
     }

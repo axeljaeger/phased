@@ -1,4 +1,4 @@
-<mat-expansion-panel hideToggle *ngrxLet="transducers$ as transducers">
+<mat-expansion-panel hideToggle *rxLet="transducers$ as transducers">
     <mat-expansion-panel-header>
         <mat-panel-title>
             Tranducers
@@ -8,7 +8,7 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-selection-list [multiple]="false">
-        <mat-list-option *ngFor="let transducer of transducers; index as index" (mouseover)="setTransducerHovered(index)" mouseleave="clearTransducerHighlight()">
+        <mat-list-option *rxFor="let transducer of transducers; index as index; trackBy:transducerIndex" (mouseover)="setTransducerHovered(index)" mouseleave="clearTransducerHighlight()">
             {{transducer.name}}
         </mat-list-option>
     </mat-selection-list>
