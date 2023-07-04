@@ -37,7 +37,6 @@ export const arrayConfigReducer = createReducer(
       }
     }),
   on(setPitchX, (state: ArrayConfig, pitch) : ArrayConfig => {
-    console.log(pitch);
     return {
         ...state,
         uraConfig: {

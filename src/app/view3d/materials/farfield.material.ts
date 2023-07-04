@@ -11,7 +11,7 @@ const rayleighVertexShaderCode = glsl`
   #include<ExcitationBuffer>
   uniform highp int numElements;
   uniform float dynamicRange;
-  uniform sampler2D coolwarmSampler;
+  uniform sampler2D viridisSampler;
 
   // Uniforms
   uniform mat4 worldViewProjection;
@@ -62,15 +62,17 @@ const rayleighVertexShaderCode = glsl`
 //    vec4 spherepos = vec4(uv.x,uv.y,tf,1);
 
     // samplePosition.z = absresult;
-    gl_Position = worldViewProjection * vec4(position.xy, af / float(numElements), 1.0);
+    // gl_Position = worldViewProjection * vec4(position.xy, af / float(numElements), 1.0);
     
-    /*highp vec3 backtransformed = vec3(
-      cos(el)*sin(az),
-      sin(el),
-      cos(el)*cos(az)
+
+    vec3 direction = vec3(
+      position.x,
+      position.y,
+      clamp(1.0 / length(vec2(position.x, position.y)), 0.0, 1.0)
     );
-*/
-    // gl_Position = worldViewProjection * vec4(backtransformed,1.0);
+
+    gl_Position = worldViewProjection * vec4(direction * absresult * 0.02, 1.0);
+
     r = position;
     uvf = uv;
   }
@@ -81,7 +83,7 @@ const rayleighFragmentShaderCode = glsl`
  
   uniform highp int numElements;
 
-  uniform sampler2D coolwarmSampler;
+  uniform sampler2D viridisSampler;
   uniform float globalPhase;
 
   uniform float k;
@@ -112,7 +114,7 @@ const rayleighFragmentShaderCode = glsl`
     
     float intensity;
     intensity = 0.5 + 0.5 * length(result) / (float(numElements));
-    glFragColor = texture(coolwarmSampler, vec2(intensity, 0.375)); 
+    glFragColor = texture(viridisSampler, vec2(intensity, 0.375)); 
   }
 `;
 
@@ -147,7 +149,7 @@ export class FarfieldMaterial extends ShaderMaterial {
       uniformBuffers: [
         'excitation'
       ],
-      samplers: ['coolwarmSampler'],
+      samplers: ['viridisSampler'],
       defines: [
         "#define INSTANCES", 
         excitationBufferMaxElementsDefine
@@ -155,8 +157,8 @@ export class FarfieldMaterial extends ShaderMaterial {
     });
 
     this.backFaceCulling = false;
-    const coolWarmTexture = new Texture('assets/coolwarm.png', scene);
-    coolWarmTexture.wrapU = Texture.CLAMP_ADDRESSMODE;
-    this.setTexture('coolwarmSampler', coolWarmTexture);
+    const viridisTexture = new Texture('assets/viridis.png', scene);
+    viridisTexture.wrapU = Texture.CLAMP_ADDRESSMODE;
+    this.setTexture('viridisSampler', viridisTexture);
   }
 }

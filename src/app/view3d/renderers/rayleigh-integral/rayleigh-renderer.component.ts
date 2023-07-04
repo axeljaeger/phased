@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 
 import { Plane } from '@babylonjs/core/Maths/math.plane';
 import { CreatePlane } from '@babylonjs/core/Meshes/Builders/planeBuilder';
@@ -10,15 +10,17 @@ import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Scene } from '@babylonjs/core/scene';
 import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
+import { OnTransducerBufferCreated } from '../../shared/transducer-buffer.component';
 
 @Component({
   selector: 'app-rayleigh-integral-renderer',
   template: '<ng-content></ng-content>',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy {
-  @Input() scene : Scene;
+export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy, OnTransducerBufferCreated {
+  // Should no longer be needed or changed to a number.
   @Input() transducers : Array<Transducer> | null = null;
-  @Input() UEB : UniformBuffer | null = null;
+
   @Input() environment : number | null = null;
 
   @Input() aspect : number | null = null;
@@ -27,23 +29,7 @@ export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy {
 
   private plane : Mesh;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.scene) {
-      if (!this.material) {
-        this.initialize3D(this.scene);
-      }
-      this.uploadEnvironment(this.environment);
-      this.uploadArrayConfig(this.transducers);
-      this.material.setResultAspect(this.aspect);
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.material.dispose();
-    this.plane.dispose();
-  }
-
-  public initialize3D(scene: Scene) : void {    
+  ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer): void {
     // Result
     this.material = new RayleighMaterial(scene);
 
@@ -64,17 +50,29 @@ export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy {
     this.plane.bakeCurrentTransformIntoVertices();
 
     this.material.onBind = (mesh: AbstractMesh) => {
-      if (this.UEB) {
         this.material
         .getEffect()
-        .bindUniformBuffer(this.UEB.getBuffer()!, 'excitation');
-      }
+        .bindUniformBuffer(buffer.getBuffer()!, 'excitation');
+      
     };
 
     this.material.setFloat('dynamicRange', 10);
     this.material.setResultAspect(this.aspect);
     this.uploadArrayConfig(this.transducers);
     this.uploadEnvironment(this.environment);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.material) {
+      this.uploadEnvironment(this.environment);
+      this.uploadArrayConfig(this.transducers);
+      this.material.setResultAspect(this.aspect);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.material.dispose();
+    this.plane.dispose();
   }
 
   private uploadEnvironment(speedOfSound : number | null) : void {

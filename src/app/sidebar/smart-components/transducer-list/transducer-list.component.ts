@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { setTransducerHovered, clearHover } from '../../../store/actions/selection.actions';
 
-import { selectTransducers } from '../../../store/selectors/arrayConfig.selector';
+import { Transducer, selectTransducers } from '../../../store/selectors/arrayConfig.selector';
 
 @Component({
   selector: 'app-transducer-list',
@@ -11,6 +11,9 @@ import { selectTransducers } from '../../../store/selectors/arrayConfig.selector
 })
 export class TransducerListComponent {
   public transducers$ = this.store.select(selectTransducers);
+  transducerIndex(index: number, transducer: Transducer) : number {
+    return index;
+  }
 
   constructor(private store: Store) { }
 

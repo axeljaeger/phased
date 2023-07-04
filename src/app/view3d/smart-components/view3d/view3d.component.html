@@ -1,27 +1,11 @@
-<div id="canvaswrapper">
-    <canvas *ngrxLet="{ 
-        transducers: transducers$, 
-        environment: environment$ 
-    } as shared" #view3dcanvas>
-    <ng-container *appTransducerBuffer="scene; transducers: shared.transducers, let buffer = ueb;">
-        <app-excitation-renderer
-            [scene]="scene"
-            [transducers]="shared.transducers" 
-            [selection]="selection$ | async"
-            (hovered)="transducerHovered($event)" 
-            (pitchChange)="setPitch($event)" />
-        <app-rayleigh-integral-renderer *ngIf="rayleighEnabled$ | async"
-            [UEB]="buffer"
-            [scene]="scene"
-            [transducers]="shared.transducers" 
-            [environment]="shared.environment" 
-            [aspect]="rayleighAspect$ | async" />
-        <app-farfield-renderer *ngIf="farfieldEnabled$ | async"
-            [UEB]="buffer"
-            [scene]="scene"
-            [transducers]="shared.transducers" 
-            [environment]="shared.environment" />
-        <ng-content></ng-content>
-    </ng-container>
-    </canvas>
-</div>
+<app-babylon-jsview *rxLet="vm$; let shared">
+    <app-excitation-renderer #renderer [transducers]="shared.transducers" [selection]="shared.selection"
+        (hovered)="transducerHovered($event)" (pitchChange)="setPitch($event)" />
+    <app-transducer-buffer #renderer [transducers]="shared.transducers">
+        <app-rayleigh-integral-renderer #transducerBufferConsumer *ngIf="rayleighEnabled$ | async"
+            [transducers]="shared.transducers" [environment]="shared.environment" [aspect]="rayleighAspect$ | async" />
+        <app-farfield-renderer #transducerBufferConsumer 
+            [transducers]="shared.transducers" [environment]="shared.environment" />
+            <ng-content></ng-content>
+    </app-transducer-buffer>
+</app-babylon-jsview>

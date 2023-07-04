@@ -20,7 +20,8 @@ import { MatSliderModule } from '@angular/material/slider';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
-import { LetDirective } from '@ngrx/component';
+import { RxLet } from '@rx-angular/template/let';
+import { RxFor } from '@rx-angular/template/for';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,6 @@ import { LetDirective } from '@ngrx/component';
   ],
   imports: [
     CommonModule,
-    LetDirective,
     MatButtonToggleModule,
     MatCheckboxModule,
     MatExpansionModule,
@@ -43,6 +43,7 @@ import { LetDirective } from '@ngrx/component';
     MatRadioModule,
     MatSliderModule,
     ReactiveFormsModule,
+    RxFor, RxLet
   ],
   exports: [
     SidebarContainerComponent

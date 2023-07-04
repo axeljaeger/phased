@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, NgZone, OnChanges, Output, SimpleChanges } from '@angular/core';
 
 import { TransducerMaterial } from '../../materials/transducer.material';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
@@ -18,13 +18,14 @@ import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
 import { Scene } from '@babylonjs/core/scene';
 import { CreateIcoSphere } from '@babylonjs/core/Meshes/Builders/icoSphereBuilder';
 import { PointerDragBehavior } from '@babylonjs/core/Behaviors/Meshes/pointerDragBehavior';
+import { OnSceneCreated } from '../../interfaces/lifecycle';
 
 @Component({
   selector: 'app-excitation-renderer',
   template: '<ng-content></ng-content>',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ExcitationRendererComponent implements OnChanges {
-  @Input() scene: Scene;
+export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
   @Input() transducers : Array<Transducer> | null = null;
   @Input() selection : SelectionState | null = null;
 
@@ -36,15 +37,17 @@ export class ExcitationRendererComponent implements OnChanges {
 
   private arrayPitchHandle: Mesh;
 
+  constructor(private ngZone : NgZone) {}
+
+  ngxSceneCreated(scene: Scene): void {
+    this.initialize3D(scene);
+    this.uploadArrayConfig(this.transducers, this.selection);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.scene) {
-      if (!this.transducerMaterial) {
-        this.initialize3D(this.scene);
-      }
-      if (changes.selection || changes.transducers) {
-        this.uploadArrayConfig(this.transducers, this.selection);
-      } 
+    if (this.transducerMaterial) {
+      this.uploadArrayConfig(this.transducers, this.selection);
+
     }
   }
   
@@ -66,7 +69,7 @@ export class ExcitationRendererComponent implements OnChanges {
     this.transducerMesh.material = this.transducerMaterial;
     
     this.transducerMesh.thinInstanceEnablePicking = true;
-    this.transducerMesh.pointerOverDisableMeshTesting = true;
+    this.transducerMesh.pointerOverDisableMeshTesting = false;
 
     const actionManager = new ActionManager(scene);
     this.transducerMesh.actionManager = actionManager;
@@ -82,14 +85,14 @@ export class ExcitationRendererComponent implements OnChanges {
               }
         )
     )
-    actionManager.registerAction(        
-        new ExecuteCodeAction(
-            {
-                trigger: ActionManager.OnPointerOutTrigger,
-            },
-           (event) => this.hovered.next(-1)
-        )
-    )
+     actionManager.registerAction(
+         new ExecuteCodeAction(
+             {
+                 trigger: ActionManager.OnPointerOutTrigger,
+             },
+            (event) => this.hovered.next(-1)
+         )
+     )
 
     this.arrayPitchHandle = CreateIcoSphere('arrayPitchHandle', {
       radius: 0.00025,
@@ -101,18 +104,13 @@ export class ExcitationRendererComponent implements OnChanges {
     const pointerDragBehavior = new PointerDragBehavior({dragAxis: new Vector3(1,0,0)});
     pointerDragBehavior.dragDeltaRatio = 1.0;
 
-    pointerDragBehavior.onDragStartObservable.add((event)=>{
-      console.log("dragStart");
-      console.log(event);
-    })
+    
     pointerDragBehavior.onDragObservable.add((event)=>{
-      this.pitchChange.next(event.dragPlanePoint.x * 2);
+      this.ngZone.run(() => {
+        this.pitchChange.next(event.dragPlanePoint.x * 2);
+      }) 
     })
-    pointerDragBehavior.onDragEndObservable.add((event)=>{
-      console.log("dragEnd");
-      console.log(event);
-    })
-
+    
     this.arrayPitchHandle.addBehavior(pointerDragBehavior);
     
     

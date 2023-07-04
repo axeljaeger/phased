@@ -4,7 +4,6 @@ import { provideMockStore } from '@ngrx/store/testing';
 
 import { View3dComponent } from './view3d.component';
 
-import { TransducerBufferDirective } from '../../directives/transducer-buffer.directive';
 import { View3DModule } from '../../view3d.module';
 
 describe('View3dComponent', () => {
@@ -20,7 +19,7 @@ describe('View3dComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ View3dComponent, TransducerBufferDirective ],
+      declarations: [ View3dComponent ],
       imports: [ LetModule, View3DModule],
       providers: [
         provideMockStore({ initialState: mockData})
