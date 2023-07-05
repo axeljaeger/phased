@@ -1,16 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
 import { Store } from '@ngrx/store';
 import { ArrayConfig } from '../../../store/reducers/arrayConfig.reducer'
 import { setConfig } from '../../../store/actions/arrayConfig.actions';
 import { selectArrayConfig } from '../../../store/selectors/arrayConfig.selector';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { NgIf } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
-  selector: 'app-array-config',
-  templateUrl: './array-config.component.html',
-  styleUrls: ['./array-config.component.css']
+    selector: 'app-array-config',
+    templateUrl: './array-config.component.html',
+    styleUrls: ['./array-config.component.css'],
+    standalone: true,
+    imports: [MatExpansionModule, ReactiveFormsModule, MatButtonToggleModule, MatIconModule, NgIf, MatFormFieldModule, MatInputModule]
 })
 export class ArrayConfigComponent implements OnInit {
   public arrayConfig: any;

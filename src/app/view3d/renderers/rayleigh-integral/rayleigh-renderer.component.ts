@@ -13,9 +13,10 @@ import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
 import { OnTransducerBufferCreated } from '../../shared/transducer-buffer.component';
 
 @Component({
-  selector: 'app-rayleigh-integral-renderer',
-  template: '<ng-content></ng-content>',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-rayleigh-integral-renderer',
+    template: '<ng-content></ng-content>',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy, OnTransducerBufferCreated {
   // Should no longer be needed or changed to a number.

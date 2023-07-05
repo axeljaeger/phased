@@ -21,9 +21,10 @@ import { PointerDragBehavior } from '@babylonjs/core/Behaviors/Meshes/pointerDra
 import { OnSceneCreated } from '../../interfaces/lifecycle';
 
 @Component({
-  selector: 'app-excitation-renderer',
-  template: '<ng-content></ng-content>',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-excitation-renderer',
+    template: '<ng-content></ng-content>',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true
 })
 export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
   @Input() transducers : Array<Transducer> | null = null;

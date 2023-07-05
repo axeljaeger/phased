@@ -29,8 +29,9 @@ typeof candidate === 'object' && candidate !== null && 'ngxSceneAndBufferCreated
 
 
 @Component({
-  selector: 'app-transducer-buffer',
-  template: '<ng-content></ng-content>',
+    selector: 'app-transducer-buffer',
+    template: '<ng-content></ng-content>',
+    standalone: true,
 })
 export class TransducerBufferComponent
   implements OnChanges, OnDestroy, OnSceneCreated
