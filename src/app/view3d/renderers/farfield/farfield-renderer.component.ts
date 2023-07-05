@@ -27,8 +27,9 @@ const uniformSquareXY: VertexData = (() => {
 })();
 
 @Component({
-  selector: 'app-farfield-renderer',
-  template: '<ng-content></ng-content>',
+    selector: 'app-farfield-renderer',
+    template: '<ng-content></ng-content>',
+    standalone: true,
 })
 export class FarfieldRendererComponent
   implements OnChanges, OnDestroy, OnTransducerBufferCreated

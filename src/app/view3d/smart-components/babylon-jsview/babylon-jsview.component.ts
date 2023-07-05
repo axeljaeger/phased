@@ -13,11 +13,12 @@ import { NullEngine } from '@babylonjs/core/Engines/nullEngine';
 import { implementsOnSceneCreated } from '../../interfaces/lifecycle';
 
 @Component({
-  selector: 'app-babylon-jsview',
-  templateUrl: './babylon-jsview.component.html',
-  styleUrls: ['./babylon-jsview.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  exportAs: 'babylon'
+    selector: 'app-babylon-jsview',
+    templateUrl: './babylon-jsview.component.html',
+    styleUrls: ['./babylon-jsview.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    exportAs: 'babylon',
+    standalone: true
 })
 export class BabylonJSViewComponent implements AfterViewChecked, AfterViewInit, AfterContentChecked {
   @ViewChild('view3dcanvas', { static: false })

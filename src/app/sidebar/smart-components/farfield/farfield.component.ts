@@ -1,16 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Results } from '../../../store';
 import { setResultVisible } from '../../../store/actions/viewportConfig.actions';
 
 import { selectResultEnabled } from '../../../store/selectors/viewportConfig.selector';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
-  selector: 'app-farfield',
-  templateUrl: './farfield.component.html',
-  styleUrls: ['./farfield.component.css']
+    selector: 'app-farfield',
+    templateUrl: './farfield.component.html',
+    styleUrls: ['./farfield.component.css'],
+    standalone: true,
+    imports: [MatExpansionModule, NgIf, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatSliderModule, AsyncPipe]
 })
 export class FarfieldComponent implements OnInit {
   public farfieldVisible$ = this.store.select(selectResultEnabled(Results.Farfield));
