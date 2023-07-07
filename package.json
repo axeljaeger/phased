@@ -50,7 +50,7 @@
     "@babylonjs/inspector": "^6.10.0",
     "@ngrx/component": "^16.0.1",
     "@ngrx/effects": "^16.0.1",
-    "@ngrx/store": "^16.0.1",
+    "@ngrx/store": "^16.1.0",
     "@rx-angular/cdk": "^16.0.0",
     "@rx-angular/state": "^16.0.0",
     "@rx-angular/template": "^16.0.1",
