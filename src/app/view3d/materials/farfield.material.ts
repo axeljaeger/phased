@@ -1,4 +1,3 @@
-import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { Scene } from '@babylonjs/core/scene';
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
 
@@ -157,8 +156,5 @@ export class FarfieldMaterial extends ShaderMaterial {
     });
 
     this.backFaceCulling = false;
-    const viridisTexture = new Texture('assets/viridis.png', scene);
-    viridisTexture.wrapU = Texture.CLAMP_ADDRESSMODE;
-    this.setTexture('viridisSampler', viridisTexture);
   }
 }

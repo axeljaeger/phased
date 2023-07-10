@@ -1,7 +1,7 @@
 import { Scene } from "@babylonjs/core/scene";
 
 export interface OnSceneCreated {
-    ngxSceneCreated(scene: Scene): void;
+    ngxSceneCreated(scene: Scene): Promise<void>;
 }
 
 export const implementsOnSceneCreated = (candidate: unknown): candidate is OnSceneCreated =>

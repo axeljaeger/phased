@@ -57,11 +57,11 @@ export class BabylonJSViewComponent implements AfterViewChecked, AfterViewInit, 
   }
 
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
     this.initEngine(this.canvasRef);
-    this.renderers.forEach((renderer) => {
+    this.renderers.forEach(async (renderer) => {
       if (implementsOnSceneCreated(renderer)) {
-        renderer.ngxSceneCreated(this.scene);
+        await renderer.ngxSceneCreated(this.scene);
       }
     });
   }

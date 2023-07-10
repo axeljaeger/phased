@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, NgZone, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 
 import { TransducerMaterial } from '../../materials/transducer.material';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
@@ -17,8 +17,8 @@ import { SelectionState } from 'src/app/store/reducers/selection.reducer';
 import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
 import { Scene } from '@babylonjs/core/scene';
 import { CreateIcoSphere } from '@babylonjs/core/Meshes/Builders/icoSphereBuilder';
-import { PointerDragBehavior } from '@babylonjs/core/Behaviors/Meshes/pointerDragBehavior';
 import { OnSceneCreated } from '../../interfaces/lifecycle';
+import { PositionGizmo } from '@babylonjs/core';
 
 @Component({
     selector: 'app-excitation-renderer',
@@ -38,9 +38,7 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
 
   private arrayPitchHandle: Mesh;
 
-  constructor(private ngZone : NgZone) {}
-
-  ngxSceneCreated(scene: Scene): void {
+  async ngxSceneCreated(scene: Scene): Promise<void> {
     this.initialize3D(scene);
     this.uploadArrayConfig(this.transducers, this.selection);
   }
@@ -102,19 +100,18 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
 
     this.arrayPitchHandle.position = new Vector3(0.0043 / 2, 0.0043 / 2,0);
 
-    const pointerDragBehavior = new PointerDragBehavior({dragAxis: new Vector3(1,0,0)});
-    pointerDragBehavior.dragDeltaRatio = 1.0;
+    const translationGizmo = new PositionGizmo();
+    translationGizmo.zGizmo.dispose();
+    translationGizmo.attachedMesh = this.arrayPitchHandle;
 
-    
-    pointerDragBehavior.onDragObservable.add((event)=>{
-      this.ngZone.run(() => {
-        this.pitchChange.next(event.dragPlanePoint.x * 2);
-      }) 
-    })
-    
-    this.arrayPitchHandle.addBehavior(pointerDragBehavior);
-    
-    
+    translationGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
+      this.pitchChange.next(this.arrayPitchHandle.position.x * 2);
+    });
+
+    translationGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
+      this.pitchChange.next(this.arrayPitchHandle.position.y * 2);
+    });
+
     this.uploadArrayConfig(this.transducers, this.selection);
   }
 
