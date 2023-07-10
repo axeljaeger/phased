@@ -49,6 +49,9 @@ export class FarfieldRendererComponent
 
   ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer, textures: Textures): void {
     this.material = new FarfieldMaterial(scene);
+    this.material.onCompiled = () => {
+      scene.render();
+    };
     this.material.setTexture('viridisSampler', textures.viridis);
 
     this.farfieldMesh = new Mesh('farfieldMesh', scene);
