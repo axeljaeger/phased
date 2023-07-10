@@ -75,10 +75,6 @@ export class TransducerBufferComponent
       VEC4_ELEMENT_COUNT /* *2 */,
       excitationBufferMaxElements * 2
     );
-    // Things to try:
-    // - Explicitely create
-    // - Make dynamic.
-    //
 
     const textures = ['assets/viridis.png', 'assets/coolwarm.png'];
     const tex = await Promise.all(
@@ -91,7 +87,6 @@ export class TransducerBufferComponent
             undefined,
             undefined,
             () => {
-              console.log('one texture loaded');
               tex.wrapU = Texture.CLAMP_ADDRESSMODE;
               resolve(tex);
             }
@@ -104,7 +99,6 @@ export class TransducerBufferComponent
        viridis: tex[0] as Texture,
        coolwarm: tex[1] as Texture,
      };
-
 
     this.updateBuffer(this.transducers ?? []);
 
