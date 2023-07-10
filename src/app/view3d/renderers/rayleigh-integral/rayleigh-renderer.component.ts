@@ -10,7 +10,7 @@ import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Scene } from '@babylonjs/core/scene';
 import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
-import { OnTransducerBufferCreated } from '../../shared/transducer-buffer.component';
+import { OnTransducerBufferCreated, Textures } from '../../shared/transducer-buffer.component';
 
 @Component({
     selector: 'app-rayleigh-integral-renderer',
@@ -30,9 +30,10 @@ export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy, 
 
   private plane : Mesh;
 
-  ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer): void {
+  ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer, textures : Textures): void {
     // Result
     this.material = new RayleighMaterial(scene);
+    this.material.setTexture('coolwarmSampler', textures.coolwarm);
 
     // Setup Aperture
     const origin = new Vector3(0, 0, 0);

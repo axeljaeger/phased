@@ -13,10 +13,10 @@ import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { FarfieldMaterial } from '../../materials/farfield.material';
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
-import { OnTransducerBufferCreated } from '../../shared/transducer-buffer.component';
+import { OnTransducerBufferCreated, Textures } from '../../shared/transducer-buffer.component';
 
-const uniformSquareXY: VertexData = (() => {
-  const positions = [-0.5, -0.5, 0, 0.5, -0.5, 0, -0.5, 0.5, 0, 0.5, 0.5, 0];
+const uvMesh: VertexData = (() => {
+  const positions = [-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0];
   const uv = [-1, -1, 1, -1, -1, 1, 1, 1];
   const indices = [0, 1, 2, 1, 3, 2];
   const vertexData = new VertexData();
@@ -47,11 +47,12 @@ export class FarfieldRendererComponent
     }
   }
 
-  ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer): void {
+  ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer, textures: Textures): void {
     this.material = new FarfieldMaterial(scene);
+    this.material.setTexture('viridisSampler', textures.viridis);
 
     this.farfieldMesh = new Mesh('farfieldMesh', scene);
-    uniformSquareXY.applyToMesh(this.farfieldMesh);
+    uvMesh.applyToMesh(this.farfieldMesh);
     this.farfieldMesh.increaseVertices(200);
     this.farfieldMesh.material = this.material;
 
@@ -62,6 +63,8 @@ export class FarfieldRendererComponent
     };
 
     this.material.setFloat('dynamicRange', 50.0);
+    this.uploadEnvironment(this.environment);
+    this.uploadArrayConfig(this.transducers);
   }
 
   ngOnDestroy(): void {

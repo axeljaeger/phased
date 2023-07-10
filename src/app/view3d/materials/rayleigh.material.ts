@@ -1,4 +1,3 @@
-import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { Scene } from '@babylonjs/core/scene';
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
 
@@ -109,20 +108,16 @@ export class RayleighMaterial extends ShaderMaterial {
         "dynamicRange",
         "numElements",
       ],
-      uniformBuffers: [
-        'excitation'
-      ],
+       uniformBuffers: [
+         'excitation'
+       ],
       samplers: ['coolwarmSampler'],
       defines: [
-        "#define INSTANCES", 
-        excitationBufferMaxElementsDefine
+         "#define INSTANCES", 
+         excitationBufferMaxElementsDefine
       ]
     });
-
     this.backFaceCulling = false;
-    const coolWarmTexture = new Texture('assets/coolwarm.png', scene);
-    coolWarmTexture.wrapU = Texture.CLAMP_ADDRESSMODE;
-    this.setTexture('coolwarmSampler', coolWarmTexture);
   }
 
   public setResultAspect(aspect : ResultAspect | null) : void {

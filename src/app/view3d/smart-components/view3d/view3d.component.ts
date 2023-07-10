@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 
 import { Store } from '@ngrx/store';
 
@@ -12,7 +12,6 @@ import { selectRayleigh } from '../../../store/selectors/rayleigh.selector';
 import { selectSelection } from '../../../store/selectors/selection.selector';
 import { selectResultEnabled } from '../../../store/selectors/viewportConfig.selector';
 import { setPitchX } from '../../../store/actions/arrayConfig.actions';
-import { Scene } from '@babylonjs/core/scene';
 import { RxState } from '@rx-angular/state';
 import { FarfieldRendererComponent } from '../../renderers/farfield/farfield-renderer.component';
 import { RayleighIntegralRendererComponent } from '../../renderers/rayleigh-integral/rayleigh-renderer.component';
@@ -32,13 +31,6 @@ import { RxLet } from '@rx-angular/template/let';
     imports: [RxLet, BabylonJSViewComponent, ExcitationRendererComponent, TransducerBufferComponent, NgIf, RayleighIntegralRendererComponent, FarfieldRendererComponent, AsyncPipe]
 })
 export class View3dComponent {
-  public scene : Scene;
-
-  setScene(scene: Scene) {
-    this.scene = scene;
-    // this.cd.detectChanges();
-  }
-
   title = 'Air coupled Ultrasound Array';
 
   transducers$ = this.store.select(selectTransducers);
@@ -47,13 +39,12 @@ export class View3dComponent {
 
   vm$ = this.state.select();
  
-
   rayleighEnabled$ = this.store.select(selectResultEnabled(Results.RayleighIntegral));
   rayleighAspect$ = this.store.select(selectRayleigh);
 
   farfieldEnabled$ = this.store.select(selectResultEnabled(Results.Farfield));
   
-  constructor(private store: Store, private ngZone: NgZone, private cd: ChangeDetectorRef, private state: RxState<{transducers: any, environment: any, selection: any}>) {
+  constructor(private store: Store, private cd: ChangeDetectorRef, private state: RxState<{transducers: any, environment: any, selection: any}>) {
 
   this.state.connect('transducers', this.store.select(selectTransducers));
   this.state.connect('environment', this.store.select(selectEnvironment));
@@ -61,9 +52,7 @@ export class View3dComponent {
 }
 
   public transducerHovered(transducerId : number) : void {
-    //this.ngZone.run(() => {
-      this.store.dispatch(setTransducerHovered({ transducerId }));
-    // })      
+    this.store.dispatch(setTransducerHovered({ transducerId }));
   }
 
   public setPitch(pitch: number) : void {
