@@ -56,7 +56,7 @@
     "@rx-angular/template": "^16.0.1",
     "@types/offscreencanvas": "^2019.7.0",
     "rxjs": "~7.8.1",
-    "tslib": "^2.4.0",
+    "tslib": "^2.6.0",
     "util": "^0.12.4",
     "zone.js": "~0.13.0"
   },
