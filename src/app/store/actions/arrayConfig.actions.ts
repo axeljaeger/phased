@@ -1,5 +1,11 @@
-import { createAction, props } from '@ngrx/store';
+import { createActionGroup, props } from '@ngrx/store';
 import { ArrayConfig } from '../reducers/arrayConfig.reducer';
 
-export const setConfig = createAction('[TransducerConfig] set', props<ArrayConfig>());
-export const setPitchX = createAction('[TransducerConfig] setPitchX', props<{pitch: number}>());
+export const ArrayConfigActions = createActionGroup({
+    source: 'TransducerConfig',
+    events: {
+      'setConfig': props<ArrayConfig>(),
+      'setPitchX': props<{pitch: number}>(),
+      'setPitchY': props<{pitch: number}>(),
+    },
+  });

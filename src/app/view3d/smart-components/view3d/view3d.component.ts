@@ -14,7 +14,7 @@ import { selectEnvironment } from '../../../store/selectors/environment.selector
 import { selectRayleigh } from '../../../store/selectors/rayleigh.selector';
 import { selectSelection } from '../../../store/selectors/selection.selector';
 import { selectResultEnabled } from '../../../store/selectors/viewportConfig.selector';
-import { setPitchX } from '../../../store/actions/arrayConfig.actions';
+import { ArrayConfigActions } from '../../../store/actions/arrayConfig.actions';
 import { RxState } from '@rx-angular/state';
 import { FarfieldRendererComponent } from '../../renderers/farfield/farfield-renderer.component';
 import { RayleighIntegralRendererComponent } from '../../renderers/rayleigh-integral/rayleigh-renderer.component';
@@ -76,7 +76,11 @@ export class View3dComponent {
     this.store.dispatch(setTransducerHovered({ transducerId }));
   }
 
-  public setPitch(pitch: number): void {
-    this.store.dispatch(setPitchX({ pitch }));
+  public setPitchX(pitch: number): void {
+    this.store.dispatch(ArrayConfigActions.setPitchX({ pitch }));
+  }
+
+  public setPitchY(pitch: number): void {
+    this.store.dispatch(ArrayConfigActions.setPitchY({ pitch }));
   }
 }

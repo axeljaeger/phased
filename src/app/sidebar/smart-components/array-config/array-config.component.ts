@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
 import { Store } from '@ngrx/store';
 import { ArrayConfig } from '../../../store/reducers/arrayConfig.reducer'
-import { setConfig } from '../../../store/actions/arrayConfig.actions';
+import { ArrayConfigActions } from '../../../store/actions/arrayConfig.actions';
 import { selectArrayConfig } from '../../../store/selectors/arrayConfig.selector';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -52,7 +52,7 @@ export class ArrayConfigComponent implements OnInit {
     });
 
     this.arrayConfig.valueChanges.subscribe(
-      (val : ArrayConfig) => this.store.dispatch(setConfig(val))
+      (val : ArrayConfig) => this.store.dispatch(ArrayConfigActions.setConfig(val))
     );
   }
 }

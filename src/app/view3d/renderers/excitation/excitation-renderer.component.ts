@@ -31,7 +31,9 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
   @Input() selection : SelectionState | null = null;
 
   @Output() hovered = new EventEmitter<number>();
-  @Output() pitchChange = new EventEmitter<number>();
+  @Output() pitchX = new EventEmitter<number>();
+  @Output() pitchY = new EventEmitter<number>();
+  
 
   private transducerMaterial: TransducerMaterial;
   private transducerMesh: Mesh;
@@ -105,11 +107,11 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
     translationGizmo.attachedMesh = this.arrayPitchHandle;
 
     translationGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
-      this.pitchChange.next(this.arrayPitchHandle.position.x * 2);
+      this.pitchX.next(this.arrayPitchHandle.position.x * 2);
     });
 
     translationGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
-      this.pitchChange.next(this.arrayPitchHandle.position.y * 2);
+      this.pitchY.next(this.arrayPitchHandle.position.y * 2);
     });
 
     this.uploadArrayConfig(this.transducers, this.selection);
