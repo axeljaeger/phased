@@ -5,14 +5,12 @@ import { MatListModule } from '@angular/material/list';
 import { NoopAnimationsModule  } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LetModule, LetDirective } from '@ngrx/component'
 
 import { SidebarContainerComponent } from './sidebar-container';
 
 import { MatInputModule } from '@angular/material/input';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FormBuilder } from '@angular/forms';
-import { SidebarModule } from '../../sidebar.module';
 
 export const initialState = {
     arrayConfig: {
@@ -31,8 +29,8 @@ export const initialState = {
   }; 
 
 export const moduleMetaData = {
-    declarations: [ SidebarContainerComponent ],
     imports: [
+      SidebarContainerComponent,
       MatExpansionModule,
       MatButtonToggleModule,
       MatFormFieldModule,
@@ -41,8 +39,6 @@ export const moduleMetaData = {
       MatListModule,
       NoopAnimationsModule,
       ReactiveFormsModule,
-      LetModule,
-      SidebarModule
     ],
     providers: [
       FormBuilder,

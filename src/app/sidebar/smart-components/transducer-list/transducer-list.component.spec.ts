@@ -1,9 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LetModule, LetDirective } from '@ngrx/component';
 import { provideMockStore } from '@ngrx/store/testing';
-import { SidebarModule } from '../../sidebar.module';
 
 import { TransducerListComponent } from './transducer-list.component';
+
+const initialState = {
+  arrayConfig: { arrayType: 'ura', uraConfig: { elementsX: 2, elementsY: 2 } },
+};
 
 describe('TransducerListComponent', () => {
   let component: TransducerListComponent;
@@ -11,13 +13,9 @@ describe('TransducerListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TransducerListComponent ],
-      imports: [ LetModule, SidebarModule ],
-      providers: [
-        provideMockStore({})
-      ]
-    })
-    .compileComponents();
+      imports: [TransducerListComponent],
+      providers: [provideMockStore({ initialState })],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TransducerListComponent);
     component = fixture.componentInstance;

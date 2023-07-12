@@ -8,7 +8,7 @@ describe('BabylonJSViewComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [BabylonJSViewComponent]
+      imports: [BabylonJSViewComponent]
     });
     fixture = TestBed.createComponent(BabylonJSViewComponent);
     component = fixture.componentInstance;

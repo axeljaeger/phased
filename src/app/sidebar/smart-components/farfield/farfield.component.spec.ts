@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideMockStore } from '@ngrx/store/testing';
-import { SidebarModule } from '../../sidebar.module';
 
 import { FarfieldComponent } from './farfield.component';
 
@@ -11,10 +10,8 @@ describe('FarfieldComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FarfieldComponent ],
       imports: [
-        SidebarModule,
-        NoopAnimationsModule,
+        FarfieldComponent, NoopAnimationsModule,
       ],
       providers: [
         provideMockStore({})
