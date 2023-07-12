@@ -1,10 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LetModule, LetDirective } from '@ngrx/component';
 import { provideMockStore } from '@ngrx/store/testing';
 
 import { View3dComponent } from './view3d.component';
-
-import { View3DModule } from '../../view3d.module';
 
 describe('View3dComponent', () => {
   let component: View3dComponent;
@@ -19,8 +16,7 @@ describe('View3dComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ View3dComponent ],
-      imports: [ LetModule, View3DModule],
+      imports: [ View3dComponent ],
       providers: [
         provideMockStore({ initialState: mockData})
       ]

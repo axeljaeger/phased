@@ -1,31 +1,45 @@
-// also exported from '@storybook/angular' if you can deal with breaking changes in 6.1
-import { StoryFn, Meta, moduleMetadata, componentWrapperDecorator, Story } from '@storybook/angular';
+import {
+  Meta,
+  moduleMetadata,
+  componentWrapperDecorator,
+  StoryObj,
+} from '@storybook/angular';
 
-import { ExcitationRendererComponent } from './excitation-renderer.component';
+import {
+  ExcitationRendererComponent,
+} from './excitation-renderer.component';
 import { BabylonJSViewComponent } from '../../smart-components/babylon-jsview/babylon-jsview.component';
+import { Vector3 } from '@babylonjs/core';
 
-
-// More on default export: https://storybook.js.org/docs/angular/writing-stories/introduction#default-export
 export default {
   title: 'ExcitationRendererComponent',
   component: BabylonJSViewComponent,
-  // More on argTypes: https://storybook.js.org/docs/angular/api/argtypes
   decorators: [
     moduleMetadata({
-      declarations: [BabylonJSViewComponent],
-      imports: [],
+      imports: [BabylonJSViewComponent, ExcitationRendererComponent],
     }),
-    componentWrapperDecorator((story) => `<app-babylon-jsview>${story}</app-babylon-jsview>`),
+    componentWrapperDecorator(
+      (story) => `<app-babylon-jsview>${story}</app-babylon-jsview>`
+    ),
+    componentWrapperDecorator(
+      (story) => `<div style="height: 600px">${story}</div>`
+    ),
   ],
 } as Meta<ExcitationRendererComponent>;
 
-// More on component templates: https://storybook.js.org/docs/angular/writing-stories/introduction#using-args
-const Template: Story<ExcitationRendererComponent> = (args: ExcitationRendererComponent) => ({
-  props: args,
-});
+export const Empty: StoryObj<ExcitationRendererComponent> = {
+  render: (args) => ({
+    props: args,
+    template: `<app-excitation-renderer #renderer [transducers]=transducers></app-excitation-renderer>`,
+  }),
+};
 
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/angular/writing-stories/args
-Primary.args = {
- 
+export const TwoByTwo: StoryObj<ExcitationRendererComponent> = {
+  ...Empty,
+  args: {
+    transducers: [
+      { name: 'a', pos: new Vector3(0.1, 0.1), enabled: true, selected: false },
+      { name: 'b', pos: new Vector3(-0.1, 0.1), enabled: true, selected: false },
+    ],
+  },
 };

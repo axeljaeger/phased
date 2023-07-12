@@ -136,18 +136,23 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
       }
     );
   
-    this.transducerMesh.thinInstanceSetBuffer(
-      'matrix',
-      buffers.matrices,
-      MAT4_ELEMENT_COUNT,
-      false
-    );
-    
-    this.transducerMesh.thinInstanceSetBuffer(
-      'selected',
-      buffers.selection,
-      SCALAR_ELEMENT_COUNT,
-      false
-    );
+
+    this.transducerMesh.setEnabled(transducers.length > 0);
+
+    if (transducers.length > 0) {
+      this.transducerMesh.thinInstanceSetBuffer(
+        'matrix',
+        buffers.matrices,
+        MAT4_ELEMENT_COUNT,
+        false
+      );
+      
+      this.transducerMesh.thinInstanceSetBuffer(
+        'selected',
+        buffers.selection,
+        SCALAR_ELEMENT_COUNT,
+        false
+      );
+    }
   }
 }

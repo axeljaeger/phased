@@ -1,4 +1,17 @@
-import { AfterContentChecked, AfterViewChecked, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component , ContentChildren, ElementRef, EventEmitter, HostListener, NgZone, Output, QueryList, ViewChild} from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ContentChildren,
+  ElementRef,
+  HostListener,
+  NgZone,
+  QueryList,
+  ViewChild,
+} from '@angular/core';
 
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
@@ -13,17 +26,19 @@ import { NullEngine } from '@babylonjs/core/Engines/nullEngine';
 import { implementsOnSceneCreated } from '../../interfaces/lifecycle';
 
 @Component({
-    selector: 'app-babylon-jsview',
-    templateUrl: './babylon-jsview.component.html',
-    styleUrls: ['./babylon-jsview.component.css'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    exportAs: 'babylon',
-    standalone: true
+  selector: 'app-babylon-jsview',
+  templateUrl: './babylon-jsview.component.html',
+  styleUrls: ['./babylon-jsview.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  exportAs: 'babylon',
+  standalone: true,
 })
-export class BabylonJSViewComponent implements AfterViewChecked, AfterViewInit, AfterContentChecked {
+export class BabylonJSViewComponent
+  implements AfterViewChecked, AfterViewInit, AfterContentChecked
+{
   @ViewChild('view3dcanvas', { static: false })
   canvasRef: ElementRef<HTMLCanvasElement>;
-  
+
   @ContentChildren('renderer')
   renderers: QueryList<any>;
 
@@ -31,13 +46,16 @@ export class BabylonJSViewComponent implements AfterViewChecked, AfterViewInit, 
   public scene: Scene;
   camera: ArcRotateCamera;
 
-  constructor(private ngZone: NgZone, private elRef:ElementRef, private cd: ChangeDetectorRef) {}
+  constructor(
+    private ngZone: NgZone,
+    private elRef: ElementRef,
+  ) {}
   ngAfterContentChecked(): void {
     this.ngZone.runOutsideAngular(() => {
       if (this.scene) {
         this.scene.render();
       }
-    })
+    });
   }
 
   ngAfterViewChecked(): void {
@@ -45,23 +63,26 @@ export class BabylonJSViewComponent implements AfterViewChecked, AfterViewInit, 
       if (this.scene) {
         this.scene.render();
       }
-    })
+    });
   }
 
   @HostListener('window:resize')
-  resize() : void  {
+  resize(): void {
     const rect = this.elRef.nativeElement.getBoundingClientRect();
     this.canvasRef.nativeElement.width = rect.width;
     this.canvasRef.nativeElement.height = rect.height;
     this.engine.resize();
   }
 
-
   async ngAfterViewInit(): Promise<void> {
-    this.initEngine(this.canvasRef);    
-    await Promise.all(this.renderers.map((renderer) => 
-      implementsOnSceneCreated(renderer) ? renderer.ngxSceneCreated(this.scene) : Promise.resolve()
-    ));
+    this.initEngine(this.canvasRef);
+    await Promise.all(
+      this.renderers.map((renderer) =>
+        implementsOnSceneCreated(renderer)
+          ? renderer.ngxSceneCreated(this.scene)
+          : Promise.resolve()
+      )
+    );
     this.scene.render();
   }
 
@@ -76,22 +97,22 @@ export class BabylonJSViewComponent implements AfterViewChecked, AfterViewInit, 
       // Uniform buffers are disabled per default in Chrome on MacOS
       // Re-enable this.
       this.engine.disableUniformBuffers = false;
-      
+
       this.scene = this.createScene(canvas);
       this.scene.useRightHandedSystem = true;
 
       this.scene.onPointerDown = () => {
-       this.engine.runRenderLoop(() => this.camera.update());
-      }
+        this.engine.runRenderLoop(() => this.camera.update());
+      };
 
       this.scene.onPointerUp = () => {
-       this.engine.stopRenderLoop();
-      }
+        this.engine.stopRenderLoop();
+      };
 
       this.scene.onPointerObservable.add((kbInfo) => {
-        if (kbInfo.type == 8) //scroll
-        {
-            this.camera.update();
+        if (kbInfo.type == 8) {
+          //scroll
+          this.camera.update();
         }
       });
     });
@@ -106,7 +127,7 @@ export class BabylonJSViewComponent implements AfterViewChecked, AfterViewInit, 
     let scene = new Scene(this.engine);
     this.camera = new ArcRotateCamera(
       'Camera',
-      3*Math.PI / 4,
+      (3 * Math.PI) / 4,
       Math.PI / 4,
       0.05,
       Vector3.Zero(),
@@ -119,7 +140,7 @@ export class BabylonJSViewComponent implements AfterViewChecked, AfterViewInit, 
     this.camera.wheelDeltaPercentage = 0.1;
     this.camera.zoomToMouseLocation = true;
 
-    this.camera.onViewMatrixChangedObservable.add(() =>  scene.render() );
+    this.camera.onViewMatrixChangedObservable.add(() => scene.render());
 
     let light = new HemisphericLight('light1', new Vector3(0, 1, 0), scene);
 
