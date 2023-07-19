@@ -33,6 +33,9 @@ export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy, 
   ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer, textures : Textures): void {
     // Result
     this.material = new RayleighMaterial(scene);
+    this.material.onCompiled = () => {
+      scene.render();
+    };
     this.material.setTexture('coolwarmSampler', textures.coolwarm);
 
     // Setup Aperture

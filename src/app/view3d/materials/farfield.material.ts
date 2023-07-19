@@ -67,7 +67,7 @@ const rayleighVertexShaderCode = glsl`
     vec3 direction = vec3(
       position.x,
       position.y,
-      clamp(1.0 / length(vec2(position.x, position.y)), 0.0, 1.0)
+      clamp(sqrt(1.0-pow(position.x, 2.0)-pow(position.y, 2.0)), 0.0, 1.0)
     );
 
     gl_Position = worldViewProjection * vec4(direction * absresult * 0.02, 1.0);
