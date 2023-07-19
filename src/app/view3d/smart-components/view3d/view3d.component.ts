@@ -23,6 +23,7 @@ import { TransducerBufferComponent } from '../../shared/transducer-buffer.compon
 import { ExcitationRendererComponent } from '../../renderers/excitation/excitation-renderer.component';
 import { BabylonJSViewComponent } from '../babylon-jsview/babylon-jsview.component';
 import { RxLet } from '@rx-angular/template/let';
+import { BeamformingRendererComponent } from '../../renderers/beamforming/beamforming-renderer.component';
 
 
 @Component({
@@ -35,6 +36,7 @@ import { RxLet } from '@rx-angular/template/let';
   imports: [
     RxLet,
     BabylonJSViewComponent,
+    BeamformingRendererComponent,
     ExcitationRendererComponent,
     TransducerBufferComponent,
     NgIf,
