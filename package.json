@@ -71,7 +71,7 @@
     "@angular/compiler-cli": "^16.1.6",
     "@babel/core": "^7.22.9",
     "@compodoc/compodoc": "^1.1.19",
-    "@ngrx/eslint-plugin": "^16.0.1",
+    "@ngrx/eslint-plugin": "^16.1.0",
     "@ngrx/schematics": "^16.0.1",
     "@ngrx/store-devtools": "^16.0.1",
     "@playwright/test": "^1.36.0",
