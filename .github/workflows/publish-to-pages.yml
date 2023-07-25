@@ -10,7 +10,7 @@ jobs:
       - name: Build react app
         run: | 
           npm ci
-          npm run build
+          npx ng build --base-href https://axeljaeger.github.io/phased/
       - name: Fix permissions
         run: |
           chmod -c -R +rX "_site/" | while read line; do
