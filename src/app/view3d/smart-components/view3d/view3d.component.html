@@ -1,7 +1,8 @@
 <app-babylon-jsview *rxLet="vm$; let shared">
     <app-excitation-renderer #renderer [transducers]="shared.transducers" [selection]="shared.selection"
         (hovered)="transducerHovered($event)" (pitchX)="setPitchX($event)" (pitchY)="setPitchY($event)" />
-    <app-transducer-buffer #renderer [transducers]="shared.transducers">
+    <app-beamforming-renderer #renderer (az)="setAz($event)" (el)="setEl($event)" />
+    <app-transducer-buffer #renderer [transducers]="shared.transducers" [beamforming]="shared.beamforming">
         <app-rayleigh-integral-renderer #transducerBufferConsumer *ngIf="rayleighEnabled$ | async"
             [transducers]="shared.transducers" [environment]="shared.environment" [aspect]="rayleighAspect$ | async" />
         <app-farfield-renderer #transducerBufferConsumer [transducers]="shared.transducers"

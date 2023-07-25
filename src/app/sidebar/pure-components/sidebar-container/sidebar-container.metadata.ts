@@ -4,13 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { NoopAnimationsModule  } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
 import { SidebarContainerComponent } from './sidebar-container';
 
 import { MatInputModule } from '@angular/material/input';
 import { provideMockStore } from '@ngrx/store/testing';
-import { FormBuilder } from '@angular/forms';
 
 export const initialState = {
     arrayConfig: {

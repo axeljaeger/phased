@@ -13,6 +13,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app/app-routing.module';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { beamformingReducer } from './app/store/reducers/beamforming.reducer';
 
 if (environment.production) {
   enableProdMode();
@@ -26,6 +27,7 @@ bootstrapApplication(AppComponent, {
             rayleigh: rayleighReducer,
             selection: selectionReducer,
             visibleResults: viewportConfigReducer,
+            beamforming: beamformingReducer
         }, {}), StoreDevtoolsModule.instrument({
             maxAge: 25,
             logOnly: environment.production, // Restrict extension to log-only mode

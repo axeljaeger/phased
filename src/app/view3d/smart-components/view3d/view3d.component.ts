@@ -24,6 +24,10 @@ import { ExcitationRendererComponent } from '../../renderers/excitation/excitati
 import { BabylonJSViewComponent } from '../babylon-jsview/babylon-jsview.component';
 import { RxLet } from '@rx-angular/template/let';
 
+import { BeamformingRendererComponent } from '../../renderers/beamforming/beamforming-renderer.component';
+import { BeamformingActions } from 'src/app/store/actions/beamforming.actions';
+import { selectBeamforming } from 'src/app/store/selectors/beamforming.selector';
+
 
 @Component({
   selector: 'app-view3d',
@@ -35,6 +39,7 @@ import { RxLet } from '@rx-angular/template/let';
   imports: [
     RxLet,
     BabylonJSViewComponent,
+    BeamformingRendererComponent,
     ExcitationRendererComponent,
     TransducerBufferComponent,
     NgIf,
@@ -45,11 +50,6 @@ import { RxLet } from '@rx-angular/template/let';
 })
 export class View3dComponent {
   title = 'Air coupled Ultrasound Array';
-
-  transducers$ = this.store.select(selectTransducers);
-  selection$ = this.store.select(selectSelection);
-  environment$ = this.store.select(selectEnvironment);
-
   vm$ = this.state.select();
 
   rayleighEnabled$ = this.store.select(
@@ -65,11 +65,13 @@ export class View3dComponent {
       transducers: any;
       environment: any;
       selection: any;
+      beamforming: any;
     }>
   ) {
     this.state.connect('transducers', this.store.select(selectTransducers));
     this.state.connect('environment', this.store.select(selectEnvironment));
     this.state.connect('selection', this.store.select(selectSelection));
+    this.state.connect('beamforming', this.store.select(selectBeamforming));
   }
 
   public transducerHovered(transducerId: number): void {
@@ -82,5 +84,13 @@ export class View3dComponent {
 
   public setPitchY(pitch: number): void {
     this.store.dispatch(ArrayConfigActions.setPitchY({ pitch }));
+  }
+
+  public setAz(az: number) : void {
+    this.store.dispatch(BeamformingActions.setU({u: az}));
+  }
+
+  public setEl(el: number) : void {
+    this.store.dispatch(BeamformingActions.setV({v: el}));
   }
 }
