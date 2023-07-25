@@ -45,7 +45,7 @@ const rayleighFragmentShaderCode = glsl`
     for (int j = 0; j < numElements; ++j) {
       ExcitationElement elm = excitation.elements[j];
       float d = distance(elm.position.xyz, r);
-      float oodd = 1.0/pow(d,2.0);
+      float oodd = pow(d,-2.0);
 
       float amplitude = elm.phasor.x;
       float area = elm.phasor.y;

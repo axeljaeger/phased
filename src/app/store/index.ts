@@ -1,4 +1,5 @@
 import { ArrayConfig } from "./reducers/arrayConfig.reducer";
+import { Beamforming } from "./reducers/beamforming.reducer";
 
 export enum Results {
     Farfield,
@@ -11,4 +12,5 @@ export type AppState = {
     },
     arrayConfig: ArrayConfig;
     visibleResults: Array<Results>;
+    beamforming: Beamforming;
 }

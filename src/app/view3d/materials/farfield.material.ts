@@ -4,13 +4,12 @@ import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
 import { glsl } from '../../utils/webgl.utils';
 import { excitationBufferMaxElementsDefine } from '../../utils/excitationbuffer';
 
-const rayleighVertexShaderCode = glsl`
+const vertexSource = glsl`
   precision highp float;
-  #define M_PI 3.1415926535897932384626433832795
   #include<ExcitationBuffer>
   uniform highp int numElements;
   uniform float dynamicRange;
-  uniform sampler2D viridisSampler;
+  uniform float k;
 
   // Uniforms
   uniform mat4 worldViewProjection;
@@ -24,16 +23,9 @@ const rayleighVertexShaderCode = glsl`
   out highp vec2 uvf;
 
   void main(void) {
-
     vec2 result = vec2(0,0);
 
-    float pi = 3.141;
-    float f = 40000.0;
-    float c = 343.0;
-
-    float omega = 2.0*pi*f;
-    float k = omega / c;
-
+    // Rework to process two elements at a time
     for (int i = 0; i < numElements; ++i) {
         ExcitationElement element = excitation.elements[i];
         vec2 argv = element.position.xy*uv;
@@ -50,23 +42,8 @@ const rayleighVertexShaderCode = glsl`
     float shifted_val = db_val+dynamicRange;
     float absresult = clamp(shifted_val/dynamicRange,0.0,1.0);
 
-    float phi = atan(uv.y,uv.x);
-    float theta = asin(length(uv));
-
-    vec2 angles = vec2(theta,phi);
-    vec2 sins = sin(angles);
-    vec2 coss = cos(angles);
-
-    vec4 spherepos = vec4(absresult*vec3(sins.x*coss.y,sins.y*sins.x,coss.x),1);
-//    vec4 spherepos = vec4(uv.x,uv.y,tf,1);
-
-    // samplePosition.z = absresult;
-    // gl_Position = worldViewProjection * vec4(position.xy, af / float(numElements), 1.0);
-    
-
     vec3 direction = vec3(
-      position.x,
-      position.y,
+      position.xy,
       clamp(sqrt(1.0-pow(position.x, 2.0)-pow(position.y, 2.0)), 0.0, 1.0)
     );
 
@@ -76,7 +53,7 @@ const rayleighVertexShaderCode = glsl`
     uvf = uv;
   }
 `;
-const rayleighFragmentShaderCode = glsl`
+const fragmentSource = glsl`
   precision highp float;
   #include<ExcitationBuffer>
  
@@ -87,7 +64,6 @@ const rayleighFragmentShaderCode = glsl`
 
   uniform float k;
   uniform float t;
-  uniform float omega;
 
   uniform float dynamicRange;
 
@@ -96,13 +72,6 @@ const rayleighFragmentShaderCode = glsl`
 
   void main(void) {
     vec2 result = vec2(0,0);
-
-    float pi = 3.141;
-    float f = 40000.0;
-    float c = 343.0;
-
-    float omega = 2.0*pi*f;
-    float k = omega / c;
 
     for (int i = 0; i < numElements; ++i) {
         ExcitationElement element = excitation.elements[i];
@@ -120,8 +89,8 @@ const rayleighFragmentShaderCode = glsl`
 export class FarfieldMaterial extends ShaderMaterial {
   constructor(scene: Scene) {
     super('FarfieldMaterial', scene, {
-      vertexSource: rayleighVertexShaderCode,
-      fragmentSource: rayleighFragmentShaderCode
+      vertexSource,
+      fragmentSource,
     }, {
       attributes: [
         "position",
@@ -141,7 +110,6 @@ export class FarfieldMaterial extends ShaderMaterial {
         "globalPhase",
         "k",
         "t",
-        "omega",
         "dynamicRange",
         "numElements",
       ],

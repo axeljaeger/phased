@@ -38,22 +38,22 @@ export const arrayConfigReducer = createReducer(
       ...newConfig,
     };
   }),
-  on(ArrayConfigActions.setPitchX, (state: ArrayConfig, pitch): ArrayConfig => {
-    return {
-      ...state,
-      uraConfig: {
-        ...state.uraConfig,
-        pitchX: pitch.pitch,
-      },
-    };
-  }),
-  on(ArrayConfigActions.setPitchY, (state: ArrayConfig, pitch): ArrayConfig => {
-    return {
-      ...state,
-      uraConfig: {
-        ...state.uraConfig,
-        pitchY: pitch.pitch,
-      },
-    };
+  on(ArrayConfigActions.setPitchX, (state: ArrayConfig, pitch): ArrayConfig =>
+  ({
+    ...state,
+    uraConfig: {
+      ...state.uraConfig,
+      pitchX: pitch.pitch,
+    },
   })
+  ),
+  on(ArrayConfigActions.setPitchY, (state: ArrayConfig, pitch): ArrayConfig =>
+  ({
+    ...state,
+    uraConfig: {
+      ...state.uraConfig,
+      pitchY: pitch.pitch,
+    },
+  })
+  )
 );

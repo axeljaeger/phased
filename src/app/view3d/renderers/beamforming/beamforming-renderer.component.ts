@@ -21,8 +21,6 @@ export class BeamformingRendererComponent implements OnSceneCreated {
 
   async ngxSceneCreated(scene: Scene): Promise<void> {
     this.initialize3D(scene);
-
-
   }
   
   public initialize3D(scene : Scene) : void {
@@ -33,16 +31,16 @@ export class BeamformingRendererComponent implements OnSceneCreated {
     })
 
     const rotationGizmo = new RotationGizmo();
+    rotationGizmo.scaleRatio = 3;
     rotationGizmo.zGizmo.dispose();
     rotationGizmo.attachedMesh = this.beamFormHandle;
 
     rotationGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
-      const angles = this.beamFormHandle.rotationQuaternion?.toEulerAngles();
-      this.el.next(angles?.x ?? 0);
+      this.el.next(this.beamFormHandle.rotation.x);
     });
 
     rotationGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
-      const angles = this.beamFormHandle.rotationQuaternion?.toEulerAngles();
-      this.az.next(angles?.y ?? 0);    });
+      this.az.next(this.beamFormHandle.rotation.y);    
+    });
   }
 }

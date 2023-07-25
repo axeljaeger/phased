@@ -20,6 +20,7 @@ import { VEC4_ELEMENT_COUNT } from '../../utils/webgl.utils';
 import { OnSceneCreated } from '../interfaces/lifecycle';
 import { map, pairwise } from 'rxjs/operators';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
+import { Beamforming } from 'src/app/store/reducers/beamforming.reducer';
 
 export interface Textures {
   viridis: Texture;
@@ -41,12 +42,11 @@ export const implementsOnTransducerBufferCreated = (
   candidate !== null &&
   'ngxSceneAndBufferCreated' in candidate;
 
-const diff = (previous: Array<any>, next: Array<any>) => {
-  return {
-    added: next.filter((val) => !previous.includes(val)),
-    removed: previous.filter((val) => !next.includes(val)),
-  };
-};
+const diff = (previous: Array<any>, next: Array<any>) =>
+({
+  added: next.filter((val) => !previous.includes(val)),
+  removed: previous.filter((val) => !next.includes(val)),
+});
 
 @Component({
   selector: 'app-transducer-buffer',
@@ -54,9 +54,9 @@ const diff = (previous: Array<any>, next: Array<any>) => {
   standalone: true,
 })
 export class TransducerBufferComponent
-  implements OnChanges, OnDestroy, OnSceneCreated
-{
+  implements OnChanges, OnDestroy, OnSceneCreated {
   @Input() transducers: Array<Transducer> | null;
+  @Input() beamforming: Beamforming | null;
 
   @ContentChildren('transducerBufferConsumer')
   consumers: QueryList<any>;
@@ -95,10 +95,10 @@ export class TransducerBufferComponent
       })
     );
 
-     this.textures = {
-       viridis: tex[0] as Texture,
-       coolwarm: tex[1] as Texture,
-     };
+    this.textures = {
+      viridis: tex[0] as Texture,
+      coolwarm: tex[1] as Texture,
+    };
 
     this.updateBuffer(this.transducers ?? []);
 
