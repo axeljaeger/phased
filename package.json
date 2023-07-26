@@ -77,7 +77,7 @@
     "@playwright/test": "^1.36.0",
     "@storybook/addon-actions": "^7.1.0",
     "@storybook/addon-essentials": "^7.1.0",
-    "@storybook/addon-interactions": "^7.1.0",
+    "@storybook/addon-interactions": "^7.1.1",
     "@storybook/addon-links": "^7.1.0",
     "@storybook/addon-mdx-gfm": "^7.1.1",
     "@storybook/angular": "^7.1.0",
