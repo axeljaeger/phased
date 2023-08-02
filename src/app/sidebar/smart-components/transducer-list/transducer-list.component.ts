@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { setTransducerHovered, clearHover } from '../../../store/actions/selection.actions';
 
-import { Transducer, selectTransducers } from '../../../store/selectors/arrayConfig.selector';
 import { RxFor } from '@rx-angular/template/for';
 import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { RxLet } from '@rx-angular/template/let';
+import { SelectionActions } from 'src/app/store/selection.state';
+import { Transducer, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
 
 @Component({
     selector: 'app-transducer-list',
@@ -16,7 +16,7 @@ import { RxLet } from '@rx-angular/template/let';
     imports: [RxLet, MatExpansionModule, MatListModule, RxFor]
 })
 export class TransducerListComponent {
-  public transducers$ = this.store.select(selectTransducers);
+  public transducers$ = this.store.select(arrayConfigFeature.selectTransducers);
   transducerIndex(index: number, transducer: Transducer) : number {
     return index;
   }
@@ -24,10 +24,10 @@ export class TransducerListComponent {
   constructor(private store: Store) { }
 
   public setTransducerHovered(index : number) : void {
-    this.store.dispatch(setTransducerHovered({transducerId: index}));
+    this.store.dispatch(SelectionActions.set({transducerId: index}));
   }
 
   public clearTransducerHighlight() : void {
-    this.store.dispatch(clearHover());
+    this.store.dispatch(SelectionActions.clear());
   }
 }

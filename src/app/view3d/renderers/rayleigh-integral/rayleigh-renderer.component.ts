@@ -9,8 +9,8 @@ import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Scene } from '@babylonjs/core/scene';
-import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
 import { OnTransducerBufferCreated, Textures } from '../../shared/transducer-buffer.component';
+import { Transducer } from 'src/app/store/arrayConfig.state';
 
 @Component({
     selector: 'app-rayleigh-integral-renderer',

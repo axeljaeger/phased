@@ -13,12 +13,12 @@ import { ActionManager } from '@babylonjs/core/Actions/actionManager';
 import '@babylonjs/core/Culling/ray';
 import '@babylonjs/core/Meshes/thinInstanceMesh';
 
-import { SelectionState } from 'src/app/store/reducers/selection.reducer';
-import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
+import { SelectionState } from 'src/app/store/selection.state';
 import { Scene } from '@babylonjs/core/scene';
 import { CreateIcoSphere } from '@babylonjs/core/Meshes/Builders/icoSphereBuilder';
 import { OnSceneCreated } from '../../interfaces/lifecycle';
 import { PositionGizmo } from '@babylonjs/core';
+import { Transducer } from 'src/app/store/arrayConfig.state';
 
 @Component({
     selector: 'app-excitation-renderer',
