@@ -1,4 +1,4 @@
-import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
+import { createAction, createFeature, createReducer, createSelector, on, props } from '@ngrx/store';
 
 export enum Results {
     Farfield,
@@ -10,8 +10,6 @@ interface ViewportState {
 }
 
 const initialState : ViewportState = { enabledResults: [Results.RayleighIntegral]};
-
-import { createAction, props } from '@ngrx/store';
 
 export const setResultVisible = createAction('[ViewportConfig] setResultVisible', props<{result: Results, visible : boolean}>());
 
