@@ -3,9 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
 import { Store } from '@ngrx/store';
-import { ArrayConfig } from '../../../store/reducers/arrayConfig.reducer'
-import { ArrayConfigActions } from '../../../store/actions/arrayConfig.actions';
-import { selectArrayConfig } from '../../../store/selectors/arrayConfig.selector';
+import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from '../../../store/arrayConfig.state'
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NgIf } from '@angular/common';
@@ -42,7 +40,7 @@ export class ArrayConfigComponent implements OnInit {
       }),
     });
     
-    this.store.select(selectArrayConfig).subscribe(config => {
+    this.store.select(arrayConfigFeature.selectArrayConfigState).subscribe(config => {
       this.arrayConfig.patchValue(config, 
         { 
           emitEvent: false, // Avoid infinite recursion

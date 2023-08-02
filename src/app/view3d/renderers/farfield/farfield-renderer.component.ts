@@ -9,11 +9,11 @@ import {
 import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Scene } from '@babylonjs/core/scene';
-import { Transducer } from 'src/app/store/selectors/arrayConfig.selector';
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { FarfieldMaterial } from '../../materials/farfield.material';
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
 import { OnTransducerBufferCreated, Textures } from '../../shared/transducer-buffer.component';
+import { Transducer } from 'src/app/store/arrayConfig.state';
 
 const uvMesh: VertexData = (() => {
   const positions = [-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0];

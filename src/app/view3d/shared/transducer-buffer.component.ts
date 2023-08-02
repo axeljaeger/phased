@@ -10,7 +10,6 @@ import {
 
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { Scene } from '@babylonjs/core/scene';
-import { Transducer } from '../../store/selectors/arrayConfig.selector';
 import {
   createExcitationBuffer,
   excitationBufferMaxElements,
@@ -20,7 +19,8 @@ import { VEC4_ELEMENT_COUNT } from '../../utils/webgl.utils';
 import { OnSceneCreated } from '../interfaces/lifecycle';
 import { map, pairwise } from 'rxjs/operators';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
-import { Beamforming } from 'src/app/store/reducers/beamforming.reducer';
+import { Beamforming } from 'src/app/store/beamforming.state';
+import { Transducer } from 'src/app/store/arrayConfig.state';
 
 export interface Textures {
   viridis: Texture;

@@ -5,16 +5,6 @@ import {
 
 import { Store } from '@ngrx/store';
 
-import { Results } from '../../../store';
-
-import { setTransducerHovered } from '../../../store/actions/selection.actions';
-
-import { selectTransducers } from '../../../store/selectors/arrayConfig.selector';
-import { selectEnvironment } from '../../../store/selectors/environment.selector';
-import { selectRayleigh } from '../../../store/selectors/rayleigh.selector';
-import { selectSelection } from '../../../store/selectors/selection.selector';
-import { selectResultEnabled } from '../../../store/selectors/viewportConfig.selector';
-import { ArrayConfigActions } from '../../../store/actions/arrayConfig.actions';
 import { RxState } from '@rx-angular/state';
 import { FarfieldRendererComponent } from '../../renderers/farfield/farfield-renderer.component';
 import { RayleighIntegralRendererComponent } from '../../renderers/rayleigh-integral/rayleigh-renderer.component';
@@ -25,8 +15,12 @@ import { BabylonJSViewComponent } from '../babylon-jsview/babylon-jsview.compone
 import { RxLet } from '@rx-angular/template/let';
 
 import { BeamformingRendererComponent } from '../../renderers/beamforming/beamforming-renderer.component';
-import { BeamformingActions } from 'src/app/store/actions/beamforming.actions';
-import { selectBeamforming } from 'src/app/store/selectors/beamforming.selector';
+import { SelectionActions, selectionFeature } from 'src/app/store/selection.state';
+import { Results, ViewportFeature } from 'src/app/store/viewportConfig.state';
+import { rayleighFeature } from 'src/app/store/rayleigh.state';
+import { environmentFeature } from 'src/app/store/environment.state';
+import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
+import { ArrayConfigActions, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
 
 
 @Component({
@@ -53,11 +47,11 @@ export class View3dComponent {
   vm$ = this.state.select();
 
   rayleighEnabled$ = this.store.select(
-    selectResultEnabled(Results.RayleighIntegral)
+    ViewportFeature.selectResultEnabled(Results.RayleighIntegral)
   );
-  rayleighAspect$ = this.store.select(selectRayleigh);
+  rayleighAspect$ = this.store.select(rayleighFeature.selectRayleighState);
 
-  farfieldEnabled$ = this.store.select(selectResultEnabled(Results.Farfield));
+  farfieldEnabled$ = this.store.select(ViewportFeature.selectResultEnabled(Results.Farfield));
 
   constructor(
     private store: Store,
@@ -68,14 +62,14 @@ export class View3dComponent {
       beamforming: any;
     }>
   ) {
-    this.state.connect('transducers', this.store.select(selectTransducers));
-    this.state.connect('environment', this.store.select(selectEnvironment));
-    this.state.connect('selection', this.store.select(selectSelection));
-    this.state.connect('beamforming', this.store.select(selectBeamforming));
+    this.state.connect('transducers', this.store.select(arrayConfigFeature.selectTransducers));
+    this.state.connect('environment', this.store.select(environmentFeature.selectEnvironmentState));
+    this.state.connect('selection', this.store.select(selectionFeature.selectSelectionState));
+    this.state.connect('beamforming', this.store.select(beamformingFeature.selectBeamformingState));
   }
 
   public transducerHovered(transducerId: number): void {
-    this.store.dispatch(setTransducerHovered({ transducerId }));
+    this.store.dispatch(SelectionActions.set({ transducerId }));
   }
 
   public setPitchX(pitch: number): void {
