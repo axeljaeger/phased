@@ -72,7 +72,7 @@
     "@babel/core": "^7.22.9",
     "@compodoc/compodoc": "^1.1.19",
     "@ngrx/eslint-plugin": "^16.1.0",
-    "@ngrx/schematics": "^16.1.0",
+    "@ngrx/schematics": "^16.2.0",
     "@ngrx/store-devtools": "^16.0.1",
     "@playwright/test": "^1.36.0",
     "@storybook/addon-actions": "^7.2.0",
