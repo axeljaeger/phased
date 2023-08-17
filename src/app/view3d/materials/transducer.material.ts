@@ -42,8 +42,10 @@ const transducerFragmentShaderCode = glsl`
   uniform float globalPhase;
   uniform float transducerDiameter;
 
+  uniform float innerRadius;
   void main(void) {
-    if (length(vUV - vec2(.5,.5)) > 0.5) {
+    float len = length(vUV - vec2(.5,.5));
+    if (step(0.5, len) + step(len, innerRadius) > 0.0) {
         discard;
     }
 
@@ -71,7 +73,8 @@ export class TransducerMaterial extends ShaderMaterial {
           "view",
           "projection",
           "parameter",
-          "transducerDiameter"
+          "transducerDiameter",
+          "innerRadius"
         ]
       }
     );

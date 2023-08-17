@@ -89,6 +89,8 @@ export class BabylonJSViewComponent
     this.ngZone.runOutsideAngular(() => {
       if (window.WebGLRenderingContext) {
         this.engine = new Engine(canvas.nativeElement, true);
+        this.engine.setStencilBuffer(true);
+        this.engine.setStencilMask(0xff);
       } else {
         this.engine = new NullEngine();
       }
@@ -99,6 +101,27 @@ export class BabylonJSViewComponent
 
       this.scene = this.createScene(canvas);
       this.scene.useRightHandedSystem = true;
+
+      const renderingOrder = [
+        'rayleigh',
+        'farfieldMesh',
+        'excitation',
+        'excitationHidden'
+      ];
+
+      this.scene.setRenderingOrder(1, (meshA, meshB) => {
+        const indexA = renderingOrder.indexOf(meshA.getMesh().name);
+        const indexB = renderingOrder.indexOf(meshB.getMesh().name);
+        if (indexA === indexB) return 0
+        else if (indexA > indexB) return 1
+        else return -1
+      });
+
+      this.scene.onBeforeRenderingGroupObservable.add((groupInfo) => {
+        if (groupInfo.renderingGroupId === 0) {
+          this.engine.setDepthFunction(Engine.LEQUAL);
+        } 
+      });
 
       this.scene.onPointerDown = () => {
         this.engine.runRenderLoop(() => this.camera.update());
