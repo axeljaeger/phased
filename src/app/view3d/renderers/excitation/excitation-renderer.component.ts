@@ -17,8 +17,9 @@ import { SelectionState } from 'src/app/store/selection.state';
 import { Scene } from '@babylonjs/core/scene';
 import { CreateIcoSphere } from '@babylonjs/core/Meshes/Builders/icoSphereBuilder';
 import { OnSceneCreated } from '../../interfaces/lifecycle';
-import { PositionGizmo } from '@babylonjs/core';
 import { Transducer } from 'src/app/store/arrayConfig.state';
+import { Engine } from '@babylonjs/core/Engines/engine';
+import { PositionGizmo } from '@babylonjs/core/Gizmos/positionGizmo';
 
 @Component({
     selector: 'app-excitation-renderer',
@@ -36,7 +37,10 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
   
 
   private transducerMaterial: TransducerMaterial;
+  private transducerMaterialHidden: TransducerMaterial;
+
   private transducerMesh: Mesh;
+  private transducerMeshHidden: Mesh;
 
   private arrayPitchHandle: Mesh;
 
@@ -53,7 +57,12 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
   }
   
   public initialize3D(scene : Scene) : void {
+    const engine = scene.getEngine();
     this.transducerMaterial = new TransducerMaterial(scene);
+    this.transducerMaterial.setFloat('innerRadius', 0.45);
+    this.transducerMaterialHidden = new TransducerMaterial(scene);
+    this.transducerMaterialHidden.setFloat('innerRadius', 0.0);
+
 
     const origin = new Vector3(0, 0, 0);
     const zPositive = new Vector3(0, 0, -1);
@@ -66,11 +75,33 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
       size: transducerDiameter,
     };
 
-    this.transducerMesh = CreatePlane('plane', apertureOptions, scene);
+    this.transducerMesh = CreatePlane('excitation', apertureOptions, scene);
     this.transducerMesh.material = this.transducerMaterial;
-    
+    this.transducerMesh.renderingGroupId = 1;
     this.transducerMesh.thinInstanceEnablePicking = true;
     this.transducerMesh.pointerOverDisableMeshTesting = false;
+
+    this.transducerMeshHidden = CreatePlane('excitationHidden', apertureOptions, scene);
+    this.transducerMeshHidden.material = this.transducerMaterialHidden;
+    this.transducerMeshHidden.renderingGroupId = 1;
+
+    this.transducerMesh.onBeforeRenderObservable.add(() => {
+      // Set stencil test positive
+      engine.setDepthFunction(Engine.ALWAYS);
+      engine.setStencilFunction(Engine.EQUAL);
+      engine.setStencilFunctionReference(1);
+      engine.setStencilOperationPass(Engine.KEEP);
+    });
+
+    this.transducerMeshHidden.onBeforeRenderObservable.add(() => {
+      // Set stencil test negative, disable depth test
+      engine.setDepthFunction(Engine.ALWAYS);
+      engine.setStencilFunction(Engine.NOTEQUAL);
+      engine.setStencilFunctionReference(1);
+      engine.setStencilOperationPass(Engine.KEEP);
+    });
+
+
 
     const actionManager = new ActionManager(scene);
     this.transducerMesh.actionManager = actionManager;
@@ -115,6 +146,11 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
     });
 
     this.uploadArrayConfig(this.transducers, this.selection);
+
+    this.transducerMesh.onBeforeRenderObservable.add(() => {
+      console.log("Render excitation")
+    });
+
   }
 
   private uploadArrayConfig(transducersx: Transducer[] | null, selectionx: SelectionState | null) : void {
@@ -142,19 +178,21 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
     this.transducerMesh.setEnabled(transducers.length > 0);
 
     if (transducers.length > 0) {
-      this.transducerMesh.thinInstanceSetBuffer(
-        'matrix',
-        buffers.matrices,
-        MAT4_ELEMENT_COUNT,
-        false
-      );
-      
-      this.transducerMesh.thinInstanceSetBuffer(
-        'selected',
-        buffers.selection,
-        SCALAR_ELEMENT_COUNT,
-        false
-      );
+      [this.transducerMesh, this.transducerMeshHidden].forEach(mesh => {
+        mesh.thinInstanceSetBuffer(
+          'matrix',
+          buffers.matrices,
+          MAT4_ELEMENT_COUNT,
+          false
+        );
+        
+        mesh.thinInstanceSetBuffer(
+          'selected',
+          buffers.selection,
+          SCALAR_ELEMENT_COUNT,
+          false
+        );
+      })
     }
   }
 }

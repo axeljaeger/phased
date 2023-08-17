@@ -11,6 +11,7 @@ import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Scene } from '@babylonjs/core/scene';
 import { OnTransducerBufferCreated, Textures } from '../../shared/transducer-buffer.component';
 import { Transducer } from 'src/app/store/arrayConfig.state';
+import { Engine } from '@babylonjs/core/Engines/engine';
 
 @Component({
     selector: 'app-rayleigh-integral-renderer',
@@ -31,6 +32,7 @@ export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy, 
   private plane : Mesh;
 
   ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer, textures : Textures): void {
+    const engine = scene.getEngine();
     // Result
     this.material = new RayleighMaterial(scene);
     this.material.onCompiled = () => {
@@ -49,22 +51,29 @@ export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy, 
       sourcePlane: resultPlane,
     };
 
-    this.plane = CreatePlane('plane', planeOptions, scene);
+    this.plane = CreatePlane('rayleigh', planeOptions, scene);
     this.plane.material = this.material;
     this.plane.position = new Vector3(0, 0, 0.5);
     this.plane.bakeCurrentTransformIntoVertices();
+    this.plane.isPickable = false;
+    this.plane.renderingGroupId = 1;
 
     this.material.onBind = (mesh: AbstractMesh) => {
         this.material
         .getEffect()
-        .bindUniformBuffer(buffer.getBuffer()!, 'excitation');
-      
+        .bindUniformBuffer(buffer.getBuffer()!, 'excitation');      
     };
 
     this.material.setFloat('dynamicRange', 10);
     this.material.setResultAspect(this.aspect);
     this.uploadArrayConfig(this.transducers);
     this.uploadEnvironment(this.environment);
+
+    this.plane.onBeforeRenderObservable.add(() => {
+      engine.setStencilFunctionReference(1);
+      engine.setStencilFunction(Engine.ALWAYS);
+      engine.setStencilOperationPass(Engine.REPLACE);
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
