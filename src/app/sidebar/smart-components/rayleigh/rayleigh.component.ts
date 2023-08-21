@@ -39,5 +39,6 @@ export class RayleighComponent implements OnInit {
     this.rayleighAspect.valueChanges.subscribe(val => {
       this.store.dispatch(setResultAspect({aspect: val!}));
     })
+    this.rayleighVisible$.subscribe(val => this.rayleighVisible.patchValue(val, {emitEvent: false}));
   }
 }

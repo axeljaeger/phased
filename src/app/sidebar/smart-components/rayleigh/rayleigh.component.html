@@ -3,7 +3,7 @@
         <mat-panel-title>
             Rayleigh integral 
         </mat-panel-title>
-            <mat-icon *ngIf="(rayleighVisible$ | async) === false"  aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off"></mat-icon>
+        <mat-icon *ngIf="(rayleighVisible$ | async) === false"  aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off"></mat-icon>
     </mat-expansion-panel-header>
     <mat-checkbox [formControl]="rayleighVisible">Visible</mat-checkbox>
     <mat-divider></mat-divider>

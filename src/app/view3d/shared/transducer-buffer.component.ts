@@ -17,7 +17,7 @@ import {
 } from '../../utils/excitationbuffer';
 import { VEC4_ELEMENT_COUNT } from '../../utils/webgl.utils';
 import { OnSceneCreated } from '../interfaces/lifecycle';
-import { map, pairwise } from 'rxjs/operators';
+import { map, pairwise, startWith, tap } from 'rxjs/operators';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { Beamforming } from 'src/app/store/beamforming.state';
 import { Transducer } from 'src/app/store/arrayConfig.state';
@@ -102,19 +102,10 @@ export class TransducerBufferComponent
 
     this.updateBuffer(this.transducers ?? []);
 
-    this.consumers.forEach((consumer) => {
-      if (implementsOnTransducerBufferCreated(consumer)) {
-        consumer.ngxSceneAndBufferCreated(
-          scene,
-          this.uniformExcitationBuffer,
-          this.textures
-        );
-      }
-    });
-
     this.consumers.changes
       .pipe(
         map((list) => list.toArray()),
+        startWith([], this.consumers.toArray()),
         pairwise()
       )
       .subscribe(([prev, next]) => {

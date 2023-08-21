@@ -52,6 +52,7 @@ export class FarfieldRendererComponent
     const engine = scene.getEngine();
     this.material = new FarfieldMaterial(scene);
     this.material.onCompiled = () => {
+      console.log("Render from farfield material compiled");
       scene.render();
     };
     this.material.setTexture('viridisSampler', textures.viridis);
@@ -88,6 +89,7 @@ export class FarfieldRendererComponent
 
   private uploadEnvironment(speedOfSound: number | null): void {
     if (speedOfSound) {
+      console.log("Upload env");
       const omega = 2.0 * Math.PI * 40000;
 
       this.material.setFloat('omega', omega);
@@ -97,6 +99,8 @@ export class FarfieldRendererComponent
 
   private uploadArrayConfig(transducers: Transducer[] | null): void {
     if (transducers) {
+      console.log("Upload array config");
+
       this.material.setInt('numElements', transducers.length);
     }
   }
