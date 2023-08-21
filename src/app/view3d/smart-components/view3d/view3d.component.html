@@ -5,7 +5,7 @@
     <app-transducer-buffer #renderer [transducers]="shared.transducers" [beamforming]="shared.beamforming">
         <app-rayleigh-integral-renderer #transducerBufferConsumer *ngIf="rayleighEnabled$ | async"
             [transducers]="shared.transducers" [environment]="shared.environment" [aspect]="rayleighAspect$ | async" />
-        <app-farfield-renderer #transducerBufferConsumer [transducers]="shared.transducers"
+        <app-farfield-renderer #transducerBufferConsumer *ngIf="farfieldEnabled$ | async" [transducers]="shared.transducers"
             [environment]="shared.environment" />
         <ng-content></ng-content>
     </app-transducer-buffer>

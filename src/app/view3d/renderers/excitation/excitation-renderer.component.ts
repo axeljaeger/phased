@@ -146,11 +146,6 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
     });
 
     this.uploadArrayConfig(this.transducers, this.selection);
-
-    this.transducerMesh.onBeforeRenderObservable.add(() => {
-      console.log("Render excitation")
-    });
-
   }
 
   private uploadArrayConfig(transducersx: Transducer[] | null, selectionx: SelectionState | null) : void {
