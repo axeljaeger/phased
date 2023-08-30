@@ -9,3 +9,15 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    storybook:
+      patterns:
+          - "storybook"
+          - "@storybook/*"
+          - "chromatic"
+    angular:
+      patterns:
+          - "@angular/*"
+          - "@angular-devkit/build-angular"
+    babylonjs:
+      patterns:
+          - "@babylonjs/*"
