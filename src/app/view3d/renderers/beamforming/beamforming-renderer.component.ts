@@ -17,30 +17,36 @@ export class BeamformingRendererComponent implements OnSceneCreated {
   @Output() az = new EventEmitter<number>();
   @Output() el = new EventEmitter<number>();
   
-  private beamFormHandle: Mesh;
+  private azHandle: Mesh;
+  private elHandle: Mesh;
 
   async ngxSceneCreated(scene: Scene): Promise<void> {
     this.initialize3D(scene);
   }
   
   public initialize3D(scene : Scene) : void {
+    this.azHandle = new Mesh('azHandle', scene);
 
-    this.beamFormHandle = CreateIcoSphere('arrayPitchHandle', {
-      radius: 0.00025,
-      subdivisions: 3,
-    })
+    const azRotationGizmo = new RotationGizmo();
+    azRotationGizmo.scaleRatio = 3;
+    azRotationGizmo.zGizmo.dispose();
+    azRotationGizmo.yGizmo.dispose();
+    azRotationGizmo.attachedMesh = this.azHandle;
 
-    const rotationGizmo = new RotationGizmo();
-    rotationGizmo.scaleRatio = 3;
-    rotationGizmo.zGizmo.dispose();
-    rotationGizmo.attachedMesh = this.beamFormHandle;
-
-    rotationGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
-      this.el.next(this.beamFormHandle.rotation.x);
+    azRotationGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
+      this.az.next(this.azHandle.rotation.x);
     });
 
-    rotationGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
-      this.az.next(this.beamFormHandle.rotation.y);    
+    this.elHandle = new Mesh('elHandle', scene);
+  
+    const elRotationGizmo = new RotationGizmo();
+    elRotationGizmo.scaleRatio = 3;
+    elRotationGizmo.zGizmo.dispose();
+    elRotationGizmo.xGizmo.dispose();
+    elRotationGizmo.attachedMesh = this.elHandle;
+
+    elRotationGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
+      this.el.next(this.elHandle.rotation.y);
     });
   }
 }
