@@ -30,11 +30,11 @@ export class BeamformingRendererComponent implements OnSceneCreated {
     const azRotationGizmo = new RotationGizmo();
     azRotationGizmo.scaleRatio = 3;
     azRotationGizmo.zGizmo.dispose();
-    azRotationGizmo.yGizmo.dispose();
+    azRotationGizmo.xGizmo.dispose();
     azRotationGizmo.attachedMesh = this.azHandle;
 
-    azRotationGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
-      this.az.next(this.azHandle.rotation.x);
+    azRotationGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
+      this.az.next(this.azHandle.rotation.y);
     });
 
     this.elHandle = new Mesh('elHandle', scene);
@@ -42,11 +42,11 @@ export class BeamformingRendererComponent implements OnSceneCreated {
     const elRotationGizmo = new RotationGizmo();
     elRotationGizmo.scaleRatio = 3;
     elRotationGizmo.zGizmo.dispose();
-    elRotationGizmo.xGizmo.dispose();
+    elRotationGizmo.yGizmo.dispose();
     elRotationGizmo.attachedMesh = this.elHandle;
 
-    elRotationGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
-      this.el.next(this.elHandle.rotation.y);
+    elRotationGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
+      this.el.next(this.elHandle.rotation.x);
     });
   }
 }

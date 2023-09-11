@@ -81,6 +81,7 @@ export class View3dComponent {
   }
 
   public setAz(az: number) : void {
+    console.log("Set az to " + az);
     this.store.dispatch(BeamformingActions.setU({u: az}));
   }
 

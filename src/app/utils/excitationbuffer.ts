@@ -29,11 +29,11 @@ export function createExcitationBuffer() {
     return new Float32Array(excitationBufferElementSize * excitationBufferMaxElements);
 }
 
-export function setExcitationElement(position : Vector3, buffer: Float32Array, index : number) {
+export function setExcitationElement(position : Vector3, phase: number, buffer: Float32Array, index : number) {
     const elementOffset = excitationBufferElementSize * index;
     position.toArray(buffer, elementOffset);
     
-    buffer[elementOffset + 4] = 1; // amplitude
+    buffer[elementOffset + 4] = phase; // amplitude
     buffer[elementOffset + 5] = 1; // area
     buffer[elementOffset + 6] = 0; // phase
     buffer[elementOffset + 7] = 0; // zero  

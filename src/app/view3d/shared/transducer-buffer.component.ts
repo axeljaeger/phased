@@ -136,9 +136,12 @@ export class TransducerBufferComponent
 
   updateBuffer(transducers: Transducer[]): void {
     if (this.uniformExcitationBuffer) {
+      console.log(this.beamforming);
       const excitationBuffer = transducers.reduce(
         (buffer, transducer, index) => {
-          setExcitationElement(transducer.pos, buffer, index);
+          const phase = 100 * ((this.beamforming?.u ?? 0) * transducer.pos.x + (this.beamforming?.v ?? 0) * transducer.pos.y);
+          setExcitationElement(transducer.pos, phase, buffer, index);
+          console.log(phase);
           return buffer;
         },
         createExcitationBuffer()
