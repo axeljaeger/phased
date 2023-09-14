@@ -39,6 +39,11 @@ export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy, 
       scene.render();
     };
     this.material.setTexture('coolwarmSampler', textures.coolwarm);
+    this.material.stencil.enabled = true;
+    this.material.stencil.funcRef = 1;
+    this.material.stencil.func = Engine.ALWAYS;
+    this.material.stencil.opStencilDepthPass = Engine.REPLACE;
+
 
     // Setup Aperture
     const origin = new Vector3(0, 0, 0);
@@ -68,12 +73,6 @@ export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy, 
     this.material.setResultAspect(this.aspect);
     this.uploadArrayConfig(this.transducers);
     this.uploadEnvironment(this.environment);
-
-    this.plane.onBeforeRenderObservable.add(() => {
-      engine.setStencilFunctionReference(1);
-      engine.setStencilFunction(Engine.ALWAYS);
-      engine.setStencilOperationPass(Engine.REPLACE);
-    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {

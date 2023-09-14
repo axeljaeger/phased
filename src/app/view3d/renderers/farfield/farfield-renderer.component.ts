@@ -49,12 +49,15 @@ export class FarfieldRendererComponent
   }
 
   ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer, textures: Textures): void {
-    const engine = scene.getEngine();
     this.material = new FarfieldMaterial(scene);
     this.material.onCompiled = () => {
       scene.render();
     };
     this.material.setTexture('viridisSampler', textures.viridis);
+    this.material.stencil.enabled = true;
+    this.material.stencil.funcRef = 1;
+    this.material.stencil.func = Engine.ALWAYS;
+    this.material.stencil.opStencilDepthPass = Engine.REPLACE;
 
     this.farfieldMesh = new Mesh('farfieldMesh', scene);
     uvMesh.applyToMesh(this.farfieldMesh);
@@ -68,13 +71,6 @@ export class FarfieldRendererComponent
         .getEffect()
         .bindUniformBuffer(buffer.getBuffer()!, 'excitation');
     };
-
-    this.farfieldMesh.onBeforeRenderObservable.add(() => {
-      // Write to stencil buffer
-      engine.setStencilFunctionReference(1);
-      engine.setStencilFunction(Engine.ALWAYS);
-      engine.setStencilOperationPass(Engine.REPLACE);
-    });
 
     this.material.setFloat('dynamicRange', 50.0);
     this.uploadEnvironment(this.environment);
