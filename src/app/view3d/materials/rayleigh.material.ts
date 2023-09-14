@@ -47,9 +47,10 @@ const rayleighFragmentShaderCode = glsl`
       float d = distance(elm.position.xyz, r);
       float oodd = pow(d,-2.0);
 
-      float amplitude = elm.phasor.x;
+      float amplitude = 1.0;
       float area = elm.phasor.y;
-      float delay = elm.phasor.z;
+      // elm.phasor.x is a phase shift
+      float delay = elm.phasor.x / omega;
       
       float argz = (d*k - delay*omega - t);
       elongation += vec2(cos(argz), sin(argz))*amplitude*area*oodd;
