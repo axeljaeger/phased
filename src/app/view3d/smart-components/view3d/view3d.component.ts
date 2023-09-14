@@ -21,6 +21,7 @@ import { rayleighFeature } from 'src/app/store/rayleigh.state';
 import { environmentFeature } from 'src/app/store/environment.state';
 import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
 import { ArrayConfigActions, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
+import { map } from 'rxjs';
 
 
 @Component({
@@ -50,8 +51,8 @@ export class View3dComponent {
     ViewportFeature.selectResultEnabled(Results.RayleighIntegral)
   );
   rayleighAspect$ = this.store.select(rayleighFeature.selectRayleighState);
-
   farfieldEnabled$ = this.store.select(ViewportFeature.selectResultEnabled(Results.Farfield));
+  k$ = this.store.select(environmentFeature.selectEnvironmentState).pipe(map((c) => 2 * Math.PI * 40000 / c ));
 
   constructor(
     private store: Store,
@@ -81,11 +82,10 @@ export class View3dComponent {
   }
 
   public setAz(az: number) : void {
-    console.log("Set az to " + az);
-    this.store.dispatch(BeamformingActions.setU({u: az}));
+    this.store.dispatch(BeamformingActions.setU({u: -Math.sin(az)}));
   }
 
   public setEl(el: number) : void {
-    this.store.dispatch(BeamformingActions.setV({v: el}));
+    this.store.dispatch(BeamformingActions.setV({v: Math.sin(el)}));
   }
 }
