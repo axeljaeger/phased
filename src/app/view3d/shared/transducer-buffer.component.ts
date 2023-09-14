@@ -57,6 +57,7 @@ export class TransducerBufferComponent
   implements OnChanges, OnDestroy, OnSceneCreated {
   @Input() transducers: Array<Transducer> | null;
   @Input() beamforming: Beamforming | null;
+  @Input() k: number | null;
 
   @ContentChildren('transducerBufferConsumer')
   consumers: QueryList<any>;
@@ -138,7 +139,8 @@ export class TransducerBufferComponent
     if (this.uniformExcitationBuffer) {
       const excitationBuffer = transducers.reduce(
         (buffer, transducer, index) => {
-          setExcitationElement(transducer.pos, buffer, index);
+          const phase = (this.k ?? 700) * ((this.beamforming?.u ?? 0) * transducer.pos.x + (this.beamforming?.v ?? 0) * transducer.pos.y);
+          setExcitationElement(transducer.pos, phase, buffer, index);
           return buffer;
         },
         createExcitationBuffer()

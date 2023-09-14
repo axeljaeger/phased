@@ -30,7 +30,7 @@ const vertexSource = glsl`
         ExcitationElement element = excitation.elements[i];
         vec2 argv = element.position.xy*uv;
         //float argument = k*(argv.x+argv.y) + element.delay*omega;
-        float argument = k*(argv.x+argv.y); // + element.delay*omega;
+        float argument = k*(argv.x+argv.y) + element.phasor.x;
         result += vec2(cos(argument), sin(argument));
     }
 
@@ -76,7 +76,7 @@ const fragmentSource = glsl`
     for (int i = 0; i < numElements; ++i) {
         ExcitationElement element = excitation.elements[i];
         vec2 argv = element.position.xy*uvf;
-        float argument = k*(argv.x+argv.y); // + element.delay*omega;
+        float argument = k*(argv.x+argv.y) + element.phasor.x;
         result += vec2(cos(argument), sin(argument));
     }
     
