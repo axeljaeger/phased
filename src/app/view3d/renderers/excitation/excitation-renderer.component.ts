@@ -57,12 +57,21 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
   }
   
   public initialize3D(scene : Scene) : void {
-    const engine = scene.getEngine();
     this.transducerMaterial = new TransducerMaterial(scene);
+    this.transducerMaterial.depthFunction = Engine.ALWAYS;
+    this.transducerMaterial.stencil.enabled = true;
+    this.transducerMaterial.stencil.funcRef = 1;
+    this.transducerMaterial.stencil.func = Engine.EQUAL;
+    this.transducerMaterial.stencil.opStencilDepthPass = Engine.KEEP;
     this.transducerMaterial.setFloat('innerRadius', 0.45);
-    this.transducerMaterialHidden = new TransducerMaterial(scene);
-    this.transducerMaterialHidden.setFloat('innerRadius', 0.0);
 
+    this.transducerMaterialHidden = new TransducerMaterial(scene);
+    this.transducerMaterialHidden.depthFunction = Engine.ALWAYS;
+    this.transducerMaterialHidden.stencil.enabled = true;
+    this.transducerMaterialHidden.stencil.funcRef = 1;
+    this.transducerMaterialHidden.stencil.func = Engine.NOTEQUAL;
+    this.transducerMaterialHidden.stencil.opStencilDepthPass = Engine.KEEP;
+    this.transducerMaterialHidden.setFloat('innerRadius', 0.0);
 
     const origin = new Vector3(0, 0, 0);
     const zPositive = new Vector3(0, 0, -1);
@@ -84,24 +93,6 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
     this.transducerMeshHidden = CreatePlane('excitationHidden', apertureOptions, scene);
     this.transducerMeshHidden.material = this.transducerMaterialHidden;
     this.transducerMeshHidden.renderingGroupId = 1;
-
-    this.transducerMesh.onBeforeRenderObservable.add(() => {
-      // Set stencil test positive
-      engine.setDepthFunction(Engine.ALWAYS);
-      engine.setStencilFunction(Engine.EQUAL);
-      engine.setStencilFunctionReference(1);
-      engine.setStencilOperationPass(Engine.KEEP);
-    });
-
-    this.transducerMeshHidden.onBeforeRenderObservable.add(() => {
-      // Set stencil test negative, disable depth test
-      engine.setDepthFunction(Engine.ALWAYS);
-      engine.setStencilFunction(Engine.NOTEQUAL);
-      engine.setStencilFunctionReference(1);
-      engine.setStencilOperationPass(Engine.KEEP);
-    });
-
-
 
     const actionManager = new ActionManager(scene);
     this.transducerMesh.actionManager = actionManager;
