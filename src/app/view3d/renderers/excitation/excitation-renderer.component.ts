@@ -54,7 +54,6 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
   ngOnChanges(changes: SimpleChanges): void {
     if (this.transducerMaterial) {
       this.uploadArrayConfig(this.transducers, this.selection);
-
     }
   }
   
@@ -65,7 +64,7 @@ export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
     this.transducerMaterial.stencil.funcRef = 1;
     this.transducerMaterial.stencil.func = Engine.EQUAL;
     this.transducerMaterial.stencil.opStencilDepthPass = Engine.KEEP;
-    this.transducerMaterial.setFloat('innerRadius', 0.45);
+    this.transducerMaterial.setFloat('innerRadius', 0.85);
 
     this.transducerMaterialHidden = new TransducerMaterial(scene);
     this.transducerMaterialHidden.depthFunction = Engine.ALWAYS;

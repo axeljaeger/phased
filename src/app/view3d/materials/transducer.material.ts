@@ -43,13 +43,15 @@ const transducerFragmentShaderCode = glsl`
   uniform float transducerDiameter;
 
   uniform float innerRadius;
-  void main(void) {
-    float len = length(vUV - vec2(.5,.5));
-    if (step(0.5, len) + step(len, innerRadius) > 0.0) {
-        discard;
-    }
 
-    gl_FragColor = vec4(0.5*(1.0 + sin(globalPhase)), vSelected, 0.5*(1.0 - sin(globalPhase)),1);
+  // based on https://www.desultoryquest.com/blog/drawing-anti-aliased-circular-points-using-opengl-slash-webgl/
+  void main(void) {
+    float r = 0.0, delta = 0.0, alpha = 1.0;
+    vec2 cxy = 2.0 * vUV - 1.0;
+    r = dot(cxy, cxy);
+    delta = fwidth(r);
+    alpha = smoothstep(innerRadius - delta, innerRadius + delta, r) - smoothstep(1.0 - delta, 1.0 + delta, r);
+    gl_FragColor = vec4(0.5*(1.0 + sin(globalPhase)), vSelected, 0.5*(1.0 - sin(globalPhase)), alpha);
   }
 `;
 
@@ -75,7 +77,8 @@ export class TransducerMaterial extends ShaderMaterial {
           "parameter",
           "transducerDiameter",
           "innerRadius"
-        ]
+        ],
+        needAlphaBlending: true,
       }
     );
     this.backFaceCulling = false;
