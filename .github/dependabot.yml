@@ -22,3 +22,6 @@ updates:
       babylonjs:
         patterns:
             - "@babylonjs/*"
+      eslint:
+        patterns:
+            - "@typescript-eslint/*"
