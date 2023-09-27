@@ -22,6 +22,7 @@ import { environmentFeature } from 'src/app/store/environment.state';
 import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
 import { ArrayConfigActions, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
 import { map } from 'rxjs';
+import { Vector2 } from '@babylonjs/core';
 
 
 @Component({
@@ -75,6 +76,10 @@ export class View3dComponent {
 
   public setPitchX(pitch: number): void {
     this.store.dispatch(ArrayConfigActions.setPitchX({ pitch }));
+  }
+
+  public setScale(scale: Vector2): void {
+    this.store.dispatch(ArrayConfigActions.scaleArray({scale}));
   }
 
   public setPitchY(pitch: number): void {
