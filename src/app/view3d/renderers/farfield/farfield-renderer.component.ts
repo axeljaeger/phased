@@ -12,7 +12,7 @@ import { Scene } from '@babylonjs/core/scene';
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { FarfieldMaterial } from '../../materials/farfield.material';
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
-import { OnTransducerBufferCreated, Textures } from '../../shared/transducer-buffer.component';
+import { Textures, TransducerBufferConsumer } from '../../shared/transducer-buffer.component';
 import { Transducer } from 'src/app/store/arrayConfig.state';
 import { Engine } from '@babylonjs/core/Engines/engine';
 
@@ -29,11 +29,12 @@ const uvMesh: VertexData = (() => {
 
 @Component({
     selector: 'app-farfield-renderer',
-    template: '<ng-content></ng-content>',
+    template: '<ng-content/>',
     standalone: true,
+    providers: [{provide: TransducerBufferConsumer, useExisting: FarfieldRendererComponent}],
 })
-export class FarfieldRendererComponent
-  implements OnChanges, OnDestroy, OnTransducerBufferCreated
+export class FarfieldRendererComponent extends TransducerBufferConsumer
+  implements OnChanges, OnDestroy
 {
   @Input() transducers: Array<Transducer> | null = null;
   @Input() environment: number | null = null;

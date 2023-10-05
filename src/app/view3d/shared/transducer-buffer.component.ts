@@ -6,6 +6,7 @@ import {
   OnDestroy,
   QueryList,
   SimpleChanges,
+  forwardRef,
 } from '@angular/core';
 
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
@@ -16,7 +17,7 @@ import {
   setExcitationElement,
 } from '../../utils/excitationbuffer';
 import { VEC4_ELEMENT_COUNT } from '../../utils/webgl.utils';
-import { OnSceneCreated } from '../interfaces/lifecycle';
+import { BabylonConsumer } from '../interfaces/lifecycle';
 import { map, pairwise, startWith, tap } from 'rxjs/operators';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { Beamforming } from 'src/app/store/beamforming.state';
@@ -35,6 +36,10 @@ export interface OnTransducerBufferCreated {
   ): void;
 }
 
+export abstract class TransducerBufferConsumer implements OnTransducerBufferCreated {
+  abstract ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer, textures: Textures): void;
+}
+
 export const implementsOnTransducerBufferCreated = (
   candidate: unknown
 ): candidate is OnTransducerBufferCreated =>
@@ -50,17 +55,18 @@ const diff = (previous: Array<any>, next: Array<any>) =>
 
 @Component({
   selector: 'app-transducer-buffer',
-  template: '<ng-content></ng-content>',
+  template: '<ng-content/>',
   standalone: true,
+  providers: [{provide: BabylonConsumer, useExisting: forwardRef(() => TransducerBufferComponent)}],
 })
-export class TransducerBufferComponent
-  implements OnChanges, OnDestroy, OnSceneCreated {
+export class TransducerBufferComponent extends BabylonConsumer
+  implements OnChanges, OnDestroy {
   @Input() transducers: Array<Transducer> | null;
   @Input() beamforming: Beamforming | null;
   @Input() k: number | null;
 
-  @ContentChildren('transducerBufferConsumer')
-  consumers: QueryList<any>;
+  @ContentChildren(TransducerBufferConsumer)
+  consumers: QueryList<TransducerBufferConsumer>;
 
   private uniformExcitationBuffer: UniformBuffer;
   private textures: Textures;

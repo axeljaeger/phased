@@ -30,7 +30,7 @@ export default {
 export const Empty: StoryObj<ExcitationRendererComponent> = {
   render: (args) => ({
     props: args,
-    template: `<app-excitation-renderer #renderer [transducers]=transducers></app-excitation-renderer>`,
+    template: `<app-excitation-renderer [transducers]=transducers></app-excitation-renderer>`,
   }),
 };
 
