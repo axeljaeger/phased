@@ -9,7 +9,7 @@ import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Scene } from '@babylonjs/core/scene';
-import { OnTransducerBufferCreated, Textures } from '../../shared/transducer-buffer.component';
+import { Textures, TransducerBufferConsumer } from '../../shared/transducer-buffer.component';
 import { Transducer } from 'src/app/store/arrayConfig.state';
 import { Engine } from '@babylonjs/core/Engines/engine';
 
@@ -17,9 +17,10 @@ import { Engine } from '@babylonjs/core/Engines/engine';
     selector: 'app-rayleigh-integral-renderer',
     template: '<ng-content></ng-content>',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true
+    standalone: true,
+    providers: [{provide: TransducerBufferConsumer, useExisting: RayleighIntegralRendererComponent}],
 })
-export class RayleighIntegralRendererComponent implements OnChanges, OnDestroy, OnTransducerBufferCreated {
+export class RayleighIntegralRendererComponent extends TransducerBufferConsumer implements OnChanges, OnDestroy {
   // Should no longer be needed or changed to a number.
   @Input() transducers : Array<Transducer> | null = null;
 

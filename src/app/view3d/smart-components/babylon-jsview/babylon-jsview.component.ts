@@ -22,7 +22,7 @@ import { Scene } from '@babylonjs/core/scene';
 import { excitationBufferInclude } from '../../../utils/excitationbuffer';
 
 import { NullEngine } from '@babylonjs/core/Engines/nullEngine';
-import { implementsOnSceneCreated } from '../../interfaces/lifecycle';
+import { BabylonConsumer, implementsOnSceneCreated } from '../../interfaces/lifecycle';
 
 @Component({
   selector: 'app-babylon-jsview',
@@ -38,8 +38,8 @@ export class BabylonJSViewComponent
   @ViewChild('view3dcanvas', { static: false })
   canvasRef: ElementRef<HTMLCanvasElement>;
 
-  @ContentChildren('renderer')
-  renderers: QueryList<any>;
+  @ContentChildren(BabylonConsumer)
+  renderers: QueryList<BabylonConsumer>;
 
   engine: Engine;
   public scene: Scene;

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, forwardRef } from '@angular/core';
 
 import { TransducerMaterial } from '../../materials/transducer.material';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
@@ -16,7 +16,7 @@ import '@babylonjs/core/Meshes/thinInstanceMesh';
 import { SelectionState } from 'src/app/store/selection.state';
 import { Scene } from '@babylonjs/core/scene';
 import { CreateIcoSphere } from '@babylonjs/core/Meshes/Builders/icoSphereBuilder';
-import { OnSceneCreated } from '../../interfaces/lifecycle';
+import { BabylonConsumer } from '../../interfaces/lifecycle';
 import { Transducer } from 'src/app/store/arrayConfig.state';
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { PositionGizmo } from '@babylonjs/core/Gizmos/positionGizmo';
@@ -24,11 +24,12 @@ import { PointerDragBehavior } from '@babylonjs/core/Behaviors/Meshes/pointerDra
 
 @Component({
     selector: 'app-excitation-renderer',
-    template: '<ng-content></ng-content>',
+    template: '<ng-content/>',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true
+    standalone: true,
+    providers: [{provide: BabylonConsumer, useExisting: forwardRef(() => ExcitationRendererComponent)}],
 })
-export class ExcitationRendererComponent implements OnChanges, OnSceneCreated {
+export class ExcitationRendererComponent extends BabylonConsumer implements OnChanges {
   @Input() transducers : Array<Transducer> | null = null;
   @Input() selection : SelectionState | null = null;
 

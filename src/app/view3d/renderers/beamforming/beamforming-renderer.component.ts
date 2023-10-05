@@ -1,19 +1,21 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, forwardRef } from '@angular/core';
 
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 
 import { Scene } from '@babylonjs/core/scene';
 import { CreateIcoSphere } from '@babylonjs/core/Meshes/Builders/icoSphereBuilder';
-import { OnSceneCreated } from '../../interfaces/lifecycle';
+import { BabylonConsumer } from '../../interfaces/lifecycle';
 import { RotationGizmo } from '@babylonjs/core';
 
 @Component({
     selector: 'app-beamforming-renderer',
-    template: '<ng-content></ng-content>',
+    template: '<ng-content/>',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: true
+    standalone: true,
+    providers: [{provide: BabylonConsumer, useExisting: forwardRef(() => BeamformingRendererComponent)}],
+
 })
-export class BeamformingRendererComponent implements OnSceneCreated {
+export class BeamformingRendererComponent extends BabylonConsumer {
   @Output() az = new EventEmitter<number>();
   @Output() el = new EventEmitter<number>();
   
