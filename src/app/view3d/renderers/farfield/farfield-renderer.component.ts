@@ -51,9 +51,6 @@ export class FarfieldRendererComponent extends TransducerBufferConsumer
 
   ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer, textures: Textures): void {
     this.material = new FarfieldMaterial(scene);
-    this.material.onCompiled = () => {
-      scene.render();
-    };
     this.material.setTexture('viridisSampler', textures.viridis);
     this.material.stencil.enabled = true;
     this.material.stencil.funcRef = 1;

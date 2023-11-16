@@ -15,7 +15,7 @@ import { Engine } from '@babylonjs/core/Engines/engine';
 
 @Component({
     selector: 'app-rayleigh-integral-renderer',
-    template: '<ng-content></ng-content>',
+    template: '<ng-content/>',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     providers: [{provide: TransducerBufferConsumer, useExisting: RayleighIntegralRendererComponent}],
@@ -36,9 +36,6 @@ export class RayleighIntegralRendererComponent extends TransducerBufferConsumer 
     const engine = scene.getEngine();
     // Result
     this.material = new RayleighMaterial(scene);
-    this.material.onCompiled = () => {
-      scene.render();
-    };
     this.material.setTexture('coolwarmSampler', textures.coolwarm);
     this.material.stencil.enabled = true;
     this.material.stencil.funcRef = 1;
