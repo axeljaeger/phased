@@ -29,7 +29,7 @@ bootstrapApplication(AppComponent, {
         provideStoreDevtools({
             maxAge: 25,
             logOnly: environment.production, // Restrict extension to log-only mode
-        , connectInZone: true}),
+         connectInZone: true}),
         provideAnimations()
     ]
 })
