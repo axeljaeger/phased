@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { RxState } from '@rx-angular/state';
 import { FarfieldRendererComponent } from '../../renderers/farfield/farfield-renderer.component';
 import { RayleighIntegralRendererComponent } from '../../renderers/rayleigh-integral/rayleigh-renderer.component';
-import { NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { TransducerBufferComponent } from '../../shared/transducer-buffer.component';
 import { ExcitationRendererComponent } from '../../renderers/excitation/excitation-renderer.component';
 import { BabylonJSViewComponent } from '../babylon-jsview/babylon-jsview.component';
@@ -38,11 +38,10 @@ import { Vector2 } from '@babylonjs/core';
     BeamformingRendererComponent,
     ExcitationRendererComponent,
     TransducerBufferComponent,
-    NgIf,
     RayleighIntegralRendererComponent,
     FarfieldRendererComponent,
-    AsyncPipe,
-  ],
+    AsyncPipe
+],
 })
 export class View3dComponent {
   title = 'Air coupled Ultrasound Array';
