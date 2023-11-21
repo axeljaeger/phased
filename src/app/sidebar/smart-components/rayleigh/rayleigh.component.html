@@ -1,16 +1,17 @@
 <mat-expansion-panel hideToggle>
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-            Rayleigh integral 
-        </mat-panel-title>
-        <mat-icon *ngIf="(rayleighVisible$ | async) === false"  aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off"></mat-icon>
-    </mat-expansion-panel-header>
-    <mat-checkbox [formControl]="rayleighVisible">Visible</mat-checkbox>
-    <mat-divider></mat-divider>
-    <mat-radio-group aria-label="Select an option" class="example-radio-group" [formControl]="rayleighAspect">
-        <mat-radio-button [value]="ResultAspect.Elongation" class="example-radio-button">Elongation</mat-radio-button>
-        <mat-radio-button [value]="ResultAspect.Amplitude" class="example-radio-button">Amplitude</mat-radio-button>
-        <mat-radio-button [value]="ResultAspect.Phase" class="example-radio-button">Phase</mat-radio-button>
-    </mat-radio-group>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Rayleigh integral
+    </mat-panel-title>
+    @if ((rayleighVisible$ | async) === false) {
+      <mat-icon  aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off"></mat-icon>
+    }
+  </mat-expansion-panel-header>
+  <mat-checkbox [formControl]="rayleighVisible">Visible</mat-checkbox>
+  <mat-divider></mat-divider>
+  <mat-radio-group aria-label="Select an option" class="example-radio-group" [formControl]="rayleighAspect">
+    <mat-radio-button [value]="ResultAspect.Elongation" class="example-radio-button">Elongation</mat-radio-button>
+    <mat-radio-button [value]="ResultAspect.Amplitude" class="example-radio-button">Amplitude</mat-radio-button>
+    <mat-radio-button [value]="ResultAspect.Phase" class="example-radio-button">Phase</mat-radio-button>
+  </mat-radio-group>
 </mat-expansion-panel>
-

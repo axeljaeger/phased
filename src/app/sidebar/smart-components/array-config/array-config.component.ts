@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from '../../../store/arrayConfig.state'
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -16,7 +16,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     templateUrl: './array-config.component.html',
     styleUrls: ['./array-config.component.css'],
     standalone: true,
-    imports: [MatExpansionModule, ReactiveFormsModule, MatButtonToggleModule, MatIconModule, NgSwitch, NgSwitchCase, NgSwitchDefault, MatFormFieldModule, MatInputModule]
+    imports: [MatExpansionModule, ReactiveFormsModule, MatButtonToggleModule, MatIconModule, MatFormFieldModule, MatInputModule]
 })
 export class ArrayConfigComponent implements OnInit {
   public arrayConfig: any;

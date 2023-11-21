@@ -7,7 +7,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Results, ViewportFeature, setResultVisible } from 'src/app/store/viewportConfig.state';
 import { setResultAspect } from 'src/app/store/rayleigh.state';
@@ -17,7 +17,7 @@ import { setResultAspect } from 'src/app/store/rayleigh.state';
     templateUrl: './rayleigh.component.html',
     styleUrls: ['./rayleigh.component.css'],
     standalone: true,
-    imports: [MatExpansionModule, NgIf, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatRadioModule, AsyncPipe]
+    imports: [MatExpansionModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatRadioModule, AsyncPipe]
 })
 export class RayleighComponent implements OnInit {
   public rayleighVisible$ = this.store.select(ViewportFeature.selectResultEnabled(Results.RayleighIntegral));

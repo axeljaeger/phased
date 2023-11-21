@@ -7,7 +7,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Results, ViewportFeature, setResultVisible } from 'src/app/store/viewportConfig.state';
 
@@ -16,7 +16,7 @@ import { Results, ViewportFeature, setResultVisible } from 'src/app/store/viewpo
     templateUrl: './farfield.component.html',
     styleUrls: ['./farfield.component.css'],
     standalone: true,
-    imports: [MatExpansionModule, NgIf, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatSliderModule, AsyncPipe]
+    imports: [MatExpansionModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatSliderModule, AsyncPipe]
 })
 export class FarfieldComponent implements OnInit {
   public farfieldVisible$ = this.store.select(ViewportFeature.selectResultEnabled(Results.Farfield));
