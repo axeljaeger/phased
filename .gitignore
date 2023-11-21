@@ -55,3 +55,6 @@ storybook-static/*
 /test-results/
 /playwright-report/
 /dist-pw/
+
+# NX
+.nx/*
