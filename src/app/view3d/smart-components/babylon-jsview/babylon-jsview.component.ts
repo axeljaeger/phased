@@ -23,6 +23,7 @@ import { excitationBufferInclude } from '../../../utils/excitationbuffer';
 
 import { NullEngine } from '@babylonjs/core/Engines/nullEngine';
 import { BabylonConsumer, implementsOnSceneCreated } from '../../interfaces/lifecycle';
+import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine';
 
 @Component({
   selector: 'app-babylon-jsview',
@@ -35,13 +36,13 @@ import { BabylonConsumer, implementsOnSceneCreated } from '../../interfaces/life
 export class BabylonJSViewComponent
   implements AfterViewChecked, AfterViewInit, AfterContentChecked
 {
-  @ViewChild('view3dcanvas', { static: false })
+  @ViewChild('view3dcanvas', { static: true })
   canvasRef: ElementRef<HTMLCanvasElement>;
 
   @ContentChildren(BabylonConsumer)
   renderers: QueryList<BabylonConsumer>;
 
-  engine: Engine;
+  engine: WebGPUEngine | NullEngine;
   public scene: Scene;
   camera: ArcRotateCamera;
 
@@ -52,7 +53,9 @@ export class BabylonJSViewComponent
   ngAfterContentChecked(): void {
     this.ngZone.runOutsideAngular(() => {
       if (this.scene) {
+        this.engine.beginFrame();
         this.scene.render();
+        this.engine.endFrame();
       }
     });
   }
@@ -60,7 +63,9 @@ export class BabylonJSViewComponent
   ngAfterViewChecked(): void {
     this.ngZone.runOutsideAngular(() => {
       if (this.scene) {
+        this.engine.beginFrame();
         this.scene.render();
+        this.engine.endFrame();
       }
     });
   }
@@ -70,11 +75,11 @@ export class BabylonJSViewComponent
     const rect = this.elRef.nativeElement.getBoundingClientRect();
     this.canvasRef.nativeElement.width = rect.width;
     this.canvasRef.nativeElement.height = rect.height;
-    this.engine.resize();
+    this.engine.resize(true);
   }
 
   async ngAfterViewInit(): Promise<void> {
-    this.initEngine(this.canvasRef);
+    await this.initEngine(this.canvasRef);
     await Promise.all(
       this.renderers.map((renderer) =>
         implementsOnSceneCreated(renderer)
@@ -82,15 +87,19 @@ export class BabylonJSViewComponent
           : Promise.resolve()
       )
     );
+    this.engine.beginFrame();
     this.scene.render();
+    this.engine.endFrame();
   }
 
-  initEngine(canvas: ElementRef<HTMLCanvasElement>) {
-    this.ngZone.runOutsideAngular(() => {
-      if (window.WebGLRenderingContext) {
-        this.engine = new Engine(canvas.nativeElement, true);
-        this.engine.setStencilBuffer(true);
-        this.engine.setStencilMask(0xff);
+  async initEngine(canvas: ElementRef<HTMLCanvasElement>) {
+    await this.ngZone.runOutsideAngular(async () => {
+      if (window.WebGLRenderingContext) {        
+        this.engine = new WebGPUEngine(canvas.nativeElement);
+        await this.engine.initAsync();
+       
+        // this.engine.setStencilBuffer(true);
+        // this.engine.setStencilMask(0xff);
       } else {
         this.engine = new NullEngine();
       }
