@@ -38,7 +38,6 @@ const transducerFragmentShaderCode = glsl`
   varying vec2 vUV;
   varying float vSelected;
 
-  uniform sampler2D textureSampler;
   uniform float globalPhase;
   uniform float transducerDiameter;
 
