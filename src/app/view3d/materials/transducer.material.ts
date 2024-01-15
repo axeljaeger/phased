@@ -3,54 +3,49 @@ import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
 
 import '@babylonjs/core/Shaders/ShadersInclude/instancesDeclaration'
 import '@babylonjs/core/Shaders/ShadersInclude/instancesVertex'
+import { ShaderLanguage } from '@babylonjs/core/Materials/shaderLanguage';
 
 const glsl = (x: TemplateStringsArray) => x;
 
-const transducerVertexShaderCode = glsl`
-  precision highp float;
-
-  // Attributes
-  attribute vec3 position;
-  attribute vec2 uv;
-  attribute float selected;
-
+const transducerVertexShaderCode = `
+  #include<sceneUboDeclaration>
+  #include<meshUboDeclaration>
   #include<instancesDeclaration>
 
-  // Uniforms
-  uniform mat4 worldViewProjection;
+  attribute position : vec3<f32>;
+  attribute uv : vec2<f32>;
+  attribute selected : f32;
 
-  // Varying
-  varying vec2 vUV;
-  varying float vSelected;
+  varying vUV : vec2<f32>;
+  varying vSelected : f32;
 
-
-  void main(void) {
+  @vertex
+  fn main(input : VertexInputs) -> FragmentInputs {
   #include<instancesVertex>
-    gl_Position = worldViewProjection * finalWorld* vec4(position, 1.0);
-    vUV = uv;
-    vSelected = selected;
+    vertexOutputs.position = scene.viewProjection * finalWorld * vec4<f32>(vertexInputs.position, 1.0);
+    vertexOutputs.vUV = vertexInputs.uv;
+    vertexOutputs.vSelected = vertexInputs.selected;
   }
 `;
 
-const transducerFragmentShaderCode = glsl`
-  precision highp float;
+const transducerFragmentShaderCode = `
+  varying vUV : vec2<f32>;
+  varying vSelected : f32;
 
-  varying vec2 vUV;
-  varying float vSelected;
+  uniform globalPhase : f32;
+  uniform transducerDiameter : f32;
 
-  uniform float globalPhase;
-  uniform float transducerDiameter;
-
-  uniform float innerRadius;
+  uniform innerRadius : f32;
 
   // based on https://www.desultoryquest.com/blog/drawing-anti-aliased-circular-points-using-opengl-slash-webgl/
-  void main(void) {
-    float r = 0.0, delta = 0.0, alpha = 1.0;
-    vec2 cxy = 2.0 * vUV - 1.0;
-    r = dot(cxy, cxy);
-    delta = fwidth(r);
-    alpha = smoothstep(innerRadius - delta, innerRadius + delta, r) - smoothstep(1.0 - delta, 1.0 + delta, r);
-    gl_FragColor = vec4(0.5*(1.0 + sin(globalPhase)), vSelected, 0.5*(1.0 - sin(globalPhase)), alpha);
+  @fragment
+  fn main(input : FragmentInputs) -> FragmentOutputs {
+    
+    let cxy : vec2<f32> = 2.0 * fragmentInputs.vUV - 1.0;
+    let r : f32 = dot(cxy, cxy);
+    let delta : f32 = fwidth(r);
+    let alpha : f32 = smoothstep(uniforms.innerRadius - delta, uniforms.innerRadius + delta, r) - smoothstep(1.0 - delta, 1.0 + delta, r);
+    fragmentOutputs.color = vec4<f32>(0.5*(1.0 + sin(uniforms.globalPhase)), fragmentInputs.vSelected, 0.5*(1.0 - sin(uniforms.globalPhase)), alpha);
   }
 `;
 
@@ -68,16 +63,13 @@ export class TransducerMaterial extends ShaderMaterial {
           "selected"
         ],
         uniforms: [
-          "world",
-          "worldView",
-          "worldViewProjection",
-          "view",
-          "projection",
           "parameter",
           "transducerDiameter",
           "innerRadius"
         ],
+        uniformBuffers: ["Scene", "Mesh"],
         needAlphaBlending: true,
+        shaderLanguage: ShaderLanguage.WGSL,
       }
     );
     this.backFaceCulling = false;
