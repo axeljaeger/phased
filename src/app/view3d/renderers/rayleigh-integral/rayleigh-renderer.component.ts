@@ -4,7 +4,6 @@ import { Plane } from '@babylonjs/core/Maths/math.plane';
 import { CreatePlane } from '@babylonjs/core/Meshes/Builders/planeBuilder';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { RayleighMaterial } from '../../materials/rayleigh.material';
-import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
@@ -33,15 +32,20 @@ export class RayleighIntegralRendererComponent extends TransducerBufferConsumer 
   private plane : Mesh;
 
   ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer, textures : Textures): void {
-    const engine = scene.getEngine();
     // Result
-    this.material = new RayleighMaterial(scene);
-    this.material.setTexture('coolwarmSampler', textures.coolwarm);
+    this.material = new RayleighMaterial(scene, textures.coolwarm);
+
+    // this.material.onBind = (mesh: AbstractMesh) => {
+    
+    this.material.setUniformBuffer('excitation', buffer);      
+  // };
+
+ 
+
     this.material.stencil.enabled = true;
     this.material.stencil.funcRef = 1;
     this.material.stencil.func = Engine.ALWAYS;
     this.material.stencil.opStencilDepthPass = Engine.REPLACE;
-
 
     // Setup Aperture
     const origin = new Vector3(0, 0, 0);
@@ -60,12 +64,6 @@ export class RayleighIntegralRendererComponent extends TransducerBufferConsumer 
     this.plane.bakeCurrentTransformIntoVertices();
     this.plane.isPickable = false;
     this.plane.renderingGroupId = 1;
-
-    this.material.onBind = (mesh: AbstractMesh) => {
-        this.material
-        .getEffect()
-        .bindUniformBuffer(buffer.getBuffer()!, 'excitation');      
-    };
 
     this.material.setFloat('dynamicRange', 10);
     this.material.setResultAspect(this.aspect);

@@ -10,10 +10,11 @@
         <app-rayleigh-integral-renderer
           [transducers]="shared.transducers" [environment]="shared.environment" [aspect]="rayleighAspect$ | async" />
       }
+      
       @if (farfieldEnabled$ | async) {
         <app-farfield-renderer [transducers]="shared.transducers"
           [environment]="shared.environment" />
       }
-      <ng-content/>
-    </app-transducer-buffer>
+    </app-transducer-buffer> 
+    <ng-content/>
   </app-babylon-jsview>

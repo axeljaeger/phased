@@ -1,5 +1,4 @@
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
-import { glsl } from './webgl.utils';
 
 export const excitationBufferMaxElements = 256;
 export const excitationBufferMaxElementsDefine = `#define MAX_ELEMENTS ${excitationBufferMaxElements}`;
@@ -13,16 +12,17 @@ export interface ExcitationElement {
 
 // Think about using tagged template to directly replace
 // the MAX_ELEMENTS. But need extension of glsl tag function.
-export const excitationBufferInclude = glsl`
+export const excitationBufferInclude = /* wgsl */`
   struct ExcitationElement { // size per element: 8
-    vec4 position; // offset 0
-    vec4 phasor; // 0: amplitude, 1: area, 2: delay, 3: dummy // Offset  16
+    position : vec4<f32>, // offset 0
+    phasor : vec4<f32>, // 0: amplitude, 1: area, 2: delay, 3: dummy // Offset  16
   };
 
-  layout(std140) uniform ExcitationBuffer
-  {
-    ExcitationElement elements[MAX_ELEMENTS];
-  } excitation;
+  struct ExcitationBuffer { 
+    elements: array<ExcitationElement, 256>,
+  };
+
+  var<uniform> excitation: ExcitationBuffer;
 `;
 
 export function createExcitationBuffer() {

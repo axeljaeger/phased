@@ -1,13 +1,13 @@
 import {
   AfterContentChecked,
   AfterViewChecked,
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ContentChildren,
   ElementRef,
   HostListener,
   NgZone,
+  OnInit,
   QueryList,
   ViewChild,
 } from '@angular/core';
@@ -16,13 +16,14 @@ import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
-import { Effect } from '@babylonjs/core/Materials/effect';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Scene } from '@babylonjs/core/scene';
 import { excitationBufferInclude } from '../../../utils/excitationbuffer';
 
 import { NullEngine } from '@babylonjs/core/Engines/nullEngine';
 import { BabylonConsumer, implementsOnSceneCreated } from '../../interfaces/lifecycle';
+import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine';
+import { ShaderStore } from '@babylonjs/core/Engines/shaderStore';
 
 @Component({
   selector: 'app-babylon-jsview',
@@ -33,15 +34,15 @@ import { BabylonConsumer, implementsOnSceneCreated } from '../../interfaces/life
   standalone: true,
 })
 export class BabylonJSViewComponent
-  implements AfterViewChecked, AfterViewInit, AfterContentChecked
+  implements AfterViewChecked, OnInit, AfterContentChecked
 {
-  @ViewChild('view3dcanvas', { static: false })
+  @ViewChild('view3dcanvas', { static: true })
   canvasRef: ElementRef<HTMLCanvasElement>;
 
   @ContentChildren(BabylonConsumer)
   renderers: QueryList<BabylonConsumer>;
 
-  engine: Engine;
+  engine: WebGPUEngine | NullEngine;
   public scene: Scene;
   camera: ArcRotateCamera;
 
@@ -52,7 +53,9 @@ export class BabylonJSViewComponent
   ngAfterContentChecked(): void {
     this.ngZone.runOutsideAngular(() => {
       if (this.scene) {
+        this.engine.beginFrame();
         this.scene.render();
+        this.engine.endFrame();
       }
     });
   }
@@ -60,7 +63,9 @@ export class BabylonJSViewComponent
   ngAfterViewChecked(): void {
     this.ngZone.runOutsideAngular(() => {
       if (this.scene) {
+        this.engine.beginFrame();
         this.scene.render();
+        this.engine.endFrame();
       }
     });
   }
@@ -70,11 +75,11 @@ export class BabylonJSViewComponent
     const rect = this.elRef.nativeElement.getBoundingClientRect();
     this.canvasRef.nativeElement.width = rect.width;
     this.canvasRef.nativeElement.height = rect.height;
-    this.engine.resize();
+    this.engine.resize(true);
   }
 
-  async ngAfterViewInit(): Promise<void> {
-    this.initEngine(this.canvasRef);
+  async ngOnInit(): Promise<void> {
+    await this.initEngine(this.canvasRef);
     await Promise.all(
       this.renderers.map((renderer) =>
         implementsOnSceneCreated(renderer)
@@ -82,15 +87,19 @@ export class BabylonJSViewComponent
           : Promise.resolve()
       )
     );
+    this.engine.beginFrame();
     this.scene.render();
+    this.engine.endFrame();
   }
 
-  initEngine(canvas: ElementRef<HTMLCanvasElement>) {
-    this.ngZone.runOutsideAngular(() => {
-      if (window.WebGLRenderingContext) {
-        this.engine = new Engine(canvas.nativeElement, true);
-        this.engine.setStencilBuffer(true);
-        this.engine.setStencilMask(0xff);
+  async initEngine(canvas: ElementRef<HTMLCanvasElement>) {
+    await this.ngZone.runOutsideAngular(async () => {
+      if (window.WebGLRenderingContext) {        
+        this.engine = new WebGPUEngine(canvas.nativeElement);
+        await this.engine.initAsync();
+       
+        // this.engine.setStencilBuffer(true);
+        // this.engine.setStencilMask(0xff);
       } else {
         this.engine = new NullEngine();
       }
@@ -143,7 +152,7 @@ export class BabylonJSViewComponent
   }
 
   createScene(canvas: ElementRef<HTMLCanvasElement>) {
-    Effect.IncludesShadersStore['ExcitationBuffer'] =
+    ShaderStore.IncludesShadersStoreWGSL['ExcitationBuffer'] =
       excitationBufferInclude as unknown as string;
 
     let scene = new Scene(this.engine);
@@ -162,7 +171,11 @@ export class BabylonJSViewComponent
     this.camera.wheelDeltaPercentage = 0.1;
     this.camera.zoomToMouseLocation = true;
 
-    this.camera.onViewMatrixChangedObservable.add(() => scene.render());
+    this.camera.onViewMatrixChangedObservable.add(() => { 
+      this.engine.beginFrame();
+      scene.render();
+      this.engine.endFrame();
+    });
 
     let light = new HemisphericLight('light1', new Vector3(0, 1, 0), scene);
 
