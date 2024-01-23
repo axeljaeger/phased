@@ -1,13 +1,13 @@
 import {
   AfterContentChecked,
   AfterViewChecked,
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ContentChildren,
   ElementRef,
   HostListener,
   NgZone,
+  OnInit,
   QueryList,
   ViewChild,
 } from '@angular/core';
@@ -16,7 +16,6 @@ import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
-import { Effect } from '@babylonjs/core/Materials/effect';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Scene } from '@babylonjs/core/scene';
 import { excitationBufferInclude } from '../../../utils/excitationbuffer';
@@ -24,6 +23,7 @@ import { excitationBufferInclude } from '../../../utils/excitationbuffer';
 import { NullEngine } from '@babylonjs/core/Engines/nullEngine';
 import { BabylonConsumer, implementsOnSceneCreated } from '../../interfaces/lifecycle';
 import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine';
+import { ShaderStore } from '@babylonjs/core/Engines/shaderStore';
 
 @Component({
   selector: 'app-babylon-jsview',
@@ -34,7 +34,7 @@ import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine';
   standalone: true,
 })
 export class BabylonJSViewComponent
-  implements AfterViewChecked, AfterViewInit, AfterContentChecked
+  implements AfterViewChecked, OnInit, AfterContentChecked
 {
   @ViewChild('view3dcanvas', { static: true })
   canvasRef: ElementRef<HTMLCanvasElement>;
@@ -78,7 +78,7 @@ export class BabylonJSViewComponent
     this.engine.resize(true);
   }
 
-  async ngAfterViewInit(): Promise<void> {
+  async ngOnInit(): Promise<void> {
     await this.initEngine(this.canvasRef);
     await Promise.all(
       this.renderers.map((renderer) =>
@@ -152,7 +152,7 @@ export class BabylonJSViewComponent
   }
 
   createScene(canvas: ElementRef<HTMLCanvasElement>) {
-    Effect.IncludesShadersStore['ExcitationBuffer'] =
+    ShaderStore.IncludesShadersStoreWGSL['ExcitationBuffer'] =
       excitationBufferInclude as unknown as string;
 
     let scene = new Scene(this.engine);
@@ -171,7 +171,11 @@ export class BabylonJSViewComponent
     this.camera.wheelDeltaPercentage = 0.1;
     this.camera.zoomToMouseLocation = true;
 
-    this.camera.onViewMatrixChangedObservable.add(() => scene.render());
+    this.camera.onViewMatrixChangedObservable.add(() => { 
+      this.engine.beginFrame();
+      scene.render();
+      this.engine.endFrame();
+    });
 
     let light = new HemisphericLight('light1', new Vector3(0, 1, 0), scene);
 

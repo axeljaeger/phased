@@ -1,74 +1,77 @@
 import { Scene } from '@babylonjs/core/scene';
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
-
-import { glsl } from '../../utils/webgl.utils';
+import { Engine } from '@babylonjs/core/Engines/engine';
 import { excitationBufferMaxElementsDefine } from '../../utils/excitationbuffer';
+import { ShaderLanguage } from '@babylonjs/core/Materials/shaderLanguage';
 
-const rayleighVertexShaderCode = glsl`
-  precision highp float;
+import { TextureSampler } from '@babylonjs/core/Materials/Textures/textureSampler';
+import { Constants } from '@babylonjs/core/Engines/constants';
+import { BaseTexture } from '@babylonjs/core';
 
-  // Uniforms
-  uniform mat4 worldViewProjection;
+const rayleighVertexShaderCode = /* wgsl*/ `
+  #include<sceneUboDeclaration>
+  #include<meshUboDeclaration>
 
-  // Attributes
-  attribute vec3 position;
+  uniform worldViewProjection : mat4x4<f32>;
 
-  // Varying
-  out highp vec3 r;
+  attribute position : vec3<f32>;
+  
+  varying r : vec3<f32>;
 
-  void main(void) {
-    gl_Position = worldViewProjection * vec4(position, 1.0);
-    r = position;
+  @vertex
+  fn main(input : VertexInputs) -> FragmentInputs {
+    vertexOutputs.position = uniforms.worldViewProjection * vec4(vertexInputs.position, 1.0);
+    vertexOutputs.r = vertexInputs.position;
   }
 `;
-const rayleighFragmentShaderCode = glsl`
-  precision highp float;
+const rayleighFragmentShaderCode = /* wgsl*/`
   #include<ExcitationBuffer>
 
-  uniform sampler2D coolwarmSampler;
-  uniform float globalPhase;
+  var coolwarmSampler : sampler;
+  var coolwarmTexture : texture_2d<f32>;
+  uniform globalPhase : f32;
 
-  uniform float k;
-  uniform float t;
-  uniform float omega;
+  uniform k : f32;
+  uniform t : f32;
+  uniform omega : f32;
 
-  uniform int viewmode;
-  uniform float dynamicRange;
+  uniform viewmode : i32;
+  uniform dynamicRange : f32;
 
-  uniform int numElements;
+  uniform numElements : i32;
 
-  in highp vec3 r;
+  varying r : vec3<f32>;
 
-  void main(void) {
-    vec2 elongation = vec2(0,0); // Complex number
+  @fragment
+  fn main(input : FragmentInputs) -> FragmentOutputs {
+    var elongation : vec2<f32> = vec2<f32>(0.0,0.0); // Complex number
 
-    for (int j = 0; j < numElements; ++j) {
-      ExcitationElement elm = excitation.elements[j];
-      float d = distance(elm.position.xyz, r);
-      float oodd = pow(d,-2.0);
+    for (var j = 0; j < uniforms.numElements; j++) {
+      let elm = excitation.elements[j];
+      let d = distance(elm.position.xyz, fragmentInputs.r);
+      let oodd = pow(d,-2.0);
 
-      float amplitude = 1.0;
-      float area = elm.phasor.y;
+      let amplitude = 1.0;
+      let area = elm.phasor.y;
       // elm.phasor.x is a phase shift
-      float delay = elm.phasor.x / omega;
+      let delay = elm.phasor.x / uniforms.omega;
       
-      float argz = (d*k - delay*omega - t);
+      let argz = (d*uniforms.k - delay*uniforms.omega - uniforms.t);
       elongation += vec2(cos(argz), sin(argz))*amplitude*area*oodd;
     } 
   
-    //glFragColor = vec4(.5 + elongation.x, .5-elongation.x, 0.5,1);
-    glFragColor = vec4(1.0 - float(numElements) / 10.0,float(numElements) / 10.0,0,1);  
-    float intensity;
-    if (viewmode == 0) { // Elongation
-      intensity = 0.5 + (.5*elongation.x + .25) / (float(numElements)*dynamicRange);
-      glFragColor = texture(coolwarmSampler, vec2(intensity, 0.375));
-    } else if (viewmode == 1) { // Magnitude
+    // glFragColor = vec4(.5 + elongation.x, .5-elongation.x, 0.5,1);
+    fragmentOutputs.color = vec4(1.0 - f32(uniforms.numElements) / 10.0,f32(uniforms.numElements) / 10.0,0,1);  
+    if (uniforms.viewmode == 0) { // Elongation
+      let intensity = 0.5 + (.5*elongation.x + .25) / (f32(uniforms.numElements)*uniforms.dynamicRange);
+      fragmentOutputs.color = textureSample(coolwarmTexture, coolwarmSampler, vec2<f32>(intensity, 0.375));
+    } else if (uniforms.viewmode == 1) { // Magnitude
       //intensity = 0.25*length(elongation) / numsources;
-      intensity = log(length(elongation) / float(numElements))/log(10.0f);
-      glFragColor = texture(coolwarmSampler, vec2(intensity, 1));
-    } else if (viewmode == 2) { // Phase
-      intensity = (atan(elongation.y,elongation.x)/(3.14) + .25);
-      glFragColor = texture(coolwarmSampler, vec2(intensity, 1));
+      let intensity = log(length(elongation) / f32(uniforms.numElements))/log(10.0f);
+      fragmentOutputs.color = textureSample(coolwarmTexture, coolwarmSampler, vec2<f32>(intensity, 1));
+    } else if (uniforms.viewmode == 2) { // Phase
+      let intensity = (atan2(elongation.y, elongation.x)/(3.14) + .25);
+      fragmentOutputs.color = textureSample(coolwarmTexture, coolwarmSampler, vec2<f32>(intensity, 1));
     }
   }
 `;
@@ -79,9 +82,8 @@ export enum ResultAspect {
   Phase = 2
 }
 
-
 export class RayleighMaterial extends ShaderMaterial {
-  constructor(scene: Scene) {
+  constructor(scene: Scene, texture: BaseTexture) {
     super('RayleighMaterial', scene, {
       vertexSource: rayleighVertexShaderCode,
       fragmentSource: rayleighFragmentShaderCode
@@ -90,17 +92,9 @@ export class RayleighMaterial extends ShaderMaterial {
         "position",
         "normal",
         "uv",
-        'world0',
-        'world1',
-        'world2',
-        'world3',
       ],
       uniforms: [
-        "world",
-        "worldView",
         "worldViewProjection",
-        "view",
-        "projection",
         "globalPhase",
         "k",
         "t",
@@ -109,16 +103,23 @@ export class RayleighMaterial extends ShaderMaterial {
         "dynamicRange",
         "numElements",
       ],
-       uniformBuffers: [
-         'excitation'
-       ],
+      uniformBuffers: ["Scene", "Mesh", "excitation"],
       samplers: ['coolwarmSampler'],
       defines: [
          "#define INSTANCES", 
          excitationBufferMaxElementsDefine
-      ]
+      ],
+      shaderLanguage: ShaderLanguage.WGSL,
     });
     this.backFaceCulling = false;
+
+    this.setTexture('coolwarmTexture', texture);
+    const sampler = new TextureSampler();
+
+    sampler.setParameters(Engine.TEXTURE_CLAMP_ADDRESSMODE, Engine.TEXTURE_CLAMP_ADDRESSMODE); // use the default values
+    sampler.samplingMode = Constants.TEXTURE_NEAREST_SAMPLINGMODE;
+
+    this.setTextureSampler("coolwarmSampler", sampler);
   }
 
   public setResultAspect(aspect : ResultAspect | null) : void {

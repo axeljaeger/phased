@@ -7,7 +7,7 @@ import { ShaderLanguage } from '@babylonjs/core/Materials/shaderLanguage';
 
 const glsl = (x: TemplateStringsArray) => x;
 
-const transducerVertexShaderCode = `
+const transducerVertexShaderCode = /* wgsl */`
   #include<sceneUboDeclaration>
   #include<meshUboDeclaration>
   #include<instancesDeclaration>
@@ -28,7 +28,7 @@ const transducerVertexShaderCode = `
   }
 `;
 
-const transducerFragmentShaderCode = `
+const transducerFragmentShaderCode = /* wgsl*/`
   varying vUV : vec2<f32>;
   varying vSelected : f32;
 
