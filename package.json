@@ -70,7 +70,7 @@
     "@angular/cli": "17.1.1",
     "@angular/compiler-cli": "^17.1.1",
     "@babel/core": "^7.23.6",
-    "@compodoc/compodoc": "^1.1.21",
+    "@compodoc/compodoc": "^1.1.23",
     "@ngrx/eslint-plugin": "^17.1.0",
     "@ngrx/schematics": "^17.1.0",
     "@ngrx/store-devtools": "^17.1.0",
