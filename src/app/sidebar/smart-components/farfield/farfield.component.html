@@ -4,11 +4,11 @@
       Far field 3D
     </mat-panel-title>
     @if ((farfieldVisible$ | async) === false) {
-      <mat-icon  aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off"></mat-icon>
+      <mat-icon  aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off" />
     }
   </mat-expansion-panel-header>
   <mat-checkbox [formControl]="farfieldVisible">Visible</mat-checkbox>
-  <mat-divider></mat-divider>
+  <mat-divider />
   Tesselation level
   <mat-slider
     [max]="10"
