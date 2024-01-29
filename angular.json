@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "aua": {
+    "phased": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -18,7 +18,7 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": {
-              "base": "dist/aua"
+              "base": "dist/phased"
             },
             "index": "src/index.html",
             "polyfills": [
@@ -75,18 +75,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "aua:build"
+            "buildTarget": "phased:build"
           },
           "configurations": {
             "production": {
-              "buildTarget": "aua:build:production"
+              "buildTarget": "phased:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "aua:build"
+            "buildTarget": "phased:build"
           }
         },
         "lint": {
@@ -101,25 +101,25 @@
         "storybook": {
           "builder": "@storybook/angular:start-storybook",
           "options": {
-            "browserTarget": "aua:build",
+            "browserTarget": "phased:build",
             "port": 4400
           }
         },
         "build-storybook": {
           "builder": "@storybook/angular:build-storybook",
           "options": {
-            "browserTarget": "aua:build"
+            "browserTarget": "phased:build"
           }
         },
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "aua:serve"
+            "devServerTarget": "phased:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "aua:serve:production"
+              "devServerTarget": "phased:serve:production"
             }
           }
         }
