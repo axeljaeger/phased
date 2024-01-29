@@ -15,6 +15,12 @@
         <app-farfield-renderer [transducers]="shared.transducers"
           [environment]="shared.environment" />
       }
+    <app-export-renderer 
+      [transducers]="shared.transducers" 
+      [environment]="k$ | async"
+      (results)="onNewResults($event)"
+      [beamforming]="shared.beamforming"
+      />
     </app-transducer-buffer> 
     <ng-content/>
   </app-babylon-jsview>
