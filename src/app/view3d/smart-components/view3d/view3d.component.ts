@@ -23,6 +23,8 @@ import { BeamformingActions, beamformingFeature } from 'src/app/store/beamformin
 import { ArrayConfigActions, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
 import { map } from 'rxjs';
 import { Vector2 } from '@babylonjs/core';
+import { ExportRendererComponent } from '../../renderers/export/export.component';
+import { ExportActions, Result } from 'src/app/store/export.state';
 
 
 @Component({
@@ -37,6 +39,7 @@ import { Vector2 } from '@babylonjs/core';
     BabylonJSViewComponent,
     BeamformingRendererComponent,
     ExcitationRendererComponent,
+    ExportRendererComponent,
     TransducerBufferComponent,
     RayleighIntegralRendererComponent,
     FarfieldRendererComponent,
@@ -44,6 +47,11 @@ import { Vector2 } from '@babylonjs/core';
 ],
 })
 export class View3dComponent {
+  onNewResults(results: Result) {
+    if (results) {
+      this.store.dispatch(ExportActions.setResults(results)); 
+    }
+  }
   title = 'Air coupled Ultrasound Array';
   vm$ = this.state.select();
 

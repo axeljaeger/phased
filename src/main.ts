@@ -12,6 +12,7 @@ import { ViewportFeature } from './app/store/viewportConfig.state';
 import { rayleighFeature } from './app/store/rayleigh.state';
 import { beamformingFeature } from './app/store/beamforming.state';
 import { arrayConfigFeature } from './app/store/arrayConfig.state';
+import { exportFeature } from './app/store/export.state';
 
 if (environment.production) {
   enableProdMode();
@@ -26,6 +27,7 @@ bootstrapApplication(AppComponent, {
         provideState(selectionFeature),
         provideState(ViewportFeature),
         provideState(beamformingFeature),
+        provideState(exportFeature),
         provideStoreDevtools({
             maxAge: 25,
             logOnly: environment.production, // Restrict extension to log-only mode
