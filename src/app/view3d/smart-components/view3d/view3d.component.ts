@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
 } from '@angular/core';
 
 import { Store } from '@ngrx/store';
@@ -47,11 +48,8 @@ import { ExportActions, Result } from 'src/app/store/export.state';
 ],
 })
 export class View3dComponent {
-  onNewResults(results: Result) {
-    if (results) {
-      this.store.dispatch(ExportActions.setResults(results)); 
-    }
-  }
+  store = inject(Store);
+  beamformingInteractive$ = this.store.select(beamformingFeature.selectInteractive);
   title = 'Air coupled Ultrasound Array';
   vm$ = this.state.select();
 
@@ -63,7 +61,6 @@ export class View3dComponent {
   k$ = this.store.select(environmentFeature.selectEnvironmentState).pipe(map((c) => 2 * Math.PI * 40000 / c ));
 
   constructor(
-    private store: Store,
     private state: RxState<{
       transducers: any;
       environment: any;
@@ -99,5 +96,11 @@ export class View3dComponent {
 
   public setEl(el: number) : void {
     this.store.dispatch(BeamformingActions.setV({v: Math.sin(el)}));
+  }
+
+  onNewResults(results: Result) {
+    if (results) {
+      this.store.dispatch(ExportActions.setResults(results)); 
+    }
   }
 }

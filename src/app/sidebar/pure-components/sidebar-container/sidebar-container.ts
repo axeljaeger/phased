@@ -5,6 +5,7 @@ import { TransducerListComponent } from '../../smart-components/transducer-list/
 import { ArrayConfigComponent } from '../../smart-components/array-config/array-config.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ChartComponent } from '../../smart-components/chart/chart.component';
+import { BeamformingComponent } from '../../smart-components/beamforming/beamforming.component';
 
 
 @Component({
@@ -18,9 +19,8 @@ import { ChartComponent } from '../../smart-components/chart/chart.component';
         FarfieldComponent,
         MatExpansionModule, 
         RayleighComponent, 
-        TransducerListComponent, 
+        TransducerListComponent,
+        BeamformingComponent
     ]
 })
-export class SidebarContainerComponent {
-  
-}
+export class SidebarContainerComponent {}

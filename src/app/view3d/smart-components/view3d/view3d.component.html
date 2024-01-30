@@ -4,7 +4,10 @@
     (pitchX)="setPitchX($event)"
     (pitchY)="setPitchY($event)"
     (scale)="setScale($event)"/>
-    <app-beamforming-renderer (az)="setAz($event)" (el)="setEl($event)" />
+      
+    @if (beamformingInteractive$ | async) {
+      <app-beamforming-renderer (az)="setAz($event)" (el)="setEl($event)" />
+    }
     <app-transducer-buffer [transducers]="shared.transducers" [beamforming]="shared.beamforming" [k]="k$ | async">
       @if (rayleighEnabled$ | async) {
         <app-rayleigh-integral-renderer
