@@ -145,7 +145,7 @@ export class TransducerBufferComponent extends BabylonConsumer
     if (this.uniformExcitationBuffer) {
       const excitationBuffer = transducers.reduce(
         (buffer, transducer, index) => {
-          const phase = (this.k ?? 700) * ((this.beamforming?.u ?? 0) * transducer.pos.x + (this.beamforming?.v ?? 0) * transducer.pos.y);
+          const phase = this.beamforming?.enabled ? (this.k ?? 700) * ((this.beamforming?.u ?? 0) * transducer.pos.x + (this.beamforming?.v ?? 0) * transducer.pos.y) : 0;
           setExcitationElement(transducer.pos, phase, buffer, index);
           return buffer;
         },

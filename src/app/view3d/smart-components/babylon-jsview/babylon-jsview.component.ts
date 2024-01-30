@@ -24,6 +24,13 @@ import { NullEngine } from '@babylonjs/core/Engines/nullEngine';
 import { BabylonConsumer, implementsOnSceneCreated } from '../../interfaces/lifecycle';
 import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine';
 import { ShaderStore } from '@babylonjs/core/Engines/shaderStore';
+import { map, pairwise, startWith } from 'rxjs';
+
+const diff = (previous: Array<any>, next: Array<any>) =>
+({
+  added: next.filter((val) => !previous.includes(val)),
+  removed: previous.filter((val) => !next.includes(val)),
+});
 
 @Component({
   selector: 'app-babylon-jsview',
@@ -80,6 +87,21 @@ export class BabylonJSViewComponent
 
   async ngOnInit(): Promise<void> {
     await this.initEngine(this.canvasRef);
+    
+    this.renderers.changes
+      .pipe(
+        map((list) => list.toArray()),
+        startWith([], this.renderers.toArray()),
+        pairwise()
+      )
+      .subscribe(([prev, next]) => {
+        const { added } = diff(prev, next);
+        added.map((renderer) => {
+          implementsOnSceneCreated(renderer)
+          ? renderer.ngxSceneCreated(this.scene)
+          : Promise.resolve() 
+        });
+      });
     await Promise.all(
       this.renderers.map((renderer) =>
         implementsOnSceneCreated(renderer)
