@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import Chart from 'chart.js/auto';
 import { exportFeature } from 'src/app/store/export.state';
@@ -13,11 +13,10 @@ import { MatExpansionModule } from '@angular/material/expansion';
   styleUrl: './chart.component.css'
 })
 export class ChartComponent implements OnInit {
+  private readonly store = inject(Store);
   @ViewChild('chartCanvas', { static: true })
   canvasRef: ElementRef<HTMLCanvasElement>;
-
-  constructor(private readonly store: Store) { }
-
+  
   ngOnInit(): void {
     const data = {
       datasets: [{

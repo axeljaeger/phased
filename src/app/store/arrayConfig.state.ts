@@ -25,7 +25,7 @@ export interface Transducer {
 export const initialState: ArrayConfig = {
   arrayType: 'ura',
   uraConfig: {
-    elementsX: 2,
+    elementsX: 3,
     elementsY: 2,
     pitchX: 0.0043,
     pitchY: 0.0043,
