@@ -102,13 +102,6 @@ export class BabylonJSViewComponent
           : Promise.resolve() 
         });
       });
-    await Promise.all(
-      this.renderers.map((renderer) =>
-        implementsOnSceneCreated(renderer)
-          ? renderer.ngxSceneCreated(this.scene)
-          : Promise.resolve()
-      )
-    );
     this.engine.beginFrame();
     this.scene.render();
     this.engine.endFrame();

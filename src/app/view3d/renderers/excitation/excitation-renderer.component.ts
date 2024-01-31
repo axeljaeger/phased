@@ -95,6 +95,8 @@ export class ExcitationRendererComponent extends BabylonConsumer implements OnCh
     this.transducerMeshHidden = CreatePlane('excitationHidden', apertureOptions, scene);
     this.transducerMeshHidden.material = this.transducerMaterialHidden;
     this.transducerMeshHidden.renderingGroupId = 1;
+    this.transducerMeshHidden.thinInstanceEnablePicking = true;
+    this.transducerMeshHidden.pointerOverDisableMeshTesting = false;
 
     const actionManager = new ActionManager(scene);
     this.transducerMesh.actionManager = actionManager;
@@ -200,7 +202,7 @@ export class ExcitationRendererComponent extends BabylonConsumer implements OnCh
         selection: new Float32Array(SCALAR_ELEMENT_COUNT * transducers.length)
       }
     );
-  
+
 
     this.transducerMesh.setEnabled(transducers.length > 0);
 
