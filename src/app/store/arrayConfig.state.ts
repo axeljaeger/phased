@@ -1,4 +1,4 @@
-import { Vector2, Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { createActionGroup, createFeature, createReducer, createSelector, on, props } from '@ngrx/store';
 
 export interface ArrayConfig {
@@ -40,9 +40,6 @@ export const ArrayConfigActions = createActionGroup({
   source: 'TransducerConfig',
   events: {
     setConfig: props<ArrayConfig>(),
-    setPitchX: props<{ pitch: number }>(),
-    setPitchY: props<{ pitch: number }>(),
-    scaleArray: props<{ scale: Vector2 }>(),
   },
 });
 
@@ -53,36 +50,6 @@ export const reducer = createReducer(
       ...newConfig,
     };
   }),
-  on(ArrayConfigActions.setPitchX, (state: ArrayConfig, pitch): ArrayConfig =>
-  ({
-    ...state,
-    uraConfig: {
-      ...state.uraConfig,
-      pitchX: pitch.pitch,
-    },
-  })
-  ),
-  on(ArrayConfigActions.setPitchY, (state: ArrayConfig, pitch): ArrayConfig =>
-  ({
-    ...state,
-    uraConfig: {
-      ...state.uraConfig,
-      pitchY: pitch.pitch,
-    },
-  })
-  ),
-  on(ArrayConfigActions.scaleArray, (state: ArrayConfig, pitch): ArrayConfig => {
-    console.log(pitch.scale.x, pitch.scale.y);
-    return ({
-      ...state,
-      uraConfig: {
-        ...state.uraConfig,
-        pitchX: state.uraConfig.pitchX * pitch.scale.x,
-        pitchY: state.uraConfig.pitchY * pitch.scale.y,
-      },
-    })
-  }
-  ),
 );
 
 export const arrayConfigFeature = createFeature({

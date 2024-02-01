@@ -21,11 +21,12 @@ import { Results, ViewportFeature } from 'src/app/store/viewportConfig.state';
 import { rayleighFeature } from 'src/app/store/rayleigh.state';
 import { environmentFeature } from 'src/app/store/environment.state';
 import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
-import { ArrayConfigActions, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
+import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
 import { map } from 'rxjs';
 import { Vector2 } from '@babylonjs/core';
 import { ExportRendererComponent } from '../../renderers/export/export.component';
 import { ExportActions, Result } from 'src/app/store/export.state';
+import { UraInteractionRendererComponent } from '../../renderers/ura-interaction/ura-interaction-renderer.component';
 
 
 @Component({
@@ -44,7 +45,8 @@ import { ExportActions, Result } from 'src/app/store/export.state';
     TransducerBufferComponent,
     RayleighIntegralRendererComponent,
     FarfieldRendererComponent,
-    AsyncPipe
+    AsyncPipe,
+    UraInteractionRendererComponent
 ],
 })
 export class View3dComponent {
@@ -59,7 +61,8 @@ export class View3dComponent {
   rayleighAspect$ = this.store.select(rayleighFeature.selectRayleighState);
   farfieldEnabled$ = this.store.select(ViewportFeature.selectResultEnabled(Results.Farfield));
   k$ = this.store.select(environmentFeature.selectEnvironmentState).pipe(map((c) => 2 * Math.PI * 40000 / c ));
-
+  ura$ = this.store.select(arrayConfigFeature.selectArrayType).pipe(map(type => type === 'ura'));
+  arrayConfig$ = this.store.select(arrayConfigFeature.selectArrayConfigState);
   constructor(
     private state: RxState<{
       transducers: any;
@@ -78,17 +81,11 @@ export class View3dComponent {
     this.store.dispatch(SelectionActions.set({ transducerId }));
   }
 
-  public setPitchX(pitch: number): void {
-    this.store.dispatch(ArrayConfigActions.setPitchX({ pitch }));
+  public setArrayConfig(arrayConfig: ArrayConfig): void {
+    this.store.dispatch(ArrayConfigActions.setConfig(arrayConfig));
   }
 
-  public setScale(scale: Vector2): void {
-    this.store.dispatch(ArrayConfigActions.scaleArray({scale}));
-  }
 
-  public setPitchY(pitch: number): void {
-    this.store.dispatch(ArrayConfigActions.setPitchY({ pitch }));
-  }
 
   public setAz(az: number) : void {
     this.store.dispatch(BeamformingActions.setU({u: -Math.sin(az)}));
