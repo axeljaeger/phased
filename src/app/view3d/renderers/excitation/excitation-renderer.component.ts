@@ -4,7 +4,7 @@ import { TransducerMaterial } from '../../materials/transducer.material';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Plane } from '@babylonjs/core/Maths/math.plane';
 import { CreatePlane } from '@babylonjs/core/Meshes/Builders/planeBuilder';
-import { Matrix, Vector2, Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { Matrix, Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { MAT4_ELEMENT_COUNT, SCALAR_ELEMENT_COUNT } from '../../../utils/webgl.utils';
 
 import { ExecuteCodeAction } from '@babylonjs/core/Actions/directActions';
@@ -15,12 +15,9 @@ import '@babylonjs/core/Meshes/thinInstanceMesh';
 
 import { SelectionState } from 'src/app/store/selection.state';
 import { Scene } from '@babylonjs/core/scene';
-import { CreateIcoSphere } from '@babylonjs/core/Meshes/Builders/icoSphereBuilder';
 import { BabylonConsumer } from '../../interfaces/lifecycle';
 import { Transducer } from 'src/app/store/arrayConfig.state';
 import { Engine } from '@babylonjs/core/Engines/engine';
-import { PositionGizmo } from '@babylonjs/core/Gizmos/positionGizmo';
-import { PointerDragBehavior } from '@babylonjs/core/Behaviors/Meshes/pointerDragBehavior';
 
 @Component({
     selector: 'app-excitation-renderer',
@@ -34,18 +31,12 @@ export class ExcitationRendererComponent extends BabylonConsumer implements OnCh
   @Input() selection : SelectionState | null = null;
 
   @Output() hovered = new EventEmitter<number>();
-  @Output() pitchX = new EventEmitter<number>();
-  @Output() pitchY = new EventEmitter<number>();
-  
-  @Output() scale = new EventEmitter<Vector2>();
   
   private transducerMaterial: TransducerMaterial;
   private transducerMaterialHidden: TransducerMaterial;
 
   private transducerMesh: Mesh;
   private transducerMeshHidden: Mesh;
-
-  private arrayPitchHandle: Mesh;
 
   async ngxSceneCreated(scene: Scene): Promise<void> {
     this.initialize3D(scene);
@@ -120,64 +111,6 @@ export class ExcitationRendererComponent extends BabylonConsumer implements OnCh
             (event) => this.hovered.next(-1)
          )
      )
-
-    this.arrayPitchHandle = CreateIcoSphere('arrayPitchHandle', {
-      radius: 0.00025,
-      subdivisions: 3,
-    })
-
-    this.arrayPitchHandle.position = new Vector3(0.0043 / 2, 0.0043 / 2,0);
-
-    const translationGizmo = new PositionGizmo();
-    translationGizmo.zGizmo.dispose();
-    translationGizmo.attachedMesh = this.arrayPitchHandle;
-
-    translationGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
-      this.pitchX.next(this.arrayPitchHandle.position.x * 2);
-    });
-
-    translationGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
-      this.pitchY.next(this.arrayPitchHandle.position.y * 2);
-    });
-
-
-    const pointerDragBehavior = new PointerDragBehavior({dragPlaneNormal: new Vector3(0,0,1)});
-    
-    // Use drag plane in world space
-    pointerDragBehavior.useObjectOrientationForDragging = false;
-    pointerDragBehavior.moveAttached = false;
-
-    // Listen to drag events
-    pointerDragBehavior.onDragStartObservable.add((event)=>{
-        console.log("dragStart");
-        console.log(event);
-        scene.render();
-    })
-    pointerDragBehavior.onDragObservable.add((event)=>{
-        console.log("drag", event.delta);
-        console.log(event);
-
-        const vec = new Vector2(event.delta.x / event.dragPlanePoint.x, 
-        event.delta.y / event.dragPlanePoint.y)
-
-        this.scale.next(vec
-          );
-        scene.render();
-
-      })
-    pointerDragBehavior.onDragEndObservable.add((event)=>{
-        console.log("dragEnd");
-        console.log(event);
-        scene.render();
-
-      })
-
-    // If handling drag events manually is desired, set move attached to false
-    // pointerDragBehavior.moveAttached = false;
-
-    this.transducerMesh.addBehavior(pointerDragBehavior);
-
-
 
     this.uploadArrayConfig(this.transducers, this.selection);
   }

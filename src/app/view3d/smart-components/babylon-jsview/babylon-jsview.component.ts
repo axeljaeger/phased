@@ -102,6 +102,9 @@ export class BabylonJSViewComponent
           : Promise.resolve() 
         });
       });
+
+    await this.scene.whenReadyAsync();
+    
     this.engine.beginFrame();
     this.scene.render();
     this.engine.endFrame();
