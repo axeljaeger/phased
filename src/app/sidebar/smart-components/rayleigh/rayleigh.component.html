@@ -9,9 +9,23 @@
   </mat-expansion-panel-header>
   <mat-checkbox [formControl]="rayleighVisible">Visible</mat-checkbox>
   <mat-divider />
-  <mat-radio-group aria-label="Select an option" class="example-radio-group" [formControl]="rayleighAspect">
-    <mat-radio-button [value]="ResultAspect.Elongation" class="example-radio-button">Elongation</mat-radio-button>
-    <mat-radio-button [value]="ResultAspect.Amplitude" class="example-radio-button">Amplitude</mat-radio-button>
-    <mat-radio-button [value]="ResultAspect.Phase" class="example-radio-button">Phase</mat-radio-button>
-  </mat-radio-group>
+
+  <mat-form-field>
+    <mat-label>Aspect</mat-label>
+    <mat-select [formControl]="rayleighAspect">
+      <mat-option [value]="ResultAspect.Elongation" class="example-radio-button">Elongation</mat-option>
+      <mat-option [value]="ResultAspect.Amplitude" class="example-radio-button">Amplitude</mat-option>
+      <mat-option [value]="ResultAspect.Phase" class="example-radio-button">Phase</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <br>
+  <mat-form-field>
+    <mat-label>Result set</mat-label>
+    <mat-select [formControl]="resultSet">
+      <mat-option [value]="ResultSet.XZPlane">XZ-Plane</mat-option>
+      <mat-option [value]="ResultSet.YZPlane">YZ-Plane</mat-option>
+      <mat-option [value]="ResultSet.CutCube">Cube cut</mat-option>
+    </mat-select>
+  </mat-form-field>
 </mat-expansion-panel>

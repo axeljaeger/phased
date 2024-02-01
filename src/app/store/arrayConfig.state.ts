@@ -57,7 +57,7 @@ export const reducer = createReducer(
 export const arrayConfigFeature = createFeature({
   name: 'arrayConfig',
   reducer,
-  extraSelectors: ({ selectArrayConfigState }) => ({
+  extraSelectors: ({ selectArrayConfigState, selectArrayType }) => ({
     selectTransducers: createSelector(
       selectArrayConfigState,
       (arrayConfig: ArrayConfig) => {
@@ -88,7 +88,6 @@ export const arrayConfigFeature = createFeature({
               }
               return excitation;
             }
-            break;
           case 'spiral':
             return spiralPositions(arrayConfig.roundConfig.diameter / 2, arrayConfig.roundConfig.elementCount, arrayConfig.roundConfig.startElement);
           case 'circular':
@@ -96,7 +95,8 @@ export const arrayConfigFeature = createFeature({
           default:
             return [];
         }
-      })
+      }),
+      isUra: createSelector(selectArrayType, (type: string) => type === 'ura'),
   })
 });
 

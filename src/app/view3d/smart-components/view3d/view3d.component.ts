@@ -18,12 +18,10 @@ import { RxLet } from '@rx-angular/template/let';
 import { BeamformingRendererComponent } from '../../renderers/beamforming/beamforming-renderer.component';
 import { SelectionActions, selectionFeature } from 'src/app/store/selection.state';
 import { Results, ViewportFeature } from 'src/app/store/viewportConfig.state';
-import { rayleighFeature } from 'src/app/store/rayleigh.state';
+import { RayleighFeature } from 'src/app/store/rayleigh.state';
 import { environmentFeature } from 'src/app/store/environment.state';
 import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
 import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
-import { map } from 'rxjs';
-import { Vector2 } from '@babylonjs/core';
 import { ExportRendererComponent } from '../../renderers/export/export.component';
 import { ExportActions, Result } from 'src/app/store/export.state';
 import { UraInteractionRendererComponent } from '../../renderers/ura-interaction/ura-interaction-renderer.component';
@@ -47,7 +45,7 @@ import { UraInteractionRendererComponent } from '../../renderers/ura-interaction
     FarfieldRendererComponent,
     AsyncPipe,
     UraInteractionRendererComponent
-],
+  ],
 })
 export class View3dComponent {
   store = inject(Store);
@@ -58,10 +56,11 @@ export class View3dComponent {
   rayleighEnabled$ = this.store.select(
     ViewportFeature.selectResultEnabled(Results.RayleighIntegral)
   );
-  rayleighAspect$ = this.store.select(rayleighFeature.selectRayleighState);
+  rayleighAspect$ = this.store.select(RayleighFeature.selectAspect);
+  rayleighResultSet$ = this.store.select(RayleighFeature.selectResultSet);
   farfieldEnabled$ = this.store.select(ViewportFeature.selectResultEnabled(Results.Farfield));
-  k$ = this.store.select(environmentFeature.selectEnvironmentState).pipe(map((c) => 2 * Math.PI * 40000 / c ));
-  ura$ = this.store.select(arrayConfigFeature.selectArrayType).pipe(map(type => type === 'ura'));
+  k$ = this.store.select(environmentFeature.selectK);
+  ura$ = this.store.select(arrayConfigFeature.isUra);
   arrayConfig$ = this.store.select(arrayConfigFeature.selectArrayConfigState);
   constructor(
     private state: RxState<{
@@ -85,19 +84,17 @@ export class View3dComponent {
     this.store.dispatch(ArrayConfigActions.setConfig(arrayConfig));
   }
 
-
-
-  public setAz(az: number) : void {
-    this.store.dispatch(BeamformingActions.setU({u: -Math.sin(az)}));
+  public setAz(az: number): void {
+    this.store.dispatch(BeamformingActions.setU({ u: -Math.sin(az) }));
   }
 
-  public setEl(el: number) : void {
-    this.store.dispatch(BeamformingActions.setV({v: Math.sin(el)}));
+  public setEl(el: number): void {
+    this.store.dispatch(BeamformingActions.setV({ v: Math.sin(el) }));
   }
 
   onNewResults(results: Result) {
     if (results) {
-      this.store.dispatch(ExportActions.setResults(results)); 
+      this.store.dispatch(ExportActions.setResults(results));
     }
   }
 }

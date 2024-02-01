@@ -1,22 +1,37 @@
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createActionGroup, createFeature, createReducer, on, props } from '@ngrx/store';
 import { ResultAspect } from 'src/app/view3d/materials/rayleigh.material';
 
-import { createAction, props } from '@ngrx/store';
-import { ArrayConfig } from './arrayConfig.state';
+export enum ResultSet {
+  XZPlane,
+  YZPlane,
+  CutCube,
+}
 
+export interface RayleighState {
+  aspect: ResultAspect;
+  resultSet: ResultSet;
+}
 
-export const initialState = ResultAspect.Elongation;
+export const initialState: RayleighState = {
+  aspect: ResultAspect.Elongation,
+  resultSet: ResultSet.XZPlane
+};
 
-export const setConfig = createAction('[TransducerConfig] set', props<ArrayConfig>());
-export const setResultAspect = createAction('[RayleightResultAspect] set', props<{aspect: ResultAspect}>());
-
+export const RayleighResultActions = createActionGroup({
+  source: 'RayleighResult',
+  events: {
+    setResultAspect: props<{ aspect: ResultAspect }>(),
+    setResultSet: props<{ resultSet: ResultSet }>(),
+  },
+});
 
 const reducer = createReducer(
   initialState,
-  on(setResultAspect, (state, args) : ResultAspect => args.aspect),
+  on(RayleighResultActions.setResultAspect, (state, args): RayleighState => ({ ...state, aspect: args.aspect })),
+  on(RayleighResultActions.setResultSet, (state, args): RayleighState => ({ ...state, resultSet: args.resultSet }))
 );
 
-export const rayleighFeature = createFeature({
+export const RayleighFeature = createFeature({
   name: 'rayleigh',
   reducer
 });
