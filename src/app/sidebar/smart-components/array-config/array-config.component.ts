@@ -45,6 +45,7 @@ export class ArrayConfigComponent implements OnInit {
     roundConfig: this.fb.group({
       diameter: this.fb.control(0),
       elementCount: this.fb.control(0),
+      startElement: this.fb.control(0),
     }),
   });
   presets = presets;

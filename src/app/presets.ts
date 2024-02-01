@@ -12,6 +12,7 @@ export const presets = [
             roundConfig: {
                 diameter: 0.05,
                 elementCount: 5,
+                startElement: 0,
             },
         }
     },
@@ -28,6 +29,7 @@ export const presets = [
             roundConfig: {
                 diameter: 0.05,
                 elementCount: 5,
+                startElement: 0,
             },
         }
     },
@@ -44,6 +46,7 @@ export const presets = [
             roundConfig: {
                 diameter: 0.05,
                 elementCount: 5,
+                startElement: 0,
             },
         }
     },
@@ -60,13 +63,8 @@ export const presets = [
             roundConfig: {
                 diameter: 0.05,
                 elementCount: 5,
+                startElement: 0,
             },
         }
     }
-
-
-
-
-
-
 ]
