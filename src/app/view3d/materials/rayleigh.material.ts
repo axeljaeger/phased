@@ -61,7 +61,6 @@ const rayleighFragmentShaderCode = /* wgsl*/`
     } 
   
     // glFragColor = vec4(.5 + elongation.x, .5-elongation.x, 0.5,1);
-    fragmentOutputs.color = vec4(1.0 - f32(uniforms.numElements) / 10.0,f32(uniforms.numElements) / 10.0,0,1);  
     if (uniforms.viewmode == 0) { // Elongation
       let intensity = 0.5 + (.5*elongation.x + .25) / (f32(uniforms.numElements)*uniforms.dynamicRange);
       fragmentOutputs.color = textureSample(coolwarmTexture, coolwarmSampler, vec2<f32>(intensity, 0.375));
@@ -106,8 +105,8 @@ export class RayleighMaterial extends ShaderMaterial {
       uniformBuffers: ["Scene", "Mesh", "excitation"],
       samplers: ['coolwarmSampler'],
       defines: [
-         "#define INSTANCES", 
-         excitationBufferMaxElementsDefine
+        "#define INSTANCES",
+        excitationBufferMaxElementsDefine
       ],
       shaderLanguage: ShaderLanguage.WGSL,
     });
@@ -122,7 +121,7 @@ export class RayleighMaterial extends ShaderMaterial {
     this.setTextureSampler("coolwarmSampler", sampler);
   }
 
-  public setResultAspect(aspect : ResultAspect | null) : void {
+  public setResultAspect(aspect: ResultAspect | null): void {
     if (aspect !== null) {
       this.setInt('viewmode', aspect);
     }

@@ -9,7 +9,7 @@ import { provideState, provideStore } from '@ngrx/store';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { ViewportFeature } from './app/store/viewportConfig.state';
-import { rayleighFeature } from './app/store/rayleigh.state';
+import { RayleighFeature } from './app/store/rayleigh.state';
 import { beamformingFeature } from './app/store/beamforming.state';
 import { arrayConfigFeature } from './app/store/arrayConfig.state';
 import { exportFeature } from './app/store/export.state';
@@ -23,7 +23,7 @@ bootstrapApplication(AppComponent, {
         provideStore(),
         provideState(arrayConfigFeature),
         provideState(environmentFeature),
-        provideState(rayleighFeature),
+        provideState(RayleighFeature),
         provideState(selectionFeature),
         provideState(ViewportFeature),
         provideState(beamformingFeature),
