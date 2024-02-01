@@ -60,6 +60,14 @@
           <input matInput data-test-id="elementCount" type="number" formControlName="elementCount" min="1" max="64">
         </mat-form-field>
       </div>
+
+      @if(arrayConfig.controls['arrayType'].value === 'spiral') {
+      Start element:
+        <mat-button-toggle-group formControlName="startElement">
+          <mat-button-toggle value="0">0</mat-button-toggle>
+          <mat-button-toggle value="1">1</mat-button-toggle>
+        </mat-button-toggle-group>
+      }
       <div>
         <mat-form-field appearance="fill">
           <mat-label>Diameter</mat-label>

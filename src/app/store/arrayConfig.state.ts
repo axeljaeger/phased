@@ -12,6 +12,7 @@ export interface ArrayConfig {
   roundConfig: {
     diameter: number;
     elementCount: number;
+    startElement: number;
   };
 }
 
@@ -33,6 +34,7 @@ export const initialState: ArrayConfig = {
   roundConfig: {
     diameter: 0.05,
     elementCount: 5,
+    startElement: 0,
   },
 };
 
@@ -88,7 +90,7 @@ export const arrayConfigFeature = createFeature({
             }
             break;
           case 'spiral':
-            return spiralPositions(arrayConfig.roundConfig.diameter / 2, arrayConfig.roundConfig.elementCount);
+            return spiralPositions(arrayConfig.roundConfig.diameter / 2, arrayConfig.roundConfig.elementCount, arrayConfig.roundConfig.startElement);
           case 'circular':
             return circularPositions(arrayConfig.roundConfig.diameter / 2, arrayConfig.roundConfig.elementCount);
           default:
@@ -98,12 +100,13 @@ export const arrayConfigFeature = createFeature({
   })
 });
 
-const spiralPositions = (maxRadius: number, numElements: number) =>
+const spiralPositions = (maxRadius: number, numElements: number, startElement: number) =>
   Array.from(Array(numElements).keys()).map(i => {
-    const radius = maxRadius * Math.sqrt(i / numElements);
-    const phi = 2 * Math.PI * i * (1 + Math.sqrt(5)) / 2;
+    const arrayIndex = (i + startElement);
+    const radius = maxRadius * Math.sqrt(arrayIndex / numElements);
+    const phi = 2 * Math.PI * arrayIndex * (1 + Math.sqrt(5)) / 2;
     return {
-      name: `Transducer ${i}`,
+      name: `Transducer ${arrayIndex}`,
       pos: new Vector3(Math.cos(phi), Math.sin(phi)).scale(radius),
       enabled: false,
       selected: false
