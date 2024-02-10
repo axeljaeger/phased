@@ -79,8 +79,10 @@
     }
     }
   </form>
-  <button mat-raised-button color="primary" [matMenuTriggerFor]="menu">Presets</button>
-  <button mat-raised-button color="primary">Export</button>
+  <mat-action-row>
+    <button mat-raised-button color="primary" [matMenuTriggerFor]="menu">Presets</button>
+    <button mat-raised-button color="primary">Export</button>  
+  </mat-action-row>
   <mat-menu #menu="matMenu">
     @for (preset of presets; track preset.name) {
       <button mat-menu-item (click)="loadPreset($index)">{{preset.name}}</button>

@@ -5,5 +5,7 @@
         </mat-panel-title>
     </mat-expansion-panel-header>
     <canvas #chartCanvas></canvas>
-    <button mat-raised-button color="primary" (click)="download()">Export</button>    
+    <mat-action-row>
+        <button mat-raised-button color="primary" (click)="download()">Export</button>    
+    </mat-action-row>
 </mat-expansion-panel>
