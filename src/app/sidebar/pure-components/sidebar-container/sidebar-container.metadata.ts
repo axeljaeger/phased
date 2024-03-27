@@ -36,7 +36,6 @@ export const moduleMetaData = {
       MatIconModule,
       MatInputModule,
       MatListModule,
-      NoopAnimationsModule,
       ReactiveFormsModule,
     ],
     providers: [

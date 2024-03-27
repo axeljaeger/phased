@@ -1,13 +1,13 @@
-import { StoryFn, Meta } from '@storybook/angular';
-import { ToolbarComponent } from './toolbar.component';
+import { StoryFn, Meta } from "@storybook/angular";
+import { ToolbarComponent } from "./toolbar.component";
 
 // More on default export: https://storybook.js.org/docs/angular/writing-stories/introduction#default-export
 export default {
-  title: 'Toolbar',
+  title: "Toolbar",
   component: ToolbarComponent,
   // More on argTypes: https://storybook.js.org/docs/angular/api/argtypes
   argTypes: {
-    backgroundColor: { control: 'color' },
+    backgroundColor: { control: "color" },
   },
 } as Meta<ToolbarComponent>;
 
