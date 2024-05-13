@@ -20,6 +20,7 @@ const vertexSource = /* wgsl */`
   // Varying
   varying r : vec3<f32>;
   varying uvf : vec2<f32>;
+  varying absresult : f32;
 
   @vertex
   fn main(input : VertexInputs) -> FragmentInputs {
@@ -52,6 +53,7 @@ const vertexSource = /* wgsl */`
     vertexOutputs.position = uniforms.worldViewProjection * vec4(direction * absresult * 0.02, 1.0);
     vertexOutputs.r = vertexInputs.position;
     vertexOutputs.uvf = vertexInputs.uv;
+    vertexOutputs.absresult = absresult;
   }
 `;
 const fragmentSource = /* wgsl */`
@@ -71,20 +73,21 @@ const fragmentSource = /* wgsl */`
 
   varying r : vec3<f32>;
   varying uvf : vec2<f32>;
+  varying absresult : f32;
 
   @fragment
   fn main(input : FragmentInputs) -> FragmentOutputs {
-    var result = vec2<f32>(0,0);
+    // var result = vec2<f32>(0,0);
 
-    for (var i = 0; i < uniforms.numElements; i++) {
-        let element = excitation.elements[i];
-        let argv = element.position.xy*fragmentInputs.uvf;
-        let argument = uniforms.k*(argv.x+argv.y) + element.phasor.x;
-        result += vec2(cos(argument), sin(argument));
-    }
+    // for (var i = 0; i < uniforms.numElements; i++) {
+    //     let element = excitation.elements[i];
+    //     let argv = element.position.xy*fragmentInputs.uvf;
+    //     let argument = uniforms.k*(argv.x+argv.y) + element.phasor.x;
+    //     result += vec2(cos(argument), sin(argument));
+    // }
     
-    let intensity = 0.5 + 0.5 * length(result) / (f32(uniforms.numElements));
-    fragmentOutputs.color = textureSample(viridisTexture, viridisSampler, vec2(intensity, 0.375)); 
+    //let intensity = 0.5 + 0.5 * length(result) / (f32(uniforms.numElements));
+    fragmentOutputs.color = textureSample(viridisTexture, viridisSampler, vec2(fragmentInputs.absresult, 0.375)); 
   }
 `;
 
@@ -120,5 +123,6 @@ export class FarfieldMaterial extends ShaderMaterial {
     });
 
     this.backFaceCulling = false;
+    this.wireframe = false;
   }
 }
