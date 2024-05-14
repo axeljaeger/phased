@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { Textures, TransducerBufferConsumer } from '../../shared/transducer-buffer.component';
-import { ComputeShader, Scene, StorageBuffer, UniformBuffer } from '@babylonjs/core';
+import { ComputeShader, Scene, StorageBuffer, UniformBuffer, WebGPUEngine } from '@babylonjs/core';
 import { Transducer } from 'src/app/store/arrayConfig.state';
 import { Point, Result } from 'src/app/store/export.state';
 import { Beamforming } from 'src/app/store/beamforming.state';
@@ -109,7 +109,7 @@ implements OnChanges, OnDestroy {
     this.cs.setUniformBuffer("uniforms", this.uniformBuffer);
     this.cs.setUniformBuffer("excitation", buffer);
 
-    this.resultBuffer = new StorageBuffer(scene.getEngine(), this.numPoints * 3 * Float32Array.BYTES_PER_ELEMENT);
+    this.resultBuffer = new StorageBuffer(scene.getEngine() as WebGPUEngine, this.numPoints * 3 * Float32Array.BYTES_PER_ELEMENT);
     this.cs.setStorageBuffer("resultBuffer", this.resultBuffer);
     this.calcData();
   }
