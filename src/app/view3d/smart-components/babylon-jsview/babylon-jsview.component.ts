@@ -122,10 +122,6 @@ export class BabylonJSViewComponent
         this.engine = new NullEngine();
       }
 
-      // Uniform buffers are disabled per default in Chrome on MacOS
-      // Re-enable this.
-      this.engine.disableUniformBuffers = false;
-
       this.scene = this.createScene(canvas);
       this.scene.useRightHandedSystem = true;
 
