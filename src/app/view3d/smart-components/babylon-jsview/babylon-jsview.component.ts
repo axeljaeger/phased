@@ -82,6 +82,10 @@ export class BabylonJSViewComponent
     const rect = this.elRef.nativeElement.getBoundingClientRect();
     this.canvasRef.nativeElement.width = rect.width;
     this.canvasRef.nativeElement.height = rect.height;
+
+    this.canvasRef.nativeElement.style.width = rect.width + 'px';
+    this.canvasRef.nativeElement.style.height = rect.height + 'px';
+
     this.engine.resize(true);
   }
 
@@ -113,7 +117,9 @@ export class BabylonJSViewComponent
   async initEngine(canvas: ElementRef<HTMLCanvasElement>) {
     await this.ngZone.runOutsideAngular(async () => {
       if (window.WebGLRenderingContext) {        
-        this.engine = new WebGPUEngine(canvas.nativeElement);
+        this.engine = new WebGPUEngine(canvas.nativeElement, {
+          adaptToDeviceRatio: true,
+        });
         await this.engine.initAsync();
        
         // this.engine.setStencilBuffer(true);
