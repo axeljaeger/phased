@@ -49,6 +49,7 @@
     "@babylonjs/inspector": "^7.11.0",
     "@ngrx/component": "^18.0.1",
     "@ngrx/effects": "^18.0.1",
+    "@ngrx/operators": "^18.0.0",
     "@ngrx/store": "^18.0.1",
     "@rx-angular/cdk": "^18.0.0",
     "@rx-angular/state": "^18.0.0",
@@ -59,8 +60,7 @@
     "rxjs": "~7.8.1",
     "tslib": "^2.6.1",
     "util": "^0.12.4",
-    "zone.js": "~0.14.3",
-    "@ngrx/operators": "^18.0.0"
+    "zone.js": "~0.14.3"
   },
   "devDependencies": {
     "@angular-devkit/architect": "^0.1801.0",
@@ -98,7 +98,7 @@
     "ng-mocks": "^14.13.0",
     "storybook": "^8.1.9",
     "ts-node": "~10.9.2",
-    "typescript": "^5.3.3",
+    "typescript": "^5.5.3",
     "util": "^0.12.4"
   }
 }
