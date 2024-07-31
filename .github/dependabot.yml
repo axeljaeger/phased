@@ -25,3 +25,4 @@ updates:
       eslint:
         patterns:
             - "@typescript-eslint/*"
+            - "eslint "
