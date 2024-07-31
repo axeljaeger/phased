@@ -76,7 +76,7 @@
     "@chromatic-com/storybook": "^1.5.0",
     "@compodoc/compodoc": "^1.1.23",
     "@ngrx/eslint-plugin": "^18.0.1",
-    "@ngrx/schematics": "^18.0.1",
+    "@ngrx/schematics": "^18.0.2",
     "@ngrx/store-devtools": "^18.0.1",
     "@playwright/test": "^1.41.1",
     "@storybook/addon-actions": "^8.2.6",
