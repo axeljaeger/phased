@@ -50,7 +50,7 @@
     "@ngrx/component": "^18.0.1",
     "@ngrx/effects": "^18.0.1",
     "@ngrx/operators": "^18.0.0",
-    "@ngrx/store": "^18.0.1",
+    "@ngrx/store": "^18.0.2",
     "@rx-angular/cdk": "^18.0.0",
     "@rx-angular/state": "^18.0.0",
     "@rx-angular/template": "^18.0.1",
