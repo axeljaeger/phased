@@ -1,4 +1,4 @@
-<div class="mat-headline-6">Simulation setup</div>
+<div class="mat-headline-small">Simulation setup</div>
 <mat-accordion>
     <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
@@ -8,13 +8,68 @@
         </mat-expansion-panel-header>
         <p>Air, c = 434 m/s</p>
     </mat-expansion-panel>
-    <app-array-config />
-    <app-transducer-list />
-    <app-beamforming />
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title data-testid="section-arrayconfig">
+              Array config
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+        <app-array-config />
+    </mat-expansion-panel>
+    <mat-expansion-panel hideToggle >
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                Tranducers
+            </mat-panel-title>
+            <mat-panel-description data-test-id="numTransducers">
+                {{ transducersCount$ | async }}
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <app-transducer-list />
+    </mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title data-testid="section-beamforming">
+                Beamforming
+            </mat-panel-title>
+            @if ((beamformingEnabled$ | async) === false) {
+                <mat-icon aria-hidden="false" aria-label="hidden-icon" fontIcon="do_not_disturb_on" />
+              }
+        </mat-expansion-panel-header>
+        <app-beamforming /> 
+    </mat-expansion-panel>
 </mat-accordion>
-    <div class="mat-headline-6">Results</div>
+    <div class="mat-headline-small">Results</div>
 <mat-accordion>
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Rayleigh integral
+          </mat-panel-title>
+          @if ((rayleighVisible$ | async) === false) {
+            <mat-icon aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off" />
+          }
+        </mat-expansion-panel-header>
+
     <app-rayleigh />        
+</mat-expansion-panel>
+<mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Far field 3D
+      </mat-panel-title>
+      @if ((farfieldVisible$ | async) === false) {
+        <mat-icon  aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off" />
+      }
+    </mat-expansion-panel-header>
     <app-farfield />
+</mat-expansion-panel>
+<mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+        2D Chart
+        </mat-panel-title>
+    </mat-expansion-panel-header>
     <app-chart />
+</mat-expansion-panel>
 </mat-accordion>

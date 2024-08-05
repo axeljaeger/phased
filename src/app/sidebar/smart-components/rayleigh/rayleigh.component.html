@@ -1,31 +1,19 @@
-<mat-expansion-panel hideToggle>
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      Rayleigh integral
-    </mat-panel-title>
-    @if ((rayleighVisible$ | async) === false) {
-      <mat-icon  aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off" />
-    }
-  </mat-expansion-panel-header>
-  <mat-checkbox [formControl]="rayleighVisible">Visible</mat-checkbox>
-  <mat-divider />
-
-  <mat-form-field>
-    <mat-label>Aspect</mat-label>
-    <mat-select [formControl]="rayleighAspect">
-      <mat-option [value]="ResultAspect.Elongation" class="example-radio-button">Elongation</mat-option>
-      <mat-option [value]="ResultAspect.Amplitude" class="example-radio-button">Amplitude</mat-option>
-      <mat-option [value]="ResultAspect.Phase" class="example-radio-button">Phase</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <br>
-  <mat-form-field>
-    <mat-label>Result set</mat-label>
-    <mat-select [formControl]="resultSet">
-      <mat-option [value]="ResultSet.XZPlane">XZ-Plane</mat-option>
-      <mat-option [value]="ResultSet.YZPlane">YZ-Plane</mat-option>
-      <mat-option [value]="ResultSet.CutCube">Cube cut</mat-option>
-    </mat-select>
-  </mat-form-field>
-</mat-expansion-panel>
+<mat-checkbox [formControl]="rayleighVisible">Visible</mat-checkbox>
+<mat-divider />
+<mat-form-field>
+  <mat-label>Aspect</mat-label>
+  <mat-select [formControl]="rayleighAspect">
+    <mat-option [value]="ResultAspect.Elongation" class="example-radio-button">Elongation</mat-option>
+    <mat-option [value]="ResultAspect.Amplitude" class="example-radio-button">Amplitude</mat-option>
+    <mat-option [value]="ResultAspect.Phase" class="example-radio-button">Phase</mat-option>
+  </mat-select>
+</mat-form-field>
+<br>
+<mat-form-field>
+  <mat-label>Result set</mat-label>
+  <mat-select [formControl]="resultSet">
+    <mat-option [value]="ResultSet.XZPlane">XZ-Plane</mat-option>
+    <mat-option [value]="ResultSet.YZPlane">YZ-Plane</mat-option>
+    <mat-option [value]="ResultSet.CutCube">Cube cut</mat-option>
+  </mat-select>
+</mat-form-field>

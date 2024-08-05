@@ -1,21 +1,11 @@
-<mat-expansion-panel hideToggle>
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      Far field 3D
-    </mat-panel-title>
-    @if ((farfieldVisible$ | async) === false) {
-      <mat-icon  aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off" />
-    }
-  </mat-expansion-panel-header>
-  <mat-checkbox [formControl]="farfieldVisible">Visible</mat-checkbox>
-  <mat-divider />
-  Tesselation level
-  <mat-slider
-    [max]="10"
-    [min]="0"
-    [step]="1"
-    [showTickMarks]="true">
-    <input matSliderThumb [formControl]="tesselationLevel">
-    </mat-slider>
-    <p>Deform mesh | Logarithmic scale</p>
-  </mat-expansion-panel>
+<mat-checkbox [formControl]="farfieldVisible">Visible</mat-checkbox>
+<mat-divider />
+Tesselation level
+<mat-slider
+  [max]="10"
+  [min]="0"
+  [step]="1"
+  [showTickMarks]="true">
+<input matSliderThumb [formControl]="tesselationLevel">
+</mat-slider>
+<p>Deform mesh | Logarithmic scale</p>
