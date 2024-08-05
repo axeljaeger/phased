@@ -37,7 +37,6 @@ export class BeamformingComponent implements OnInit {
     beamformingV: this.fb.control(0),
   });
 
-  beamformingEnabled$ = this.store.select(beamformingFeature.selectEnabled);
   public beamformingEnabled = this.fb.control(false);
   public beamformingInteractive = this.fb.control(false);
 

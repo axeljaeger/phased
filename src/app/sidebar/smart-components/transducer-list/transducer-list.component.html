@@ -1,15 +1,5 @@
-<mat-expansion-panel hideToggle *rxLet="transducers$ as transducers">
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-            Tranducers
-        </mat-panel-title>
-        <mat-panel-description data-test-id="numTransducers">
-            {{ transducers.length }}
-        </mat-panel-description>
-    </mat-expansion-panel-header>
-    <mat-selection-list [multiple]="false">
-        <mat-list-option *rxFor="let transducer of transducers; index as index; trackBy:transducerIndex" (mouseover)="setTransducerHovered(index)" mouseleave="clearTransducerHighlight()">
-            {{transducer.name}}
-        </mat-list-option>
-    </mat-selection-list>
-</mat-expansion-panel>
+<mat-selection-list [multiple]="false" *rxLet="transducers$ as transducers">
+    <mat-list-option *rxFor="let transducer of transducers; index as index; trackBy:transducerIndex" (mouseover)="setTransducerHovered(index)" mouseleave="clearTransducerHighlight()">
+        {{transducer.name}}
+    </mat-list-option>
+</mat-selection-list>
