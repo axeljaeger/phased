@@ -17,7 +17,7 @@ import { Results, ViewportFeature } from 'src/app/store/viewportConfig.state';
 @Component({
     selector: 'app-sidebar-container',
     templateUrl: './sidebar-container.component.html',
-    styleUrls: ['./sidebar-container.component.css'],
+    styleUrls: ['./sidebar-container.component.scss'],
     standalone: true,
     imports: [
         AsyncPipe,
