@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SidebarContainerComponent } from './sidebar-container';
-import * as menuLeft from './sidebar-container.metadata' ;
+import { SidebarContainerComponent } from './sidebar-container.component';
+import * as menuLeft from './sidebar-container.component.metadata' ;
 
 describe('SidebarContainerComponent', () => {
   let component: SidebarContainerComponent;

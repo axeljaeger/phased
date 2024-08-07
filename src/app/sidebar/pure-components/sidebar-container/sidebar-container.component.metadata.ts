@@ -2,11 +2,10 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { NoopAnimationsModule  } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
-import { SidebarContainerComponent } from './sidebar-container';
+import { SidebarContainerComponent } from './sidebar-container.component';
 
 import { MatInputModule } from '@angular/material/input';
 import { provideMockStore } from '@ngrx/store/testing';

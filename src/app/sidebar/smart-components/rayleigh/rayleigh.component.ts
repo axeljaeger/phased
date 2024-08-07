@@ -16,7 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'app-rayleigh',
   templateUrl: './rayleigh.component.html',
-  styleUrls: ['./rayleigh.component.css'],
+  styleUrls: ['./rayleigh.component.scss'],
   standalone: true,
   imports: [MatExpansionModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatFormFieldModule, MatSelectModule, AsyncPipe]
 })

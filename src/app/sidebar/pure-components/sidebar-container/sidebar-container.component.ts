@@ -11,7 +11,7 @@ import { BeamformingComponent } from '../../smart-components/beamforming/beamfor
 @Component({
     selector: 'app-sidebar-container',
     templateUrl: './sidebar-container.component.html',
-    styleUrls: ['./sidebar-container.component.css'],
+    styleUrls: ['./sidebar-container.component.scss'],
     standalone: true,
     imports: [
         ArrayConfigComponent, 

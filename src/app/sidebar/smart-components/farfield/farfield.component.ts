@@ -14,7 +14,7 @@ import { Results, ViewportFeature, setResultVisible } from 'src/app/store/viewpo
 @Component({
     selector: 'app-farfield',
     templateUrl: './farfield.component.html',
-    styleUrls: ['./farfield.component.css'],
+    styleUrls: ['./farfield.component.scss'],
     standalone: true,
     imports: [MatExpansionModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatSliderModule, AsyncPipe]
 })

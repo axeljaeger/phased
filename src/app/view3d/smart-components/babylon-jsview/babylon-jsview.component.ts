@@ -35,7 +35,7 @@ const diff = (previous: Array<any>, next: Array<any>) =>
 @Component({
   selector: 'app-babylon-jsview',
   templateUrl: './babylon-jsview.component.html',
-  styleUrls: ['./babylon-jsview.component.css'],
+  styleUrls: ['./babylon-jsview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   exportAs: 'babylon',
   standalone: true,

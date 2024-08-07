@@ -1,6 +1,6 @@
 import { importProvidersFrom } from "@angular/core";
-import { SidebarContainerComponent } from "./sidebar-container";
-import * as menuLeft from "./sidebar-container.metadata";
+import { SidebarContainerComponent } from "./sidebar-container.component";
+import * as menuLeft from "./sidebar-container.component.metadata";
 
 import { StoryFn, Meta, moduleMetadata, applicationConfig } from "@storybook/angular";
 import { userEvent, within } from "@storybook/test";
