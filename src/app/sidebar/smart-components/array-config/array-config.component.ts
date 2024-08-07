@@ -18,7 +18,7 @@ import { presets } from '../../../presets'
 @Component({
   selector: 'app-array-config',
   templateUrl: './array-config.component.html',
-  styleUrls: ['./array-config.component.css'],
+  styleUrls: ['./array-config.component.scss'],
   standalone: true,
   imports: [
     MatButtonModule,

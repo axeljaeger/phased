@@ -24,7 +24,7 @@ import { BeamformingActions, beamformingFeature } from 'src/app/store/beamformin
     ReactiveFormsModule
   ],
   templateUrl: './beamforming.component.html',
-  styleUrl: './beamforming.component.css'
+  styleUrl: './beamforming.component.scss'
 })
 export class BeamformingComponent implements OnInit {
   store = inject(Store);  
