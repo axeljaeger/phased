@@ -19,6 +19,7 @@ updates:
         patterns:
             - "@angular/*"
             - "@angular-devkit/build-angular"
+            - "zone.js"
       babylonjs:
         patterns:
             - "@babylonjs/*"
@@ -27,3 +28,6 @@ updates:
             - "@typescript-eslint/*"
             - "eslint"
             - "@angular-eslint/*"
+      ngrx:
+        patterns:
+            - "@ngrx/*"

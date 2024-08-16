@@ -30,7 +30,7 @@ import { UraInteractionRendererComponent } from '../../renderers/ura-interaction
 @Component({
   selector: 'app-view3d',
   templateUrl: './view3d.component.html',
-  styleUrls: ['./view3d.component.css'],
+  styleUrls: ['./view3d.component.scss'],
   providers: [RxState],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,

@@ -9,7 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatExpansionModule } from '@angular/material/expansion';
+import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { presets } from '../../../presets'
@@ -18,7 +18,7 @@ import { presets } from '../../../presets'
 @Component({
   selector: 'app-array-config',
   templateUrl: './array-config.component.html',
-  styleUrls: ['./array-config.component.css'],
+  styleUrls: ['./array-config.component.scss'],
   standalone: true,
   imports: [
     MatButtonModule,
@@ -29,7 +29,7 @@ import { presets } from '../../../presets'
     MatInputModule,
     MatMenuModule,
     ReactiveFormsModule,
-  ]
+  ],
 })
 export class ArrayConfigComponent implements OnInit {
   private store = inject(Store);

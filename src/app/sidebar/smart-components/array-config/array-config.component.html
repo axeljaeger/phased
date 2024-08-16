@@ -1,91 +1,70 @@
-<mat-expansion-panel hideToggle>
-  <mat-expansion-panel-header>
-    <mat-panel-title data-testid="section-arrayconfig">
-      Array config
-    </mat-panel-title>
-  </mat-expansion-panel-header>
-  <form class="example-container" [formGroup]="arrayConfig">
-    <div>
-      <mat-button-toggle-group formControlName="arrayType">
-        <mat-button-toggle value="ura">
-          URA
-          <mat-icon aria-hidden="false" aria-label="URA">square</mat-icon>
-        </mat-button-toggle>
-        <mat-button-toggle value="circular">
-          Circular
-          <mat-icon aria-hidden="false" aria-label="circular">circle</mat-icon>
-        </mat-button-toggle>
-        <mat-button-toggle value="spiral">
-          Spiral
-          <mat-icon aria-hidden="false" aria-label="circular">hive</mat-icon>
-        </mat-button-toggle>
+<form class="example-container" [formGroup]="arrayConfig">
+  <mat-button-toggle-group formControlName="arrayType" class="span-all">
+    <mat-button-toggle value="ura">
+      URA
+    </mat-button-toggle>
+    <mat-button-toggle value="circular">
+      Circular
+    </mat-button-toggle>
+    <mat-button-toggle value="spiral">
+      Spiral
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  @switch (arrayConfig.controls['arrayType'].value) {
+  @case ('ura') {
+  <ng-container formGroupName="uraConfig">
+    <span class="span-all">Element count:</span>
+      <span>x:</span>
+      <mat-form-field appearance="fill">
+        <mat-label>x</mat-label>
+        <input matInput data-test-id="elementsX" type="number" formControlName="elementsX" min="1" max="16">
+      </mat-form-field>
+      <span>y:</span>
+      <mat-form-field appearance="fill">
+        <mat-label>y</mat-label>
+        <input matInput data-test-id="elementsY" type="number" formControlName="elementsY" min="1" max="16">
+      </mat-form-field>
+    <span class="span-all">Element distance</span>
+      <span>x:</span>
+      <mat-form-field appearance="fill">
+        <mat-label>x</mat-label>
+        <input matInput type="number" data-test-id="pitchX" formControlName="pitchX" min="0" max="1" step="0.0001">
+      </mat-form-field>
+      <span>y:</span>
+      <mat-form-field appearance="fill">
+        <mat-label>y</mat-label>
+        <input matInput type="number" data-test-id="pitchY" formControlName="pitchY" min="0" max="1" step="0.0001">
+      </mat-form-field>
+  </ng-container>
+  }
+  @default {
+  <ng-container formGroupName="roundConfig">
+      <span class="first-half">Count:</span>
+      <mat-form-field appearance="fill" class="second-half">
+        <mat-label>Count</mat-label>
+        <input matInput data-test-id="elementCount" type="number" formControlName="elementCount" min="1" max="64">
+      </mat-form-field>
+    @if(arrayConfig.controls['arrayType'].value === 'spiral') {
+      <span class="first-half">Start element:</span>
+      <mat-button-toggle-group formControlName="startElement" class="second-half">
+        <mat-button-toggle value="0">0</mat-button-toggle>
+        <mat-button-toggle value="1">1</mat-button-toggle>
       </mat-button-toggle-group>
-    </div>
-    @switch (arrayConfig.controls['arrayType'].value) {
-    @case ('ura') {
-    <div formGroupName="uraConfig">
-      <div>Element count</div>
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>x</mat-label>
-          <input matInput data-test-id="elementsX" type="number" formControlName="elementsX" min="1" max="16">
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>y</mat-label>
-          <input matInput data-test-id="elementsY" type="number" formControlName="elementsY" min="1" max="16">
-        </mat-form-field>
-      </div>
-      <div>Element distance</div>
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>x</mat-label>
-          <input matInput type="number" data-test-id="pitchX" formControlName="pitchX" min="0" max="1" step="0.0001">
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>y</mat-label>
-          <input matInput type="number" data-test-id="pitchY" formControlName="pitchY" min="0" max="1" step="0.0001">
-        </mat-form-field>
-      </div>
-    </div>
     }
-    @default {
-    <div formGroupName="roundConfig">
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>Element count</mat-label>
-          <input matInput data-test-id="elementCount" type="number" formControlName="elementCount" min="1" max="64">
-        </mat-form-field>
-      </div>
+      <span class="first-half">Diameter:</span>
+      <mat-form-field appearance="fill" class="second-half">
+        <mat-label>Diameter</mat-label>
+        <input matInput type="number" data-test-id="diameter" formControlName="diameter" min="0" max="10" step="0.0001">
+      </mat-form-field>
+  </ng-container>
 
-      @if(arrayConfig.controls['arrayType'].value === 'spiral') {
-      Start element:
-        <mat-button-toggle-group formControlName="startElement">
-          <mat-button-toggle value="0">0</mat-button-toggle>
-          <mat-button-toggle value="1">1</mat-button-toggle>
-        </mat-button-toggle-group>
-      }
-      <div>
-        <mat-form-field appearance="fill">
-          <mat-label>Diameter</mat-label>
-          <input matInput type="number" data-test-id="diameter" formControlName="diameter" min="0" max="10"
-            step="0.0001">
-        </mat-form-field>
-      </div>
-    </div>
-    }
-    }
-  </form>
-  <mat-action-row>
-    <button mat-raised-button color="primary" [matMenuTriggerFor]="menu">Presets</button>
-    <button mat-raised-button color="primary">Export</button>  
-  </mat-action-row>
-  <mat-menu #menu="matMenu">
-    @for (preset of presets; track preset.name) {
-      <button mat-menu-item (click)="loadPreset($index)">{{preset.name}}</button>
-    }
-  </mat-menu>
-</mat-expansion-panel>
+  }
+  }
+  <button class="first-half" mat-raised-button color="primary" [matMenuTriggerFor]="menu">Presets</button>
+  <button class="second-half" mat-raised-button color="primary">Export</button>
+</form> 
+<mat-menu #menu="matMenu">
+  @for (preset of presets; track preset.name) {
+  <button mat-menu-item (click)="loadPreset($index)">{{preset.name}}</button>
+  }
+</mat-menu>

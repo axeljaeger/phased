@@ -24,7 +24,7 @@ import { BeamformingActions, beamformingFeature } from 'src/app/store/beamformin
     ReactiveFormsModule
   ],
   templateUrl: './beamforming.component.html',
-  styleUrl: './beamforming.component.css'
+  styleUrl: './beamforming.component.scss'
 })
 export class BeamformingComponent implements OnInit {
   store = inject(Store);  
@@ -37,7 +37,6 @@ export class BeamformingComponent implements OnInit {
     beamformingV: this.fb.control(0),
   });
 
-  beamformingEnabled$ = this.store.select(beamformingFeature.selectEnabled);
   public beamformingEnabled = this.fb.control(false);
   public beamformingInteractive = this.fb.control(false);
 

@@ -14,7 +14,7 @@ import { Results, ViewportFeature, setResultVisible } from 'src/app/store/viewpo
 @Component({
     selector: 'app-farfield',
     templateUrl: './farfield.component.html',
-    styleUrls: ['./farfield.component.css'],
+    styleUrls: ['./farfield.component.scss'],
     standalone: true,
     imports: [MatExpansionModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatSliderModule, AsyncPipe]
 })
@@ -22,7 +22,6 @@ export class FarfieldComponent implements OnInit {
   store = inject(Store);
   fb = inject(FormBuilder);
   
-  public farfieldVisible$ = this.store.select(ViewportFeature.selectResultEnabled(Results.Farfield));
   public farfieldVisible = this.fb.control(false);
   public tesselationLevel = this.fb.control(1);
 
@@ -31,5 +30,4 @@ export class FarfieldComponent implements OnInit {
       this.store.dispatch(setResultVisible({result: Results.Farfield, visible: val!}));
     });
   }
-
 }

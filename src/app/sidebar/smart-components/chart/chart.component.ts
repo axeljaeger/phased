@@ -10,7 +10,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
   standalone: true,
   imports: [MatButtonModule, MatExpansionModule],
   templateUrl: './chart.component.html',
-  styleUrl: './chart.component.css'
+  styleUrl: './chart.component.scss'
 })
 export class ChartComponent implements OnInit {
   private readonly store = inject(Store);
