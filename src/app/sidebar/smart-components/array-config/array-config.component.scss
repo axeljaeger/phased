@@ -1,0 +1,22 @@
+.example-container {
+    display: grid;
+    grid-template-columns: min-content 40% 5% 40%;
+    align-items: baseline;
+    gap: 1ex;
+}
+
+.span-all {
+    grid-column: 1 / 5;
+}
+
+.first-half {
+    grid-column: 1 / 3;
+}
+
+.second-half {
+    grid-column: 3 / 5;
+}
+
+.span-two {
+    grid-column: 1 / 3;
+}
