@@ -25,6 +25,7 @@ import { BabylonConsumer, implementsOnSceneCreated } from '../../interfaces/life
 import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine';
 import { ShaderStore } from '@babylonjs/core/Engines/shaderStore';
 import { map, pairwise, startWith } from 'rxjs';
+import { Color4 } from '@babylonjs/core';
 
 const diff = (previous: Array<any>, next: Array<any>) =>
 ({
@@ -175,7 +176,8 @@ export class BabylonJSViewComponent
     ShaderStore.IncludesShadersStoreWGSL['ExcitationBuffer'] =
       excitationBufferInclude as unknown as string;
 
-    let scene = new Scene(this.engine);
+    const scene = new Scene(this.engine);
+    scene.clearColor = new Color4(0.2, 0.2, 0.2, 1.0);
     this.camera = new ArcRotateCamera(
       'Camera',
       (3 * Math.PI) / 4,
