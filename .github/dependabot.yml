@@ -26,9 +26,7 @@ updates:
       eslint:
         patterns:
             - "@typescript-eslint/*"
-            - "eslint "
-      angular-eslint:
-        patterns:
+            - "eslint"
             - "@angular-eslint/*"
       ngrx:
         patterns:
