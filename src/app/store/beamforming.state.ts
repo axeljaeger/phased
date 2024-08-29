@@ -22,7 +22,7 @@ export const BeamformingActions = createActionGroup({
     reset: emptyProps(),
     setEnabled: props<{enabled: boolean}>(),
     setInteractive: props<{interactive: boolean}>(),
-    set: props<Beamforming>(),
+    set: props<Partial<Beamforming>>(),
   },
 });
 
@@ -59,8 +59,9 @@ export const reducer = createReducer(
     interactive: args.interactive
   })
   ),
-  on(BeamformingActions.set, (state: Beamforming, args: Beamforming): Beamforming =>
+  on(BeamformingActions.set, (state: Beamforming, args: Partial<Beamforming>): Beamforming =>
   ({
+    ...state,
     ...args,
   })
   ),
