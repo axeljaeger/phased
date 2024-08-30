@@ -7,3 +7,17 @@
     justify-content: space-between;
     align-items: center;
 }
+
+.github-section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 2ex .5ex;
+    gap: .5ex;
+    text-decoration: none;
+}
+
+a, a:visited, a:active {
+    color: #e6e1e6;
+    text-decoration: none;
+}
