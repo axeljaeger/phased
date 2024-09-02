@@ -14,6 +14,8 @@ import { beamformingFeature } from 'src/app/store/beamforming.state';
 import { MatIconModule } from '@angular/material/icon';
 import { Results, ViewportFeature } from 'src/app/store/viewportConfig.state';
 
+import { version } from '../../../../../package.json';
+
 @Component({
     selector: 'app-sidebar-container',
     templateUrl: './sidebar-container.component.html',
@@ -32,6 +34,7 @@ import { Results, ViewportFeature } from 'src/app/store/viewportConfig.state';
     ]
 })
 export class SidebarContainerComponent {
+    public version = version;
     private store = inject(Store);
     public transducersCount$ = this.store.select(arrayConfigFeature.selectTransducers).pipe(map(transducers => transducers.length));
     public beamformingEnabled$ = this.store.select(beamformingFeature.selectEnabled);
