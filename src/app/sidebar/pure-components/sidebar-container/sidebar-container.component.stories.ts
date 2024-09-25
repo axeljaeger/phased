@@ -25,7 +25,7 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/angular/writing-stories/introduction#using-args
 const Template: StoryFn<SidebarContainerComponent> = (
-  args: SidebarContainerComponent,
+  args,
 ) => ({
   props: args,
 });
