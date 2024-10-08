@@ -18,12 +18,16 @@ $theme: mat.define-theme((
 
 html {
     @include mat.all-component-themes($theme);
-
+    scrollbar-color: rgb(36, 36, 36) transparent;
+    scrollbar-width: thin;
 }
-
 
 html, body { height: 100%; }
 body {
     overflow: hidden;
 }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-drawer-inner-container {
+  scrollbar-gutter: stable;
+}
