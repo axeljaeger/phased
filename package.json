@@ -61,7 +61,7 @@
     "rxjs": "~7.8.1",
     "tslib": "^2.7.0",
     "util": "^0.12.4",
-    "zone.js": "~0.15.0"
+    "zone.js": "^0.14.10"
   },
   "devDependencies": {
     "@angular-devkit/architect": "^0.1802.6",
@@ -99,7 +99,7 @@
     "ng-mocks": "^14.13.1",
     "storybook": "8.3.5",
     "ts-node": "~10.9.2",
-    "typescript": "^5.6.2",
+    "typescript": "^5.5.4",
     "util": "^0.12.4"
   }
 }
