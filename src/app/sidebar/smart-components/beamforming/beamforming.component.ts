@@ -86,16 +86,16 @@ export class BeamformingComponent implements OnInit {
     this.store.select(beamformingFeature.selectBeamformingState).subscribe(config => {
       console.log("Config: ", config);
       this.fg.patchValue({
-        beamformingEnabled: config.enabled,
-        beamformingInteractive: config.interactive,
-        beamformingU: config.u,
-        beamformingV: config.v
+        beamformingEnabled: config?.enabled,
+        beamformingInteractive: config?.interactive,
+        beamformingU: config?.u,
+        beamformingV: config?.v
       }, 
       { 
         emitEvent: false, // Avoid infinite recursion
       });
 
-      this.anglesGroup.patchValue({
+      config && this.anglesGroup.patchValue({
         az: normalizeAngle(Angle.FromRadians(Scalar.NormalizeRadians(Math.atan(config.u / Math.sqrt(1 - config.u**2 - config.v**2)))).degrees()),
         el: normalizeAngle(Angle.FromRadians(Scalar.NormalizeRadians(Math.asin(config.v))).degrees()),
       }, 

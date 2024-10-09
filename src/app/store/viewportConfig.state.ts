@@ -34,6 +34,6 @@ export const ViewportFeature = createFeature({
             (result: Results) => 
                 createSelector(
                     selectEnabledResults, 
-                    (results: Array<Results>) => results.includes(result))
+                    (results: Array<Results>) => results?.includes(result))
     })
 })

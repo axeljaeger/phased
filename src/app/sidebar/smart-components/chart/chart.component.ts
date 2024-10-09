@@ -69,8 +69,8 @@ export class ChartComponent implements OnInit {
     });
 
     this.store.select(exportFeature.selectExportState).subscribe(state => {
-      chart.data.datasets[0].data = state.u;
-      chart.data.datasets[1].data = state.v;
+      chart.data.datasets[0].data = state?.u;
+      chart.data.datasets[1].data = state?.v;
       chart.update();
     });
   }
