@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Angle } from '@babylonjs/core/Maths/math.path';
-import { Scalar } from '@babylonjs/core/Maths/math.scalar';
+import { NormalizeRadians } from '@babylonjs/core/Maths/math.scalar.functions';
 import { Store } from '@ngrx/store';
 import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
 
@@ -96,8 +96,8 @@ export class BeamformingComponent implements OnInit {
       });
 
       config && this.anglesGroup.patchValue({
-        az: normalizeAngle(Angle.FromRadians(Scalar.NormalizeRadians(Math.atan(config.u / Math.sqrt(1 - config.u**2 - config.v**2)))).degrees()),
-        el: normalizeAngle(Angle.FromRadians(Scalar.NormalizeRadians(Math.asin(config.v))).degrees()),
+        az: normalizeAngle(Angle.FromRadians(NormalizeRadians(Math.atan(config.u / Math.sqrt(1 - config.u**2 - config.v**2)))).degrees()),
+        el: normalizeAngle(Angle.FromRadians(NormalizeRadians(Math.asin(config.v))).degrees()),
       }, 
       { 
         emitEvent: false, // Avoid infinite recursion
