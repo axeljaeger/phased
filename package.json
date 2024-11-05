@@ -72,7 +72,7 @@
     "@angular/compiler-cli": "18.2.10",
     "@babel/core": "^7.25.9",
     "@chromatic-com/storybook": "^3.2.2",
-    "@compodoc/compodoc": "^1.1.23",
+    "@compodoc/compodoc": "^1.1.26",
     "@ngrx/eslint-plugin": "^18.1.1",
     "@ngrx/schematics": "^18.1.1",
     "@ngrx/store-devtools": "^18.1.1",
