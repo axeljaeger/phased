@@ -52,7 +52,7 @@
     "@rx-angular/state": "19.0.0",
     "@rx-angular/template": "19.0.0",
     "@storybook/test": "^8.4.7",
-    "@types/react": "^18.3.9",
+    "@types/react": "^19.0.2",
     "@types/react-dom": "^18.3.1",
     "chart.js": "^4.4.6",
     "rxjs": "~7.8.1",
