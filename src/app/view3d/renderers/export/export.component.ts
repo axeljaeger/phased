@@ -60,11 +60,10 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 }`
 
 @Component({
-  selector: 'app-export-renderer',
-  standalone: true,
-  imports: [],
-  template: '<ng-content />',
-  providers: [{provide: TransducerBufferConsumer, useExisting: ExportRendererComponent}],
+    selector: 'app-export-renderer',
+    imports: [],
+    template: '<ng-content />',
+    providers: [{ provide: TransducerBufferConsumer, useExisting: ExportRendererComponent }]
 })
 export class ExportRendererComponent extends TransducerBufferConsumer
 implements OnChanges, OnDestroy {

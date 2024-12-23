@@ -8,7 +8,6 @@ import { View3dComponent } from './view3d/smart-components/view3d/view3d.compone
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
-    standalone: true,
     imports: [MatSidenavModule, RouterOutlet, SidebarContainerComponent, View3dComponent]
 })
 export class AppComponent {

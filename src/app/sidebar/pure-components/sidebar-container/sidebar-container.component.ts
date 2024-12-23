@@ -20,15 +20,14 @@ import { version } from '../../../../../package.json';
     selector: 'app-sidebar-container',
     templateUrl: './sidebar-container.component.html',
     styleUrls: ['./sidebar-container.component.scss'],
-    standalone: true,
     imports: [
         AsyncPipe,
-        ArrayConfigComponent, 
+        ArrayConfigComponent,
         ChartComponent,
         FarfieldComponent,
         MatExpansionModule,
-        MatIconModule, 
-        RayleighComponent, 
+        MatIconModule,
+        RayleighComponent,
         TransducerListComponent,
         BeamformingComponent
     ]

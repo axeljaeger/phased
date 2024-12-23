@@ -28,24 +28,23 @@ import { UraInteractionRendererComponent } from '../../renderers/ura-interaction
 
 
 @Component({
-  selector: 'app-view3d',
-  templateUrl: './view3d.component.html',
-  styleUrls: ['./view3d.component.scss'],
-  providers: [RxState],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    RxLet,
-    BabylonJSViewComponent,
-    BeamformingRendererComponent,
-    ExcitationRendererComponent,
-    ExportRendererComponent,
-    TransducerBufferComponent,
-    RayleighIntegralRendererComponent,
-    FarfieldRendererComponent,
-    AsyncPipe,
-    UraInteractionRendererComponent
-  ],
+    selector: 'app-view3d',
+    templateUrl: './view3d.component.html',
+    styleUrls: ['./view3d.component.scss'],
+    providers: [RxState],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        RxLet,
+        BabylonJSViewComponent,
+        BeamformingRendererComponent,
+        ExcitationRendererComponent,
+        ExportRendererComponent,
+        TransducerBufferComponent,
+        RayleighIntegralRendererComponent,
+        FarfieldRendererComponent,
+        AsyncPipe,
+        UraInteractionRendererComponent
+    ]
 })
 export class View3dComponent {
   store = inject(Store);

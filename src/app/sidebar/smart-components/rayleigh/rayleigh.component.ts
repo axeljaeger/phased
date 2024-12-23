@@ -6,7 +6,6 @@ import { ResultAspect } from '../../../view3d/materials/rayleigh.material';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { AsyncPipe } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Results, ViewportFeature, setResultVisible } from 'src/app/store/viewportConfig.state';
 import { RayleighResultActions, ResultSet } from 'src/app/store/rayleigh.state';
@@ -14,11 +13,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 
 @Component({
-  selector: 'app-rayleigh',
-  templateUrl: './rayleigh.component.html',
-  styleUrls: ['./rayleigh.component.scss'],
-  standalone: true,
-  imports: [MatExpansionModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatFormFieldModule, MatSelectModule, AsyncPipe]
+    selector: 'app-rayleigh',
+    templateUrl: './rayleigh.component.html',
+    styleUrls: ['./rayleigh.component.scss'],
+    imports: [MatExpansionModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatFormFieldModule, MatSelectModule]
 })
 export class RayleighComponent implements OnInit {
   private store = inject(Store);

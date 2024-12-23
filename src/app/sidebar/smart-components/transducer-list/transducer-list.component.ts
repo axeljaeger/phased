@@ -12,7 +12,6 @@ import { Transducer, arrayConfigFeature } from 'src/app/store/arrayConfig.state'
     selector: 'app-transducer-list',
     templateUrl: './transducer-list.component.html',
     styleUrls: ['./transducer-list.component.scss'],
-    standalone: true,
     imports: [RxLet, MatExpansionModule, MatListModule, RxFor]
 })
 export class TransducerListComponent {

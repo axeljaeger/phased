@@ -6,11 +6,10 @@ import {MatButtonModule} from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
-  selector: 'app-chart',
-  standalone: true,
-  imports: [MatButtonModule, MatExpansionModule],
-  templateUrl: './chart.component.html',
-  styleUrl: './chart.component.scss'
+    selector: 'app-chart',
+    imports: [MatButtonModule, MatExpansionModule],
+    templateUrl: './chart.component.html',
+    styleUrl: './chart.component.scss'
 })
 export class ChartComponent implements OnInit {
   private readonly store = inject(Store);
