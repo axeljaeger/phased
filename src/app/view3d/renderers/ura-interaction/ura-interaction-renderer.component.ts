@@ -11,11 +11,10 @@ import { ArrayConfig } from 'src/app/store/arrayConfig.state';
 
 
 @Component({
-  selector: 'app-ura-interaction',
-  standalone: true,
-  imports: [],
-  template: '<ng-content />',
-  providers: [{provide: BabylonConsumer, useExisting: forwardRef(() => UraInteractionRendererComponent)}],
+    selector: 'app-ura-interaction',
+    imports: [],
+    template: '<ng-content />',
+    providers: [{ provide: BabylonConsumer, useExisting: forwardRef(() => UraInteractionRendererComponent) }]
 })
 export class UraInteractionRendererComponent extends BabylonConsumer implements OnDestroy, OnChanges {
   @Input() arrayConfig : ArrayConfig | null = null;

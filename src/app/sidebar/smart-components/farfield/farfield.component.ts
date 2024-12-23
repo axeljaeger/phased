@@ -7,7 +7,6 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { AsyncPipe } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { Results, ViewportFeature, setResultVisible } from 'src/app/store/viewportConfig.state';
 
@@ -15,8 +14,7 @@ import { Results, ViewportFeature, setResultVisible } from 'src/app/store/viewpo
     selector: 'app-farfield',
     templateUrl: './farfield.component.html',
     styleUrls: ['./farfield.component.scss'],
-    standalone: true,
-    imports: [MatExpansionModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatSliderModule, AsyncPipe]
+    imports: [MatExpansionModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatSliderModule]
 })
 export class FarfieldComponent implements OnInit {
   store = inject(Store);

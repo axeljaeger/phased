@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,20 +16,18 @@ const normalizeAngle = (angle: number) => {
 };
 
 @Component({
-  selector: 'app-beamforming',
-  standalone: true,
-  imports: [
-    AsyncPipe,
-    MatButtonModule, 
+    selector: 'app-beamforming',
+    imports: [
+    MatButtonModule,
     MatCheckboxModule,
-    MatExpansionModule, 
-    MatFormFieldModule, 
-    MatIconModule, 
+    MatExpansionModule,
+    MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     ReactiveFormsModule
-  ],
-  templateUrl: './beamforming.component.html',
-  styleUrl: './beamforming.component.scss'
+],
+    templateUrl: './beamforming.component.html',
+    styleUrl: './beamforming.component.scss'
 })
 export class BeamformingComponent implements OnInit {
   store = inject(Store);  

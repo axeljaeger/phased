@@ -16,20 +16,19 @@ import { presets } from '../../../presets'
 
 
 @Component({
-  selector: 'app-array-config',
-  templateUrl: './array-config.component.html',
-  styleUrls: ['./array-config.component.scss'],
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatExpansionModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatMenuModule,
-    ReactiveFormsModule,
-  ],
+    selector: 'app-array-config',
+    templateUrl: './array-config.component.html',
+    styleUrls: ['./array-config.component.scss'],
+    imports: [
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatExpansionModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        MatMenuModule,
+        ReactiveFormsModule,
+    ]
 })
 export class ArrayConfigComponent implements OnInit {
   private store = inject(Store);
