@@ -74,7 +74,7 @@
     "@ngrx/eslint-plugin": "^19.0.0",
     "@ngrx/schematics": "^19.0.0",
     "@ngrx/store-devtools": "^19.0.0",
-    "@playwright/test": "^1.48.2",
+    "@playwright/test": "^1.49.1",
     "@storybook/addon-actions": "^8.4.7",
     "@storybook/addon-essentials": "^8.4.7",
     "@storybook/addon-interactions": "^8.4.7",
