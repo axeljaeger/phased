@@ -1,0 +1,48 @@
+<mat-accordion multi>
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title data-testid="section-environment">
+                Aperture
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <app-aperture-view [transducers]="transducers()" [transducerDiameter]="diameter()" />
+    </mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title data-testid="section-beamforming">
+                KPIs
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <app-kpi [kpis]="kpis()" />
+    </mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Charts
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+    <app-chart />
+</mat-expansion-panel>
+<mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Far field 3D
+      </mat-panel-title>
+      @if (farfieldVisible() === false) {
+        <mat-icon  aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off" />
+      }
+    </mat-expansion-panel-header>
+    <app-farfield />
+</mat-expansion-panel>
+<mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Rayleigh integral
+      </mat-panel-title>
+      @if (rayleighVisible() === false) {
+        <mat-icon aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off" />
+      }
+    </mat-expansion-panel-header>
+<app-rayleigh />        
+</mat-expansion-panel>
+</mat-accordion>

@@ -20,12 +20,12 @@ const initialState: SelectionState = {
 export const SelectionActions = createActionGroup({
   source: 'Selection',
   events: {
-    'Clear': emptyProps(),
-    'Set': props<{ transducerId: number }>(),
+    clear: emptyProps(),
+    set: props<{ transducerId: number }>(),
   },
 });
 
-const selectionReducer = createReducer(
+const reducer = createReducer(
   initialState,
   on(SelectionActions.set, (state, args): SelectionState => ({ ...state, hovered: [args.transducerId] })),
   on(SelectionActions.clear, (state): SelectionState => ({ ...state, hovered: [] })),
@@ -33,5 +33,5 @@ const selectionReducer = createReducer(
 
 export const selectionFeature = createFeature({
   name: 'selection',
-  reducer: selectionReducer,
+  reducer,
 });

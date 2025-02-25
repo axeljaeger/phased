@@ -13,6 +13,7 @@ import { Transducer } from 'src/app/store/arrayConfig.state';
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { ResultSet } from 'src/app/store/rayleigh.state';
 import { VertexData } from '@babylonjs/core';
+import { EnvironmentState } from 'src/app/store/environment.state';
 
 export const cubeCut = (): VertexData => {
   const positions = [
@@ -74,7 +75,7 @@ export class RayleighIntegralRendererComponent extends TransducerBufferConsumer 
   // Should no longer be needed or changed to a number.
   @Input() transducers : Array<Transducer> | null = null;
 
-  @Input() environment : number | null = null;
+  @Input() environment : EnvironmentState | null = null;
 
   @Input() aspect : ResultAspect | null = null;
   @Input() resultSet : ResultSet | null = null;
@@ -156,12 +157,12 @@ export class RayleighIntegralRendererComponent extends TransducerBufferConsumer 
     this.cubeCut.dispose();
   }
 
-  private uploadEnvironment(speedOfSound : number | null) : void {
-    if (speedOfSound) {
+  private uploadEnvironment(environment : EnvironmentState | null) : void {
+    if (environment) {
       const omega = 2.0 * Math.PI * 40000;
 
       this.material.setFloat('omega', omega);
-      this.material.setFloat('k', omega / speedOfSound);
+      this.material.setFloat('k', omega / environment.speedOfSound);
     }
   }
 

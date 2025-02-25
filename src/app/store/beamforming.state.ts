@@ -26,40 +26,40 @@ export const BeamformingActions = createActionGroup({
   },
 });
 
-export const reducer = createReducer(
+const reducer = createReducer(
   initialState,
-  on(BeamformingActions.setU, (state: Beamforming, args): Beamforming =>
+  on(BeamformingActions.setU, (state, args): Beamforming =>
   ({
     ...state,
     u: args.u
   })
   ),
-  on(BeamformingActions.setV, (state: Beamforming, args): Beamforming =>
+  on(BeamformingActions.setV, (state, args): Beamforming =>
   ({
     ...state,
     v: args.v
   })
   ),
-  on(BeamformingActions.reset, (state: Beamforming): Beamforming =>
+  on(BeamformingActions.reset, (state): Beamforming =>
   ({
     ...state,
     u: 0,
     v: 0,
   })
   ),
-  on(BeamformingActions.setEnabled, (state: Beamforming, args): Beamforming =>
+  on(BeamformingActions.setEnabled, (state, args): Beamforming =>
   ({
     ...state,
     enabled: args.enabled
   })
   ),
-  on(BeamformingActions.setInteractive, (state: Beamforming, args): Beamforming =>
+  on(BeamformingActions.setInteractive, (state, args): Beamforming =>
   ({
     ...state,
     interactive: args.interactive
   })
   ),
-  on(BeamformingActions.set, (state: Beamforming, args: Partial<Beamforming>): Beamforming =>
+  on(BeamformingActions.set, (state, args): Beamforming =>
   ({
     ...state,
     ...args,

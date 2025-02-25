@@ -23,9 +23,9 @@ export const ExportActions = createActionGroup({
   },
 });
 
-export const reducer = createReducer(
+const reducer = createReducer(
   initialState,
-  on(ExportActions.setResults, (state: Result, args): Result =>
+  on(ExportActions.setResults, (state, args): Result =>
   ({
     ...state,
     u: args.u,

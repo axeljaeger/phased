@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, Output, forwardRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, forwardRef, output } from '@angular/core';
 
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 
@@ -15,8 +15,8 @@ import { RotationGizmo } from '@babylonjs/core';
 
 })
 export class BeamformingRendererComponent extends BabylonConsumer implements OnDestroy {
-  @Output() az = new EventEmitter<number>();
-  @Output() el = new EventEmitter<number>();
+  az = output<number>();
+  el = output<number>();
   
   private azHandle: Mesh;
   private elHandle: Mesh;
@@ -37,7 +37,7 @@ export class BeamformingRendererComponent extends BabylonConsumer implements OnD
     this.azRotationGizmo.attachedMesh = this.azHandle;
 
     this.azRotationGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
-      this.az.next(this.azHandle.rotation.y);
+      this.az.emit(this.azHandle.rotation.y);
     });
 
     this.elHandle = new Mesh('elHandle', scene);
@@ -49,7 +49,7 @@ export class BeamformingRendererComponent extends BabylonConsumer implements OnD
     this.elRotationGizmo.attachedMesh = this.elHandle;
 
     this.elRotationGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
-      this.el.next(this.elHandle.rotation.x);
+      this.el.emit(this.elHandle.rotation.x);
     });
   }
 

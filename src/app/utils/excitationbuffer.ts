@@ -1,6 +1,6 @@
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 
-export const excitationBufferMaxElements = 256;
+export const excitationBufferMaxElements = 2048;
 export const excitationBufferMaxElementsDefine = `#define MAX_ELEMENTS ${excitationBufferMaxElements}`;
 export const excitationBufferElementSize = 8;
 
@@ -19,7 +19,7 @@ export const excitationBufferInclude = /* wgsl */`
   };
 
   struct ExcitationBuffer { 
-    elements: array<ExcitationElement, 256>,
+    elements: array<ExcitationElement, 2048>,
   };
 
   var<uniform> excitation: ExcitationBuffer;

@@ -6,14 +6,11 @@ import {
 
 import { Store } from '@ngrx/store';
 
-import { RxState } from '@rx-angular/state';
 import { FarfieldRendererComponent } from '../../renderers/farfield/farfield-renderer.component';
 import { RayleighIntegralRendererComponent } from '../../renderers/rayleigh-integral/rayleigh-renderer.component';
-import { AsyncPipe } from '@angular/common';
 import { TransducerBufferComponent } from '../../shared/transducer-buffer.component';
 import { ExcitationRendererComponent } from '../../renderers/excitation/excitation-renderer.component';
 import { BabylonJSViewComponent } from '../babylon-jsview/babylon-jsview.component';
-import { RxLet } from '@rx-angular/template/let';
 
 import { BeamformingRendererComponent } from '../../renderers/beamforming/beamforming-renderer.component';
 import { SelectionActions, selectionFeature } from 'src/app/store/selection.state';
@@ -31,10 +28,8 @@ import { UraInteractionRendererComponent } from '../../renderers/ura-interaction
     selector: 'app-view3d',
     templateUrl: './view3d.component.html',
     styleUrls: ['./view3d.component.scss'],
-    providers: [RxState],
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        RxLet,
         BabylonJSViewComponent,
         BeamformingRendererComponent,
         ExcitationRendererComponent,
@@ -42,39 +37,29 @@ import { UraInteractionRendererComponent } from '../../renderers/ura-interaction
         TransducerBufferComponent,
         RayleighIntegralRendererComponent,
         FarfieldRendererComponent,
-        AsyncPipe,
         UraInteractionRendererComponent
     ]
 })
 export class View3dComponent {
   store = inject(Store);
-  beamformingInteractive$ = this.store.select(beamformingFeature.selectInteractive);
-  title = 'Air coupled Ultrasound Array';
-  vm$ = this.state.select();
+  beamformingInteractive = this.store.selectSignal(beamformingFeature.selectInteractive);
 
-  rayleighEnabled$ = this.store.select(
+  rayleighEnabled = this.store.selectSignal(
     ViewportFeature.selectResultEnabled(Results.RayleighIntegral)
   );
-  rayleighAspect$ = this.store.select(RayleighFeature.selectAspect);
-  rayleighResultSet$ = this.store.select(RayleighFeature.selectResultSet);
-  farfieldEnabled$ = this.store.select(ViewportFeature.selectResultEnabled(Results.Farfield));
-  k$ = this.store.select(environmentFeature.selectK);
-  ura$ = this.store.select(arrayConfigFeature.isUra);
-  arrayConfig$ = this.store.select(arrayConfigFeature.selectArrayConfigState);
-  constructor(
-    private state: RxState<{
-      transducers: any;
-      environment: any;
-      selection: any;
-      beamforming: any;
-    }>
-  ) {
-    this.state.connect('transducers', this.store.select(arrayConfigFeature.selectTransducers));
-    this.state.connect('environment', this.store.select(environmentFeature.selectEnvironmentState));
-    this.state.connect('selection', this.store.select(selectionFeature.selectSelectionState));
-    this.state.connect('beamforming', this.store.select(beamformingFeature.selectBeamformingState));
-  }
-
+  rayleighAspect = this.store.selectSignal(RayleighFeature.selectAspect);
+  rayleighResultSet = this.store.selectSignal(RayleighFeature.selectResultSet);
+  farfieldEnabled = this.store.selectSignal(ViewportFeature.selectResultEnabled(Results.Farfield));
+  k = this.store.selectSignal(environmentFeature.selectK);
+  ura = this.store.selectSignal(arrayConfigFeature.isUra);
+  
+  arrayConfig = this.store.selectSignal(arrayConfigFeature.selectArrayConfigState);
+  transducers = this.store.selectSignal(arrayConfigFeature.selectTransducers);
+  environment = this.store.selectSignal(environmentFeature.selectEnvironmentState);
+  selection =   this.store.selectSignal(selectionFeature.selectSelectionState);
+  beamforming = this.store.selectSignal(beamformingFeature.selectBeamformingState);
+  transducerDiameter = this.store.selectSignal(arrayConfigFeature.selectTransducerDiameter);
+  
   public transducerHovered(transducerId: number): void {
     this.store.dispatch(SelectionActions.set({ transducerId }));
   }

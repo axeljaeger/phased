@@ -8,7 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { Results, ViewportFeature, setResultVisible } from 'src/app/store/viewportConfig.state';
+import { Results, ResultsActions } from 'src/app/store/viewportConfig.state';
 
 @Component({
     selector: 'app-farfield',
@@ -25,7 +25,7 @@ export class FarfieldComponent implements OnInit {
 
   ngOnInit(): void {
     this.farfieldVisible.valueChanges.subscribe(val => {
-      this.store.dispatch(setResultVisible({result: Results.Farfield, visible: val!}));
+      this.store.dispatch(ResultsActions.setResultVisible({result: Results.Farfield, visible: val!}));
     });
   }
 }

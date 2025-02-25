@@ -1,0 +1,18 @@
+
+<mat-selection-list role="list">
+    @for (preset of presets; track preset.config.name) {
+        <mat-list-item role="listitem" (click)="loadPresetIndex($index)">
+            <mat-icon matListItemIcon>{{ 
+                preset.config.kind === 'Academic' ? 'school' : 
+                preset.config.kind === 'Industrial' ? 'factory' : 
+                'description' 
+                }}</mat-icon>
+            <span matListItemTitle>{{preset.config.name}}</span>
+            <span matListItemLine>{{ 
+                preset.config.kind === 'Academic' ? 'Academic publication' : 
+                preset.config.kind === 'Industrial' ? 'Commercial product' : 
+                'Sample' 
+                }}</span>
+        </mat-list-item>
+    }
+</mat-selection-list>

@@ -50,9 +50,7 @@ export class BeamformingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fg.valueChanges.subscribe(val => {
-      console.log(val);
-      
+    this.fg.valueChanges.subscribe(val => {      
       this.store.dispatch(BeamformingActions.set({
         enabled: val.beamformingEnabled!,
         interactive: val.beamformingInteractive!,
@@ -81,7 +79,6 @@ export class BeamformingComponent implements OnInit {
     });
 
     this.store.select(beamformingFeature.selectBeamformingState).subscribe(config => {
-      console.log("Config: ", config);
       this.fg.patchValue({
         beamformingEnabled: config?.enabled,
         beamformingInteractive: config?.interactive,

@@ -1,5 +1,0 @@
-<mat-selection-list [multiple]="false" *rxLet="transducers$ as transducers">
-    <mat-list-option *rxFor="let transducer of transducers; index as index; trackBy:transducerIndex" (mouseover)="setTransducerHovered(index)" mouseleave="clearTransducerHighlight()">
-        {{transducer.name}}
-    </mat-list-option>
-</mat-selection-list>
