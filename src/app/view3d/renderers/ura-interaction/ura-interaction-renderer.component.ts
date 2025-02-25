@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, forwardRef } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, SimpleChanges, forwardRef, output } from '@angular/core';
 
 import { PositionGizmo } from '@babylonjs/core/Gizmos/positionGizmo';
 import { CreateIcoSphere } from '@babylonjs/core/Meshes/Builders/icoSphereBuilder';
@@ -18,7 +18,7 @@ import { ArrayConfig } from 'src/app/store/arrayConfig.state';
 })
 export class UraInteractionRendererComponent extends BabylonConsumer implements OnDestroy, OnChanges {
   @Input() arrayConfig : ArrayConfig | null = null;
-  @Output() arrayConfigChange = new EventEmitter<ArrayConfig>();
+  arrayConfigChange = output<ArrayConfig>();
   
   private pitchHandle: Mesh;
   private pitchGizmo: PositionGizmo;
@@ -47,12 +47,12 @@ export class UraInteractionRendererComponent extends BabylonConsumer implements 
     );
     
     this.pitchGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
-      if (this.arrayConfig) {
-        this.arrayConfigChange.next({
+      if (this.arrayConfig && this.arrayConfig.config.type === 'ura') {
+        this.arrayConfigChange.emit({
           ...this.arrayConfig,
-          uraConfig: {
-            ...this.arrayConfig.uraConfig,
-            pitchX: event.dragPlanePoint.add(this.offset).x * 2 / (this.arrayConfig.uraConfig.elementsX-1)
+          config: {
+            ...this.arrayConfig.config,
+            pitchX: event.dragPlanePoint.add(this.offset).x * 2 / (this.arrayConfig.config.elementsX-1)
           }
         });
       }
@@ -63,12 +63,12 @@ export class UraInteractionRendererComponent extends BabylonConsumer implements 
       this.offset = this.pitchHandle.position.subtract(event.dragPlanePoint)
     );
     this.pitchGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
-      if (this.arrayConfig) {
-        this.arrayConfigChange.next({
+      if (this.arrayConfig && this.arrayConfig.config.type === 'ura') {
+        this.arrayConfigChange.emit({
           ...this.arrayConfig,
-          uraConfig: {
-            ...this.arrayConfig.uraConfig,
-            pitchY: event.dragPlanePoint.add(this.offset).y * 2 /(this.arrayConfig.uraConfig.elementsY-1)
+          config: {
+            ...this.arrayConfig.config,
+            pitchY: event.dragPlanePoint.add(this.offset).y * 2 /(this.arrayConfig.config.elementsY-1)
           }
         });
       }
@@ -89,12 +89,12 @@ export class UraInteractionRendererComponent extends BabylonConsumer implements 
       this.offset = this.pitchHandle.position.subtract(event.dragPlanePoint)
     );
     this.numGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
-      if (this.arrayConfig) {
-        this.arrayConfigChange.next({
+      if (this.arrayConfig && this.arrayConfig.config.type === 'ura') {
+        this.arrayConfigChange.emit({
           ...this.arrayConfig,
-          uraConfig: {
-            ...this.arrayConfig.uraConfig,
-            elementsX: Math.abs(1 + Math.round(2*event.dragPlanePoint.add(this.offset).x / this.arrayConfig.uraConfig.pitchX))
+          config: {
+            ...this.arrayConfig.config,
+            elementsX: Math.abs(1 + Math.round(2*event.dragPlanePoint.add(this.offset).x / this.arrayConfig.config.pitchX))
           }
         });
       }
@@ -105,12 +105,13 @@ export class UraInteractionRendererComponent extends BabylonConsumer implements 
       this.offset = this.pitchHandle.position.subtract(event.dragPlanePoint)
     );
     this.numGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
-      if (this.arrayConfig) {
-        this.arrayConfigChange.next({
+      if (this.arrayConfig && this.arrayConfig.config.type === 'ura') {
+        this.arrayConfigChange.emit({
           ...this.arrayConfig,
-          uraConfig: {
-            ...this.arrayConfig.uraConfig,
-            elementsY: Math.abs(1 + Math.round(2*event.dragPlanePoint.add(this.offset).y / this.arrayConfig.uraConfig.pitchY))
+          config: {
+            ...this.arrayConfig.config,
+            type: 'ura',
+            elementsY: Math.abs(1 + Math.round(2*event.dragPlanePoint.add(this.offset).y / this.arrayConfig.config.pitchY)),  
           }
         });
       }
@@ -131,14 +132,14 @@ export class UraInteractionRendererComponent extends BabylonConsumer implements 
   }
 
   prepareHandles() : void {
-    if (this.arrayConfig && this.pitchHandle) {
+    if (this.arrayConfig && this.pitchHandle && this.arrayConfig.config.type === 'ura') {
       this.numHandle.position = new Vector3(
-        this.arrayConfig.uraConfig.pitchX * this.arrayConfig.uraConfig.elementsX / 2, 
-        this.arrayConfig.uraConfig.pitchY * this.arrayConfig.uraConfig.elementsY / 2,0);
+        this.arrayConfig.config.pitchX * this.arrayConfig.config.elementsX / 2, 
+        this.arrayConfig.config.pitchY * this.arrayConfig.config.elementsY / 2,0);
     
         this.pitchHandle.position = new Vector3(
-          this.arrayConfig.uraConfig.pitchX * (this.arrayConfig.uraConfig.elementsX-1) / 2, 
-          this.arrayConfig.uraConfig.pitchY * (this.arrayConfig.uraConfig.elementsY-1) / 2,0);
+          this.arrayConfig.config.pitchX * (this.arrayConfig.config.elementsX-1) / 2, 
+          this.arrayConfig.config.pitchY * (this.arrayConfig.config.elementsY-1) / 2,0);
     }
   }
 }

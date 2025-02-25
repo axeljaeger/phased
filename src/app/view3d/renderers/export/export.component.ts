@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, output, SimpleChanges } from '@angular/core';
 import { Textures, TransducerBufferConsumer } from '../../shared/transducer-buffer.component';
 import { ComputeShader, Scene, StorageBuffer, UniformBuffer, WebGPUEngine } from '@babylonjs/core';
 import { Transducer } from 'src/app/store/arrayConfig.state';
@@ -28,7 +28,7 @@ struct ExcitationElement { // size per element: 8
 };
 
 struct ExcitationBuffer { 
-  elements: array<ExcitationElement, 256>,
+  elements: array<ExcitationElement, 2048>,
 };
 
 @group(0) @binding(1) var<uniform> excitation: ExcitationBuffer;
@@ -67,8 +67,7 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 })
 export class ExportRendererComponent extends TransducerBufferConsumer
 implements OnChanges, OnDestroy {
-  @Output() 
-  results = new EventEmitter<Result>();
+  results = output<Result>();
   
   @Input() transducers: Array<Transducer> | null = null;
   @Input() environment: number | null = null;
@@ -116,6 +115,7 @@ implements OnChanges, OnDestroy {
   ngOnDestroy(): void {
       console.log("Destroying Export Renderer")
   }
+  
   ngOnChanges(changes: SimpleChanges): void {
     this.calcData();
   }
@@ -144,7 +144,7 @@ implements OnChanges, OnDestroy {
           acc.v.push({x: label, y: series.v[index] / numElements});
           return acc;
         }, {u: new Array<Point>, v: new Array<Point>});
-        this.results.next(result);
+        this.results.emit(result);
       });
     }
   }

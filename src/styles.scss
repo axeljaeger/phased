@@ -8,18 +8,18 @@ $theme: mat.define-theme((
     primary: mat.$violet-palette,
   ),
   typography: (
-    brand-family: 'Comic Sans',
+    brand-family: 'Roboto, sans-serif',
     bold-weight: 900
   ),
   density: (
-    scale: -5
+    scale: -1
   )
 ));
 
 html {
-    @include mat.all-component-themes($theme);
     scrollbar-color: rgb(36, 36, 36) transparent;
     scrollbar-width: thin;
+    @include mat.all-component-themes($theme);
 }
 
 html, body { height: 100%; }
@@ -30,4 +30,29 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .mat-drawer-inner-container {
   scrollbar-gutter: stable;
+  overflow-x: clip !important;
+}
+
+.sidebar-panel {
+  background-color: var(--mat-sidenav-content-background-color);
+  display: block;
+  border-radius: 12px;
+}
+
+.bigTab {
+  @include mat.button-toggle-overrides((
+    selected-state-background-color: var(--mdc-switch-selected-handle-color),
+    background-color: var(--mat-sys-surface),
+  ));
+}
+
+:root {
+  @include mat.card-overrides((
+    elevated-container-color: var(--mat-sys-surface),
+  ));
+  --mdc-list-list-item-hover-leading-icon-color: var(--mat-full-pseudo-checkbox-selected-icon-color);
+}
+
+.mat-mdc-card-subtitle {
+  font-style: italic;
 }

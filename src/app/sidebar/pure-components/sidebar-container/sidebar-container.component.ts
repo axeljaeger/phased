@@ -1,42 +1,58 @@
-import { Component, inject } from '@angular/core';
-import { FarfieldComponent } from '../../smart-components/farfield/farfield.component';
-import { RayleighComponent } from '../../smart-components/rayleigh/rayleigh.component';
-import { TransducerListComponent } from '../../smart-components/transducer-list/transducer-list.component';
+import { Component, inject, model } from '@angular/core';
 import { ArrayConfigComponent } from '../../smart-components/array-config/array-config.component';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { ChartComponent } from '../../smart-components/chart/chart.component';
 import { BeamformingComponent } from '../../smart-components/beamforming/beamforming.component';
 import { Store } from '@ngrx/store';
-import { arrayConfigFeature } from 'src/app/store/arrayConfig.state';
-import { map } from 'rxjs/operators';
-import { AsyncPipe } from '@angular/common';
+import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
 import { beamformingFeature } from 'src/app/store/beamforming.state';
-import { MatIconModule } from '@angular/material/icon';
-import { Results, ViewportFeature } from 'src/app/store/viewportConfig.state';
+import { MatIcon } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
+
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { LibraryComponent } from '../library/library.component';
+
+import { EnvironmentComponent } from '../environment/environment.component';
+import { ExcitationComponent } from '../excitation/excitation.component';
 
 import { version } from '../../../../../package.json';
+import { InfoComponent } from '../info/info.component';
+import { TransducerComponent } from '../transducer/transducer.component';
+import { ExportComponent } from '../export/export.component';
+import { EnvironmentActions, environmentFeature, EnvironmentState } from 'src/app/store/environment.state';
 
 @Component({
     selector: 'app-sidebar-container',
     templateUrl: './sidebar-container.component.html',
     styleUrls: ['./sidebar-container.component.scss'],
     imports: [
-        AsyncPipe,
         ArrayConfigComponent,
-        ChartComponent,
-        FarfieldComponent,
+        BeamformingComponent,
+        EnvironmentComponent,
+        ExcitationComponent,
+        ExportComponent,
+        FormsModule,
+        InfoComponent,
+        LibraryComponent,
+        MatButtonToggle,
+        MatButtonToggleGroup,
         MatExpansionModule,
-        MatIconModule,
-        RayleighComponent,
-        TransducerListComponent,
-        BeamformingComponent
+        MatIcon,
+        TransducerComponent
     ]
 })
 export class SidebarContainerComponent {
-    public version = version;
     private store = inject(Store);
-    public transducersCount$ = this.store.select(arrayConfigFeature.selectTransducers).pipe(map(transducers => transducers.length));
-    public beamformingEnabled$ = this.store.select(beamformingFeature.selectEnabled);
-    public rayleighVisible$ = this.store.select(ViewportFeature.selectResultEnabled(Results.RayleighIntegral));
-    public farfieldVisible$ = this.store.select(ViewportFeature.selectResultEnabled(Results.Farfield));
+    public beamformingEnabled = this.store.selectSignal(beamformingFeature.selectEnabled);
+    public transducers = this.store.selectSignal(arrayConfigFeature.selectTransducers);
+    public environment = this.store.selectSignal(environmentFeature.selectEnvironmentState);
+    public array = this.store.selectSignal(arrayConfigFeature.selectArrayConfigState);
+
+    public version = version;
+
+    selectedTab = model('library');
+    
+    loadPreset(preset: {config: ArrayConfig, environment: EnvironmentState}) {
+        this.store.dispatch(ArrayConfigActions.setConfig(preset.config));
+        this.store.dispatch(EnvironmentActions.setEnvironment(preset.environment));
+    }
 }

@@ -1,81 +1,80 @@
-<div class="mat-headline-small">Simulation setup</div>
-<mat-accordion>
-    <mat-expansion-panel hideToggle>
+@switch (selectedTab()) {
+  @case ('library') {
+    <div style="
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      gap: 1ex;">
+      <app-library (loadPreset)="loadPreset($event)" />
+      @if (array().title) {
+        <app-info [array]="array()" />
+      }
+    </div>
+  }
+  @case ('export') {
+    <app-export />
+  }
+  @default {
+    <mat-accordion multi>
+      <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+              <mat-panel-title data-testid="section-environment">
+                  Environment
+              </mat-panel-title>
+              {{ environment().environmentHint }}
+          </mat-expansion-panel-header>
+      <app-environment />
+      </mat-expansion-panel>
+      <mat-expansion-panel hideToggle>
         <mat-expansion-panel-header>
             <mat-panel-title data-testid="section-environment">
-                Environment
+                Excitation
+            </mat-panel-title>
+            {{ environment().excitationFrequencyBase }} {{ environment().multiplier }}
+        </mat-expansion-panel-header>
+        <app-excitation />
+      </mat-expansion-panel>
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title data-testid="section-transducer">
+                Transducer
             </mat-panel-title>
         </mat-expansion-panel-header>
-        <p>Air, c = 434 m/s</p>
-    </mat-expansion-panel>
-    <mat-expansion-panel hideToggle>
-        <mat-expansion-panel-header>
-            <mat-panel-title data-testid="section-arrayconfig">
-              Array config
-            </mat-panel-title>
+        <app-transducer />
+      </mat-expansion-panel>
+      <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+              <mat-panel-title data-testid="section-arrayconfig">
+                Array config
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+          <app-array-config />
+      </mat-expansion-panel>
+      <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+              <mat-panel-title data-testid="section-beamforming">
+                  Beamforming
+              </mat-panel-title>
+              @if (beamformingEnabled() === false) {
+                  <mat-icon aria-hidden="false" aria-label="hidden-icon" fontIcon="do_not_disturb_on" />
+                }
           </mat-expansion-panel-header>
-        <app-array-config />
-    </mat-expansion-panel>
-    <mat-expansion-panel hideToggle >
-        <mat-expansion-panel-header>
-            <mat-panel-title>
-                Tranducers
-            </mat-panel-title>
-            <mat-panel-description data-test-id="numTransducers">
-                {{ transducersCount$ | async }}
-            </mat-panel-description>
-        </mat-expansion-panel-header>
-        <app-transducer-list />
-    </mat-expansion-panel>
-    <mat-expansion-panel hideToggle>
-        <mat-expansion-panel-header>
-            <mat-panel-title data-testid="section-beamforming">
-                Beamforming
-            </mat-panel-title>
-            @if ((beamformingEnabled$ | async) === false) {
-                <mat-icon aria-hidden="false" aria-label="hidden-icon" fontIcon="do_not_disturb_on" />
-              }
-        </mat-expansion-panel-header>
-        <app-beamforming /> 
-    </mat-expansion-panel>
-</mat-accordion>
-    <div class="mat-headline-small">Results</div>
-<mat-accordion>
-    <mat-expansion-panel hideToggle>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Rayleigh integral
-          </mat-panel-title>
-          @if ((rayleighVisible$ | async) === false) {
-            <mat-icon aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off" />
-          }
-        </mat-expansion-panel-header>
-
-    <app-rayleigh />        
-</mat-expansion-panel>
-<mat-expansion-panel hideToggle>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        Far field 3D
-      </mat-panel-title>
-      @if ((farfieldVisible$ | async) === false) {
-        <mat-icon  aria-hidden="false" aria-label="hidden-icon" fontIcon="visibility_off" />
-      }
-    </mat-expansion-panel-header>
-    <app-farfield />
-</mat-expansion-panel>
-<mat-expansion-panel hideToggle>
-    <mat-expansion-panel-header>
-        <mat-panel-title>
-        2D Chart
-        </mat-panel-title>
-    </mat-expansion-panel-header>
-    <app-chart />
-</mat-expansion-panel>
-</mat-accordion>
-<a aria-label="View project on GitHub" href="https://github.com/axeljaeger/phased" target="_blank">
-<div class="github-section">
-        <img src="assets/github-mark-white.svg" alt="GitHub" width="16" />
-{{ version }}
+          <app-beamforming /> 
+      </mat-expansion-panel>
+    </mat-accordion>
+  }
+}
+<div style="text-align: center; display: flex; flex-direction: column; gap: 1ex">
+  <mat-button-toggle-group hideSingleSelectionIndicator [(ngModel)]="selectedTab" style="--mdc-density-scale: 0">
+    <mat-button-toggle value="library" class="bigTab"><mat-icon>book_5</mat-icon>Library</mat-button-toggle>
+    <mat-button-toggle value="setup" class="bigTab"><mat-icon>tune</mat-icon>Array Setup</mat-button-toggle>
+    <mat-button-toggle value="export" class="bigTab"><mat-icon>ios_share</mat-icon>Export</mat-button-toggle>
+  </mat-button-toggle-group>
+  
+  <a aria-label="View project on GitHub" href="https://github.com/axeljaeger/phased" target="_blank">
+    <div class="github-section">
+        Phased Array Design Tool v{{ version }}
+            <img src="assets/github-mark-white.svg" alt="GitHub" width="16" />
+    </div>
+  </a>
 </div>
-</a>

@@ -17,6 +17,7 @@ import { Transducer } from 'src/app/store/arrayConfig.state';
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { TextureSampler } from '@babylonjs/core/Materials/Textures/textureSampler';
 import { Constants } from '@babylonjs/core/Engines/constants';
+import { EnvironmentState, frequencyFromBase } from 'src/app/store/environment.state';
 
 const uvMesh: VertexData = (() => {
   const positions = [-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0];
@@ -38,8 +39,8 @@ const uvMesh: VertexData = (() => {
 export class FarfieldRendererComponent extends TransducerBufferConsumer
   implements OnChanges, OnDestroy
 {
-  @Input() transducers: Array<Transducer> | null = null;
-  @Input() environment: number | null = null;
+  @Input() transducers: Transducer[] | null = null;
+  @Input() environment: EnvironmentState | null = null;
 
   private material: FarfieldMaterial;
   private farfieldMesh: Mesh;
@@ -61,7 +62,6 @@ export class FarfieldRendererComponent extends TransducerBufferConsumer
     sampler.samplingMode = Constants.TEXTURE_NEAREST_SAMPLINGMODE;
 
     this.material.setTextureSampler("viridisSampler", sampler);
-
 
     this.material.stencil.enabled = true;
     this.material.stencil.funcRef = 1;
@@ -91,12 +91,12 @@ export class FarfieldRendererComponent extends TransducerBufferConsumer
     this.material.dispose();
   }
 
-  private uploadEnvironment(speedOfSound: number | null): void {
-    if (speedOfSound) {
-      const omega = 2.0 * Math.PI * 40000;
+  private uploadEnvironment(environment: EnvironmentState | null): void {
+    if (environment) {
+      const omega = 2.0 * Math.PI * frequencyFromBase(environment.excitationFrequencyBase, environment.multiplier);
 
       this.material.setFloat('omega', omega);
-      this.material.setFloat('k', omega / speedOfSound);
+      this.material.setFloat('k', omega / environment.speedOfSound);
     }
   }
 

@@ -1,4 +1,4 @@
-import { createAction, createFeature, createReducer, createSelector, on, props } from '@ngrx/store';
+import { createAction, createActionGroup, createFeature, createReducer, createSelector, on, props } from '@ngrx/store';
 
 export enum Results {
     Farfield,
@@ -9,13 +9,19 @@ interface ViewportState {
     enabledResults: Array<Results>
 }
 
-const initialState : ViewportState = { enabledResults: [Results.RayleighIntegral]};
+const initialState : ViewportState = { enabledResults: [Results.Farfield]};
 
-export const setResultVisible = createAction('[ViewportConfig] setResultVisible', props<{result: Results, visible : boolean}>());
+export const ResultsActions = createActionGroup({
+  source: 'ViewportConfig',
+  events: {
+    setResultVisible: props<{result: Results, visible : boolean}>(),
+  },
+});
+
 
 const reducer = createReducer(
 initialState,
-  on(setResultVisible, (state: ViewportState, args: {result: Results, visible: boolean}) : ViewportState => {
+  on(ResultsActions.setResultVisible, (state, args) : ViewportState => {
     const results = new Set<Results>(state.enabledResults);  
     if (args.visible) {
         results.add(args.result);
@@ -34,6 +40,6 @@ export const ViewportFeature = createFeature({
             (result: Results) => 
                 createSelector(
                     selectEnabledResults, 
-                    (results: Array<Results>) => results?.includes(result))
+                    (results: Results[]) => results?.includes(result))
     })
 })

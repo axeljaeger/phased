@@ -1,9 +1,29 @@
 import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
-import { Store } from '@ngrx/store';
-import Chart from 'chart.js/auto';
-import { exportFeature } from 'src/app/store/export.state';
-import {MatButtonModule} from '@angular/material/button';
+import { createSelector, Store } from '@ngrx/store';
+import { exportFeature, Result } from 'src/app/store/export.state';
+import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
+
+import * as echarts from 'echarts/core';
+import { CanvasRenderer } from 'echarts/renderers';
+
+import { LineChart } from 'echarts/charts';
+
+
+// Import the title, tooltip, rectangular coordinate system, dataset and transform components
+import {
+  TitleComponent,
+  TooltipComponent,
+  GridComponent,
+  DatasetComponent,
+  TransformComponent,
+  LegendComponent,
+  MarkAreaComponent,
+  MarkLineComponent
+} from 'echarts/components';
+import { ECBasicOption } from 'echarts/types/dist/shared';
+import { arrayConfigFeature } from 'src/app/store/arrayConfig.state';
+import { ApertureViewComponent } from '../../pure-components/aperture-view/aperture-view.component';
 
 @Component({
     selector: 'app-chart',
@@ -13,76 +33,241 @@ import { MatExpansionModule } from '@angular/material/expansion';
 })
 export class ChartComponent implements OnInit {
   private readonly store = inject(Store);
-  @ViewChild('chartCanvas', { static: true })
-  canvasRef: ElementRef<HTMLCanvasElement>;
-  
+  @ViewChild('echartDiv', { static: true })
+  echartDiv: ElementRef<HTMLElement>;
+
+  transducers = this.store.selectSignal(arrayConfigFeature.selectTransducers);
+
   ngOnInit(): void {
-    const data = {
-      datasets: [{
-        label: 'u',
-        data: [{
-          x: -10,
-          y: 0
-        }],
-        fill: false,
-        showLine: true,
-        pointStyle: false as any as string,
-        borderWidth: 1,
-        borderColor: 'red',
-      }, {
-        label: 'v',
-        data: [{
-          x: -10,
-          y: 0
-        }],
-        fill: false,
-        showLine: true,
-        pointStyle: false as any as string,
-        borderWidth: 1,
-        borderColor: 'green',
+    
+
+// Register the required components
+    echarts.use([
+      TitleComponent,
+      TooltipComponent,
+      GridComponent,
+      DatasetComponent,
+      TransformComponent,
+      CanvasRenderer,
+      LegendComponent,
+      LineChart,
+      MarkAreaComponent,
+      MarkLineComponent
+    ]);
+
+
+    const myChart = echarts.init(this.echartDiv.nativeElement);
+
+    const option : ECBasicOption = {
+      tooltip: {
+        trigger: 'item',
+        formatter: (params : any) => `${params.seriesName} <br> ${params.name} : ${params.value.toFixed(2)}`
+      },
+      // legend: {
+      //   left: 'left'
+      // },
+      grid: [{
+        top: '1%',
+        left: '3%',
+        right: '3%',
+        height: '45%',
+        containLabel: true
+      },
+      {
+        left: '3%',
+        right: '3%',
+        top: '50%',
+        height: '45%',
+        containLabel: true
       }
+    ],
+
+    xAxis: [{
+      name: 'x',
+      type: 'value',
+      axisLabel: {
+          inside: false,
+          align: 'center',
+          verticalAlign: 'middle',
+          padding: [0, 0, 0, 0], // Optional für Feinanpassung
+          color: 'red'
+      },
+      splitLine: {
+        show: true,
+        lineStyle: {
+            color: '#444444', // Grün für Y-Achse
+            width: 1,
+            type: 'solid'
+        }
+      }
+    },
+    {
+      gridIndex: 1,
+      name: 'x2',
+      type: 'value',
+      axisLabel: {
+          inside: false,
+          align: 'center',
+          verticalAlign: 'middle',
+          padding: [0, 0, 0, 0], // Optional für Feinanpassung
+          color: 'red'
+      },
+      splitLine: {
+        show: true,
+        lineStyle: {
+            color: '#444444', // Grün für Y-Achse
+            width: 1,
+            type: 'solid'
+        }
+      }
+    },
+  
+  
+  ],
+
+    
+      yAxis: [{
+        type: 'log',
+        name: 'y',
+        min: 0.01, max: 1.1,
+        minorSplitLine: {
+          show: true,
+          lineStyle: {
+            color: 'lightgray',  // Farbe der kleinen Zwischen-Gitterlinien
+            type: 'dotted'
+          }
+        },
+        axisLabel: {
+          color: 'red',
+          formatter: (value : number) => `${10 * Math.log10(value / 1)} dB`,
+          inside: true,
+          align: 'left',
+          verticalAlign: 'middle',
+          padding: [0, 10, 0, 0] // Optional für Feinanpassung
+        },
+        splitLine: {
+          show: true,
+          lineStyle: {
+              color: '#444444', // Grün für Y-Achse
+              width: 1,
+              type: 'solid'
+          }
+        }
+      },{
+        type: 'log',
+        gridIndex: 1,
+        name: 'y2',
+        min: 0.01, max: 1.1,
+        minorSplitLine: {
+          show: true,
+          lineStyle: {
+            color: 'lightgray',  // Farbe der kleinen Zwischen-Gitterlinien
+            type: 'dotted'
+          }
+        },
+        axisLabel: {
+          color: 'red',
+          formatter: (value : number) => `${10 * Math.log10(value / 1)} dB`,
+          inside: true,
+          align: 'left',
+          verticalAlign: 'middle',
+          padding: [0, 10, 0, 0] // Optional für Feinanpassung
+        },
+        splitLine: {
+          show: true,
+          lineStyle: {
+              color: '#444444', // Grün für Y-Achse
+              width: 1,
+              type: 'solid'
+          }
+        }
+      },
+    
+    
+    
+    
       ],
+      series: [],
+      animation: false,
     };
 
-    const chart = new Chart(this.canvasRef.nativeElement, {
-      type: 'scatter',
-      data: data,
-      options: {
-        scales: {
-          x: {
-            type: 'linear',
-            position: 'bottom',
-            min: -1,
-            max: 1,
+    // Display the chart using the configuration items and data just specified.
+    myChart.setOption(option);
 
-          },
-          y: {
-            type: 'linear',
-            position: 'left',
-            min: 0,
-            max: 1,
-          },
-        },
-        animation: false,
-      } 
+    this.store.select(createSelector(
+      exportFeature.selectExportState, 
+      arrayConfigFeature.selectFnbw,
+      arrayConfigFeature.selectHpbw,
+      (state, fnbw, hpbw) => ({
+        series: [
+          {
+            name: 'u',
+            type: 'line',
+            showSymbol: false,
+            lineStyle: {
+              color: 'rgba(192, 0, 0, 0.8)',
+            },
+            data: state.u.map(u => [u.x, u.y]),
+            markLine: {
+              symbol: ['none', 'none'],
+              label: { show: false },
+              data: [{ yAxis: 0.1 }]
+            },
+            markArea: {
+              itemStyle: {
+                color: 'rgba(255, 0, 0, 0.2)'
+              },
+              data: [
+                [
+                  { 
+                    name: 'FNBW',
+                    value: Math.abs(fnbw.secondZero! - fnbw.firstZero!),
+                    xAxis: fnbw.firstZero,
+                  }, { xAxis: fnbw.secondZero}
+                ], // xAxis + yAxis für Bereich
+                [
+                  { 
+                    grid: 1,
+                    name: 'HBPW',
+                    value: Math.abs(hpbw.secondZero! - hpbw.firstZero!),
+                    xAxis: hpbw.firstZero,
+                  }, { xAxis: hpbw.secondZero}
+                ], // xAxis + yAxis für Bereich                       
+                ]
+              }
+          }, {
+            name: 'v',
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            type: 'line',
+            showSymbol: false,
+            data: state.v.map(u => [u.x, u.y]),
+            // markArea: {
+            //   name: 'HPBW',
+            //   itemStyle: {
+            //     color: 'rgba(255, 173, 177, 0.4)'
+            //   },
+            //   data: [
+            //     [{ xAxis: -0.3, yAxis: -1 }, { xAxis: 0.3, yAxis: 1 }], // xAxis + yAxis für Bereich
+            //     [{ xAxis: -0.1 }, { xAxis: 0.1 }]
+            //   ]
+            // }
+          }
+        ]
+      }))).subscribe(options => {
+      myChart.setOption(options, false);
     });
 
-    this.store.select(exportFeature.selectExportState).subscribe(state => {
-      chart.data.datasets[0].data = state?.u;
-      chart.data.datasets[1].data = state?.v;
-      chart.update();
-    });
-  }
 
-  download() : void {
-    this.store.select(exportFeature.selectExportState).subscribe(state => {
-      const content = state.u.map((u, index) => `${u.x.toLocaleString()}; ${u.y.toLocaleString()};${state.v[index].y.toLocaleString()}`).join('\n');
-      const a = document.createElement('a') // Create "a" element
-      const blob = new Blob([content], {type: 'text/csv'}) // Create a blob (file-like object)
-      const url = URL.createObjectURL(blob) // Create an object URL from blob
-      a.setAttribute('href', url) // Set "a" element link
-      a.setAttribute('download', 'response.csv') // Set download filename
-      a.click() // Start downloading
-    });
+    // this.store.select(arrayConfigFeature.samplePattern).subscribe(state => {      
+    //   chart.data.datasets[2].data = state;
+    //   chart.update();
+    // });
+
+
+    // this.store.select(arrayConfigFeature.sampleDerrivate).subscribe(state => {
+    //   chart.data.datasets[3].data = state;
+    //   chart.update();
+    // });
   }
 }

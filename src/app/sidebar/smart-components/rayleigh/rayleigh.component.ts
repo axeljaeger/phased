@@ -7,16 +7,19 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { Results, ViewportFeature, setResultVisible } from 'src/app/store/viewportConfig.state';
+import { Results, ResultsActions, ViewportFeature } from 'src/app/store/viewportConfig.state';
 import { RayleighResultActions, ResultSet } from 'src/app/store/rayleigh.state';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 
 @Component({
     selector: 'app-rayleigh',
     templateUrl: './rayleigh.component.html',
     styleUrls: ['./rayleigh.component.scss'],
-    imports: [MatExpansionModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatFormFieldModule, MatSelectModule]
+    imports: [MatExpansionModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatFormFieldModule, MatSelectModule,
+      MatButtonToggle, MatButtonToggleGroup
+    ]
 })
 export class RayleighComponent implements OnInit {
   private store = inject(Store);
@@ -33,7 +36,7 @@ export class RayleighComponent implements OnInit {
 
   ngOnInit(): void {
     this.rayleighVisible.valueChanges.subscribe(val => {
-      this.store.dispatch(setResultVisible({ result: Results.RayleighIntegral, visible: val! }));
+      this.store.dispatch(ResultsActions.setResultVisible({ result: Results.RayleighIntegral, visible: val! }));
     });
 
     this.rayleighAspect.valueChanges.subscribe(val => {

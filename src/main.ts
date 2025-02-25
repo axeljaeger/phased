@@ -13,6 +13,7 @@ import { RayleighFeature } from './app/store/rayleigh.state';
 import { beamformingFeature } from './app/store/beamforming.state';
 import { arrayConfigFeature } from './app/store/arrayConfig.state';
 import { exportFeature } from './app/store/export.state';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 if (environment.production) {
   enableProdMode();
@@ -21,6 +22,8 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
     providers: [
         provideStore(),
+        provideAnimations(),
+        { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
         provideState(arrayConfigFeature),
         provideState(environmentFeature),
         provideState(RayleighFeature),
@@ -32,7 +35,7 @@ bootstrapApplication(AppComponent, {
             maxAge: 25,
             logOnly: environment.production, // Restrict extension to log-only mode
          connectInZone: true}),
-        provideAnimations()
+
     ]
 })
   .catch(err => console.error(err));

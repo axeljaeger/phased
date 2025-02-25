@@ -9,10 +9,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { presets } from '../../../presets'
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 
 @Component({
@@ -28,40 +29,35 @@ import { presets } from '../../../presets'
         MatInputModule,
         MatMenuModule,
         ReactiveFormsModule,
+        MatCheckbox,
+        MatTabsModule,
     ]
 })
 export class ArrayConfigComponent implements OnInit {
   private store = inject(Store);
   private fb = inject(FormBuilder);
   public arrayConfig = this.fb.group({
-    arrayType: 'ura',
-    uraConfig: this.fb.group({
+      type: 'ura',
       elementsX: this.fb.control(0),
       elementsY: this.fb.control(0),
       pitchX: this.fb.control(0),
       pitchY: this.fb.control(0),
-    }),
-    roundConfig: this.fb.group({
-      diameter: this.fb.control(0),
-      elementCount: this.fb.control(0),
-      startElement: this.fb.control(0),
-    }),
+      diameter: this.fb.control(0.05),
+      elementCount: this.fb.control(5),
+      startWithZero: this.fb.control(false),
   });
-  presets = presets;
 
   ngOnInit(): void {
     this.store.select(arrayConfigFeature.selectArrayConfigState).subscribe(config => {
-      this.arrayConfig.patchValue(config,
+      this.arrayConfig.patchValue(config.config,
         {
           emitEvent: false, // Avoid infinite recursion
         });
     });
 
     this.arrayConfig.valueChanges.subscribe(
-      (value) => this.store.dispatch(ArrayConfigActions.setConfig(value as ArrayConfig))
+      (value) => this.store.dispatch(ArrayConfigActions.setConfig({config: value} as ArrayConfig))
     );
   }
-  loadPreset(presetIndex: number) {
-    this.store.dispatch(ArrayConfigActions.setConfig(this.presets[presetIndex].config));
-  }
+
 }

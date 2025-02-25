@@ -87,6 +87,10 @@ const fragmentSource = /* wgsl */`
     // }
     
     //let intensity = 0.5 + 0.5 * length(result) / (f32(uniforms.numElements));
+
+    if length(fragmentInputs.uvf) > 1.0 {
+      discard;
+    }
     fragmentOutputs.color = textureSample(viridisTexture, viridisSampler, vec2(fragmentInputs.absresult, 0.375)); 
   }
 `;

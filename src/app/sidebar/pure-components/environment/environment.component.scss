@@ -1,0 +1,14 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2ex;
+}
+
+input {
+    text-align: right;
+}
+
+mat-form-field {
+    align-self: stretch;
+}

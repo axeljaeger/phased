@@ -1,3 +1,11 @@
+@use '@angular/material' as mat;
+
+:host {
+    display: grid;
+    grid-template-rows: 1fr min-content;
+    gap: 2ex;
+}
+
 .mat-headline-small {
     margin-top: 2ex;
     margin-left: .5ex;
@@ -12,12 +20,16 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 2ex .5ex;
     gap: .5ex;
     text-decoration: none;
+    background-color: var(--mat-sys-surface);
+    border-radius: var(--mat-expansion-container-shape, 12px);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding: 1ex 2ex 2ex;
 }
 
 a, a:visited, a:active {
     color: #e6e1e6;
     text-decoration: none;
-}
+  }

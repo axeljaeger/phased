@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, forwardRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, SimpleChanges, forwardRef, output } from '@angular/core';
 
 import { TransducerMaterial } from '../../materials/transducer.material';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
@@ -28,9 +28,10 @@ import { Engine } from '@babylonjs/core/Engines/engine';
 })
 export class ExcitationRendererComponent extends BabylonConsumer implements OnChanges {
   @Input() transducers : Array<Transducer> | null = null;
+  @Input() transducerDiameter : number | null = null;
   @Input() selection : SelectionState | null = null;
 
-  @Output() hovered = new EventEmitter<number>();
+  hovered = output<number>();
   
   private transducerMaterial: TransducerMaterial;
   private transducerMaterialHidden: TransducerMaterial;
@@ -70,11 +71,9 @@ export class ExcitationRendererComponent extends BabylonConsumer implements OnCh
     const zPositive = new Vector3(0, 0, -1);
     const aperturePlane = Plane.FromPositionAndNormal(origin, zPositive);
     
-    const transducerDiameter = 0.0034;
-
     const apertureOptions = {
       sourcePlane: aperturePlane,
-      size: transducerDiameter,
+      size: 1,
     };
 
     this.transducerMesh = CreatePlane('excitation', apertureOptions, scene);
@@ -99,7 +98,7 @@ export class ExcitationRendererComponent extends BabylonConsumer implements OnCh
             },
             (event) => {                
                 const pickingResult = scene.pick(event.pointerX, scene.pointerY);
-                this.hovered.next(pickingResult.thinInstanceIndex);
+                this.hovered.emit(pickingResult.thinInstanceIndex);
               }
         )
     )
@@ -108,7 +107,7 @@ export class ExcitationRendererComponent extends BabylonConsumer implements OnCh
              {
                  trigger: ActionManager.OnPointerOutTrigger,
              },
-            (event) => this.hovered.next(-1)
+            (event) => this.hovered.emit(-1)
          )
      )
 
@@ -120,11 +119,11 @@ export class ExcitationRendererComponent extends BabylonConsumer implements OnCh
     const selection : SelectionState = selectionx ?? {hovered: [], selected: [] };
     const buffers = (transducers ?? []).reduce(
       (buffers, transducer, index) => {
-        Matrix.Translation(
+        Matrix.Scaling(this.transducerDiameter!, this.transducerDiameter!, this.transducerDiameter!).multiply(Matrix.Translation(
           transducer.pos.x,
           transducer.pos.y,
           transducer.pos.z
-        ).copyToArray(buffers.matrices, index * MAT4_ELEMENT_COUNT);
+        )).copyToArray(buffers.matrices, index * MAT4_ELEMENT_COUNT);
         
         buffers.selection[index] = selection.hovered.includes(index) ? 1 : 0;
 
