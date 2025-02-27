@@ -6,7 +6,7 @@
       overflow: hidden;
       gap: 1ex;">
       <app-library (loadPreset)="loadPreset($event)" />
-      @if (array().title) {
+      @if (array().citation) {
         <app-info [array]="array()" />
       }
     </div>
@@ -15,6 +15,7 @@
     <app-export />
   }
   @default {
+    <div style="overflow-y: scroll">
     <mat-accordion multi>
       <mat-expansion-panel hideToggle>
           <mat-expansion-panel-header>
@@ -62,6 +63,7 @@
           <app-beamforming /> 
       </mat-expansion-panel>
     </mat-accordion>
+  </div>
   }
 }
 <div style="text-align: center; display: flex; flex-direction: column; gap: 1ex">

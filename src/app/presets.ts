@@ -5,18 +5,20 @@ export const presets : { config: ArrayConfig, environment: EnvironmentState}[] =
     {
         config: {
             name: "URA 8x8 0.5lambda",
-            url: 'https://doi.org/10.1109/ULTSYM.2017.8091892',
-            urlTitle: 'ULTSYM.2017.8091892',
-            title: 'Air-coupled 40-KHZ ultrasonic 2D-phased array based on a 3D-printed waveguide structure',
-            description: '',
-            arrayType: 'ura',
-            kind: 'Academic',
             config: {
                 type: 'ura',
                 elementsX: 8,
                 elementsY: 8,
                 pitchX: 0.0043,
                 pitchY: 0.0043,
+            },
+            citation: {
+                urlTitle: 'ULTSYM.2017.8091892',
+                title: 'Air-coupled 40-KHZ ultrasonic 2D-phased array based on a 3D-printed waveguide structure',
+                kind: 'Academic',
+                url: 'https://doi.org/10.1109/ULTSYM.2017.8091892',
+                authors: "A. Jäger et. al.",
+                year: 2017,
             },
             transducerDiameter: 0.0034,
         },
@@ -30,8 +32,7 @@ export const presets : { config: ArrayConfig, environment: EnvironmentState}[] =
     {
         config: {
             name: "URA 8x8 1.1lambda",
-            arrayType: 'ura',
-            kind: 'None',
+            citation: null,
             config: {
                 type: 'ura',
                 elementsX: 8,
@@ -40,10 +41,6 @@ export const presets : { config: ArrayConfig, environment: EnvironmentState}[] =
                 pitchY: 0.012,
             },
             transducerDiameter: 0.012,
-            description: "",
-            url: "",
-            urlTitle: "",
-            title: ""
         },
         environment: {
             speedOfSound: 0,
@@ -55,8 +52,14 @@ export const presets : { config: ArrayConfig, environment: EnvironmentState}[] =
     {
         config: {
             name: "Line 6 0.5lambda",
-            arrayType: 'ura',
-            kind: 'Academic',
+            citation: {
+                kind: 'Academic',
+                url: "https://doi.org/10.1117/12.783988",
+                urlTitle: "10.1117/12.783988",
+                title: "Ultrasonic phased array sensor for electric travel aids for visually impaired people",
+                authors: "T. Takahashi et. al.",
+                year: 2008
+            },
             config: {
                 type: 'ura',
                 elementsX: 6,
@@ -65,10 +68,6 @@ export const presets : { config: ArrayConfig, environment: EnvironmentState}[] =
                 pitchY: 0.0043,
             },
             transducerDiameter: 0.0034,
-            description: "",
-            url: "https://doi.org/10.1117/12.783988",
-            urlTitle: "10.1117/12.783988",
-            title: "Ultrasonic phased array sensor for electric travel aids for visually impaired people"
         },
         environment: {
             speedOfSound: 434,
@@ -80,8 +79,15 @@ export const presets : { config: ArrayConfig, environment: EnvironmentState}[] =
     {
         config: {
             name: "Line 8 0.5lambda wide",
-            arrayType: 'ura',
-            kind: 'Academic',
+            citation: {
+                kind: 'Academic',
+                url: "https://doi.org/10.1109/ICSENS.2015.7370187",
+                urlTitle: "ICSENS.2015.7370187",
+                title: "Versatile air-coupled phased array transducer for sensor applications",
+                authors: "A. Unger et. al.",
+                year: 2015,
+            },
+            transducerDiameter: 0.0034,
             config: {
                 type: 'ura',
                 elementsX: 8,
@@ -89,11 +95,6 @@ export const presets : { config: ArrayConfig, environment: EnvironmentState}[] =
                 pitchX: 0.0043,
                 pitchY: 0.006,
             },
-            transducerDiameter: 0.0034,
-            description: "",
-            url: "https://doi.org/10.1109/ICSENS.2015.7370187",
-            urlTitle: "ICSENS.2015.7370187",
-            title: "Versatile air-coupled phased array transducer for sensor applications"
         },
         environment: {
             speedOfSound: 434,
@@ -104,8 +105,7 @@ export const presets : { config: ArrayConfig, environment: EnvironmentState}[] =
     },
     {
         config: {
-            arrayType: 'ura',
-            kind: 'None',
+            name: "Point source",
             config: {
                 type: 'ura',
                 elementsX: 1,
@@ -114,11 +114,8 @@ export const presets : { config: ArrayConfig, environment: EnvironmentState}[] =
                 pitchY: 0.01,
             },
             transducerDiameter: 0.001,
-            name: "Point source",
-            description: "",
-            url: "",
-            urlTitle: "",
-            title: ""
+            citation: null,
+
         },
         environment: {
             speedOfSound: 0,

@@ -3,14 +3,14 @@
     @for (preset of presets; track preset.config.name) {
         <mat-list-item role="listitem" (click)="loadPresetIndex($index)">
             <mat-icon matListItemIcon>{{ 
-                preset.config.kind === 'Academic' ? 'school' : 
-                preset.config.kind === 'Industrial' ? 'factory' : 
+                preset.config.citation?.kind === 'Academic' ? 'school' : 
+                preset.config.citation?.kind === 'Industrial' ? 'factory' : 
                 'description' 
                 }}</mat-icon>
             <span matListItemTitle>{{preset.config.name}}</span>
             <span matListItemLine>{{ 
-                preset.config.kind === 'Academic' ? 'Academic publication' : 
-                preset.config.kind === 'Industrial' ? 'Commercial product' : 
+                preset.config.citation?.kind === 'Academic' ? 'Academic publication' : 
+                preset.config.citation?.kind === 'Industrial' ? 'Commercial product' : 
                 'Sample' 
                 }}</span>
         </mat-list-item>

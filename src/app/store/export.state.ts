@@ -19,7 +19,7 @@ const initialState: Result = {
 export const ExportActions = createActionGroup({
   source: 'Export',
   events: {
-    'setResults': props<Result>(),
+    setResults: props<Result>(),
   },
 });
 
