@@ -53,7 +53,7 @@
     "@rx-angular/template": "19.2.1",
     "@storybook/test": "^8.6.2",
     "echarts": "^5.6.0",
-    "rxjs": "~7.8.1",
+    "rxjs": "~7.8.2",
     "tslib": "^2.8.1",
     "util": "^0.12.4",
     "zone.js": "^0.15.0"
