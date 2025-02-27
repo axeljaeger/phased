@@ -56,3 +56,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-mdc-card-subtitle {
   font-style: italic;
 }
+
+.mat-expansion-panel-body {
+  mat-button-toggle-group {
+    @include mat.button-toggle-density(-5);
+    margin-bottom: 1ex;
+  }
+
+  mat-form-field {
+    @include mat.form-field-density(-5);
+  }
+
+  input {
+    text-align: right;
+  }
+}

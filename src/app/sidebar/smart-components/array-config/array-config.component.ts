@@ -49,15 +49,24 @@ export class ArrayConfigComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.select(arrayConfigFeature.selectArrayConfigState).subscribe(config => {
-      this.arrayConfig.patchValue(config.config,
+      this.arrayConfig.patchValue({
+        ...config.config,
+        ...config.config.type === 'ura' ? {
+        pitchX: config.config.pitchX * 1e3,
+        pitchY: config.config.pitchY * 1e3,
+        } : {},
+      },
         {
           emitEvent: false, // Avoid infinite recursion
         });
     });
 
     this.arrayConfig.valueChanges.subscribe(
-      (value) => this.store.dispatch(ArrayConfigActions.setConfig({config: value} as ArrayConfig))
+      (value) => this.store.dispatch(ArrayConfigActions.setConfig({config: {
+        ...value,
+        ...value.type === 'ura' && value.pitchX !== undefined && value.pitchX !== null ? { pitchX: value.pitchX * 1e-3 } : {},
+        ...value.type === 'ura' && value.pitchY !== undefined && value.pitchY !== null ? { pitchY: value.pitchY * 1e-3 } : {},
+      }} as ArrayConfig))
     );
   }
-
 }

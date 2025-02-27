@@ -51,7 +51,16 @@ export interface RangeKpi {
   width: number;
 }
 
-export type Kind = 'None' | 'Academic' | 'Industrial';
+export type Kind = 'Academic' | 'Industrial';
+
+export interface Citation {
+  kind: Kind;
+  title: string;
+  authors: string;
+  year: number;
+  url: string;
+  urlTitle: string;
+}
 
 export interface CircularConfig {
   type: 'circular';
@@ -77,12 +86,7 @@ export interface UraConfig {
 
 export interface ArrayConfig {
   name: string;
-  description: string;
-  url: string;
-  kind: Kind;
-  title: string;
-  urlTitle: string;
-  arrayType: string;
+  citation: Citation | null;
   config: UraConfig | CircularConfig | SpiralConfig;
   transducerDiameter: number;
 }
@@ -121,7 +125,7 @@ const reducer = createReducer(
 export const arrayConfigFeature = createFeature({
   name: 'arrayConfig',
   reducer,
-  extraSelectors: ({ selectArrayConfigState, selectArrayType }) => {
+  extraSelectors: ({ selectArrayConfigState, selectConfig }) => {
       const selectTransducers = createSelector(
       selectArrayConfigState,
       (arrayConfig: ArrayConfig) => {
@@ -161,8 +165,8 @@ export const arrayConfigFeature = createFeature({
         }
       });
 
-      const isUra = createSelector(selectArrayType, (type: string) => type === 'ura');
-      const selectPattern = createSelector(selectTransducers,(transducers) => {
+      const isUra = createSelector(selectConfig, config => config.type === 'ura');
+      const selectPattern = createSelector(selectTransducers, transducers => {
         return (x : number) => 
           
           transducers.reduce((acc, t) => {

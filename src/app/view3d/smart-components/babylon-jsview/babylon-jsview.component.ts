@@ -182,7 +182,7 @@ export class BabylonJSViewComponent
       'Camera',
       (3 * Math.PI) / 4,
       Math.PI / 4,
-      0.05,
+      0.1,
       Vector3.Zero(),
       scene
     );

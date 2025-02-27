@@ -67,16 +67,16 @@ export class ChartComponent implements OnInit {
       //   left: 'left'
       // },
       grid: [{
-        top: '1%',
+        top: '7%',
         left: '3%',
         right: '3%',
-        height: '45%',
+        height: '40%',
         containLabel: true
       },
       {
         left: '3%',
         right: '3%',
-        top: '50%',
+        top: '55%',
         height: '45%',
         containLabel: true
       }
@@ -89,8 +89,8 @@ export class ChartComponent implements OnInit {
           inside: false,
           align: 'center',
           verticalAlign: 'middle',
-          padding: [0, 0, 0, 0], // Optional für Feinanpassung
-          color: 'red'
+          padding: [10, 10, 10, 10], // Optional für Feinanpassung
+          color: '#e6e1e6'
       },
       splitLine: {
         show: true,
@@ -110,7 +110,7 @@ export class ChartComponent implements OnInit {
           align: 'center',
           verticalAlign: 'middle',
           padding: [0, 0, 0, 0], // Optional für Feinanpassung
-          color: 'red'
+          color: '#e6e1e6'
       },
       splitLine: {
         show: true,
@@ -121,8 +121,6 @@ export class ChartComponent implements OnInit {
         }
       }
     },
-  
-  
   ],
 
     
@@ -138,17 +136,17 @@ export class ChartComponent implements OnInit {
           }
         },
         axisLabel: {
-          color: 'red',
-          formatter: (value : number) => `${10 * Math.log10(value / 1)} dB`,
+          color: '#e6e1e6',
+          formatter: (value : number) => value !== 0 ? `${10 * Math.log10(value / 1)} dB` : '',
           inside: true,
           align: 'left',
           verticalAlign: 'middle',
-          padding: [0, 10, 0, 0] // Optional für Feinanpassung
+          padding: [0, 10, 0, 0]
         },
         splitLine: {
           show: true,
           lineStyle: {
-              color: '#444444', // Grün für Y-Achse
+              color: '#444444',
               width: 1,
               type: 'solid'
           }
@@ -156,7 +154,9 @@ export class ChartComponent implements OnInit {
       },{
         type: 'log',
         gridIndex: 1,
-        name: 'y2',
+        name: 'Normalized Amplitude y / dB',
+        nameLocation: "end",
+        nameGap: 10,
         min: 0.01, max: 1.1,
         minorSplitLine: {
           show: true,
@@ -166,8 +166,8 @@ export class ChartComponent implements OnInit {
           }
         },
         axisLabel: {
-          color: 'red',
-          formatter: (value : number) => `${10 * Math.log10(value / 1)} dB`,
+          color: '#e6e1e6',
+          formatter: (value : number) => value !== 0 ? `${10 * Math.log10(value / 1)} dB` : '',
           inside: true,
           align: 'left',
           verticalAlign: 'middle',

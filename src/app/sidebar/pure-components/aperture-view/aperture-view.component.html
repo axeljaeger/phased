@@ -1,6 +1,5 @@
 <svg [attr.viewBox]="bb()" style="height: 150px; width: 150px">  
     @for (point of transducersMapped(); track point) {
-        // template content to repeat
         <circle 
         [attr.cx]="point.pos.x"
         [attr.cy]="point.pos.y"

@@ -39,5 +39,4 @@ export class ResultContainerComponent {
     public diameter = this.store.selectSignal(arrayConfigFeature.selectTransducerDiameter);
     public transducersCount = computed(() => this.transducers().length);
     public rayleighVisible = this.store.selectSignal(ViewportFeature.selectResultEnabled(Results.RayleighIntegral));
-
 }
