@@ -4,6 +4,7 @@ import { ComputeShader, Scene, StorageBuffer, UniformBuffer, WebGPUEngine } from
 import { Transducer } from 'src/app/store/arrayConfig.state';
 import { Point, Result } from 'src/app/store/export.state';
 import { Beamforming } from 'src/app/store/beamforming.state';
+import { MatCardModule } from '@angular/material/card';
 
 const exportComputeShader = /* glsl */`
 
