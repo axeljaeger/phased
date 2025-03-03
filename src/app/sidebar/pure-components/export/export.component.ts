@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { Store } from '@ngrx/store';
 
@@ -11,6 +12,7 @@ import { exportFeature } from 'src/app/store/export.state';
   imports: [
     MatIcon,
     MatIconButton,
+    MatCardModule,
   ],
   templateUrl: './export.component.html',
   styleUrl: './export.component.scss'
