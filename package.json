@@ -92,7 +92,7 @@
     "ng-mocks": "^14.13.2",
     "storybook": "^8.6.4",
     "ts-node": "~10.9.2",
-    "typescript": "^5.7.3",
+    "typescript": "^5.8.2",
     "util": "^0.12.4"
   }
 }
