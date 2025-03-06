@@ -53,10 +53,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   --mdc-list-list-item-hover-leading-icon-color: var(--mat-full-pseudo-checkbox-selected-icon-color);
 }
 
-.mat-mdc-card-subtitle {
-  font-style: italic;
-}
-
 .mat-expansion-panel-body {
   mat-button-toggle-group {
     @include mat.button-toggle-density(-5);
