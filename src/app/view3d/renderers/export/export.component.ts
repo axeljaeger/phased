@@ -1,10 +1,9 @@
-import { Component, Input, OnChanges, OnDestroy, output, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, output, SimpleChanges } from '@angular/core';
 import { Textures, TransducerBufferConsumer } from '../../shared/transducer-buffer.component';
 import { ComputeShader, Scene, StorageBuffer, UniformBuffer, WebGPUEngine } from '@babylonjs/core';
 import { Transducer } from 'src/app/store/arrayConfig.state';
-import { Point, Result } from 'src/app/store/export.state';
+import { Point, ResultValues } from 'src/app/store/export.state';
 import { Beamforming } from 'src/app/store/beamforming.state';
-import { MatCardModule } from '@angular/material/card';
 
 const exportComputeShader = /* glsl */`
 
@@ -67,8 +66,8 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     providers: [{ provide: TransducerBufferConsumer, useExisting: ExportRendererComponent }]
 })
 export class ExportRendererComponent extends TransducerBufferConsumer
-implements OnChanges, OnDestroy {
-  results = output<Result>();
+implements OnChanges {
+  results = output<ResultValues>();
   
   @Input() transducers: Array<Transducer> | null = null;
   @Input() environment: number | null = null;
@@ -96,7 +95,6 @@ implements OnChanges, OnDestroy {
       }
     );
 
-
     this.uniformBuffer = new UniformBuffer(scene.getEngine());
     this.uniformBuffer.addUniform("k", 1);
     this.uniformBuffer.addUniform("omega", 1);
@@ -113,40 +111,35 @@ implements OnChanges, OnDestroy {
     this.calcData();
   }
 
-  ngOnDestroy(): void {
-      console.log("Destroying Export Renderer")
-  }
-  
   ngOnChanges(changes: SimpleChanges): void {
     this.calcData();
   }
 
   calcData() : void {
     if (this.cs && this.resultBuffer) {
-
+      console.log("Calculating data");
       this.uniformBuffer.updateFloat("k", this.environment!);
       const numElements = this.transducers!.length;
       this.uniformBuffer.updateInt("numElements", numElements);
       this.uniformBuffer.updateInt("numPoints", this.numPoints);
       this.uniformBuffer.update();
-
-      this.cs.dispatch(this.numPoints, 1, 1);
-
-      this.resultBuffer!.read().then((res) => {
-        const uOffset = this.numPoints * Float32Array.BYTES_PER_ELEMENT;
-        const vOffset = this.numPoints * 2 * Float32Array.BYTES_PER_ELEMENT;
-        const series = {
-          labels: Array.from(new Float32Array(res.buffer, 0, this.numPoints)),
-          u: Array.from(new Float32Array(res.buffer, uOffset, this.numPoints)),
-          v: Array.from(new Float32Array(res.buffer, vOffset, this.numPoints))
-        };
-        const result = series.labels.reduce((acc, label, index) => {
-          acc.u.push({x: label, y: series.u[index] / numElements});
-          acc.v.push({x: label, y: series.v[index] / numElements});
-          return acc;
-        }, {u: new Array<Point>, v: new Array<Point>});
-        this.results.emit(result);
+      this.cs.dispatchWhenReady(this.numPoints, 1, 1).then(() => {
+        this.resultBuffer!.read().then((res) => {
+          const uOffset = this.numPoints * Float32Array.BYTES_PER_ELEMENT;
+          const vOffset = this.numPoints * 2 * Float32Array.BYTES_PER_ELEMENT;
+          const series = {
+            labels: Array.from(new Float32Array(res.buffer, 0, this.numPoints)),
+            u: Array.from(new Float32Array(res.buffer, uOffset, this.numPoints)),
+            v: Array.from(new Float32Array(res.buffer, vOffset, this.numPoints))
+          };
+          const result = series.labels.reduce((acc, label, index) => {
+            acc.u.push({x: label, y: series.u[index] / numElements});
+            acc.v.push({x: label, y: series.v[index] / numElements});
+            return acc;
+          }, {u: new Array<Point>, v: new Array<Point>});
+          this.results.emit(result);
+        });
       });
-    }
+    } 
   }
 }

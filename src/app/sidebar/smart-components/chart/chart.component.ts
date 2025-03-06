@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { createSelector, Store } from '@ngrx/store';
-import { exportFeature, Result } from 'src/app/store/export.state';
+import { exportFeature, ResultSpace } from 'src/app/store/export.state';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 
@@ -23,16 +23,46 @@ import {
 } from 'echarts/components';
 import { ECBasicOption } from 'echarts/types/dist/shared';
 import { arrayConfigFeature } from 'src/app/store/arrayConfig.state';
-import { ApertureViewComponent } from '../../pure-components/aperture-view/aperture-view.component';
+import { combineLatest, map, startWith } from 'rxjs';
+
+const seriesTemplate = {
+name: 'u',
+type: 'line',
+showSymbol: false,
+lineStyle: {
+  color: 'rgba(192, 0, 0, 0.8)',
+},
+data: [], // Data series
+markLine: {
+  symbol: ['none', 'none'],
+  label: { show: false },
+  data: [{ yAxis: 0.1 }]
+},
+markArea: {
+  itemStyle: {
+    color: 'rgba(255, 0, 0, 0.1)'
+  },
+  label: {
+    position: ['100%', '20%']
+  },
+  data: [
+ // xAxis + yAxis für Bereich                       
+    ]
+  }
+}
 
 @Component({
     selector: 'app-chart',
-    imports: [MatButtonModule, MatExpansionModule],
+    imports: [
+      MatButtonModule,
+      MatExpansionModule
+    ],
     templateUrl: './chart.component.html',
     styleUrl: './chart.component.scss'
 })
 export class ChartComponent implements OnInit {
   private readonly store = inject(Store);
+
   @ViewChild('echartDiv', { static: true })
   echartDiv: ElementRef<HTMLElement>;
 
@@ -90,7 +120,8 @@ export class ChartComponent implements OnInit {
           align: 'center',
           verticalAlign: 'middle',
           padding: [10, 10, 10, 10], // Optional für Feinanpassung
-          color: '#e6e1e6'
+          color: '#e6e1e6',
+          formatter: (value : number) => `${value.toFixed(0)}°`,
       },
       splitLine: {
         show: true,
@@ -126,7 +157,7 @@ export class ChartComponent implements OnInit {
     
       yAxis: [{
         type: 'log',
-        name: 'y',
+        name: 'Normalized Amplitude x / dB',
         min: 0.01, max: 1.1,
         minorSplitLine: {
           show: true,
@@ -137,7 +168,7 @@ export class ChartComponent implements OnInit {
         },
         axisLabel: {
           color: '#e6e1e6',
-          formatter: (value : number) => value !== 0 ? `${10 * Math.log10(value / 1)} dB` : '',
+          formatter: (value : number) => value !== 0 ? `${10 * Math.log10(value / 1)}` : '',
           inside: true,
           align: 'left',
           verticalAlign: 'middle',
@@ -167,7 +198,7 @@ export class ChartComponent implements OnInit {
         },
         axisLabel: {
           color: '#e6e1e6',
-          formatter: (value : number) => value !== 0 ? `${10 * Math.log10(value / 1)} dB` : '',
+          formatter: (value : number) => value !== 0 ? `${10 * Math.log10(value / 1)}` : '',
           inside: true,
           align: 'left',
           verticalAlign: 'middle',
@@ -182,10 +213,6 @@ export class ChartComponent implements OnInit {
           }
         }
       },
-    
-    
-    
-    
       ],
       series: [],
       animation: false,
@@ -194,11 +221,13 @@ export class ChartComponent implements OnInit {
     // Display the chart using the configuration items and data just specified.
     myChart.setOption(option);
 
+    
     this.store.select(createSelector(
-      exportFeature.selectExportState, 
+      arrayConfigFeature.samplePattern,
       arrayConfigFeature.selectFnbw,
       arrayConfigFeature.selectHpbw,
-      (state, fnbw, hpbw) => ({
+      exportFeature.selectResultUnits,
+      (state, fnbw, hpbw, resultSpace) => ({
         series: [
           {
             name: 'u',
@@ -207,7 +236,7 @@ export class ChartComponent implements OnInit {
             lineStyle: {
               color: 'rgba(192, 0, 0, 0.8)',
             },
-            data: state.u.map(u => [u.x, u.y]),
+            data: state.map(u => [resultSpace === ResultSpace.AZEL ? 180*Math.atan((u.x) / (Math.sqrt(1 - u.x**2))) / Math.PI : u.x, u.y]),
             markLine: {
               symbol: ['none', 'none'],
               label: { show: false },
@@ -215,7 +244,10 @@ export class ChartComponent implements OnInit {
             },
             markArea: {
               itemStyle: {
-                color: 'rgba(255, 0, 0, 0.2)'
+                color: 'rgba(255, 0, 0, 0.1)'
+              },
+              label: {
+                position: ['100%', '20%']
               },
               data: [
                 [
@@ -229,6 +261,7 @@ export class ChartComponent implements OnInit {
                   { 
                     grid: 1,
                     name: 'HBPW',
+
                     value: Math.abs(hpbw.secondZero! - hpbw.firstZero!),
                     xAxis: hpbw.firstZero,
                   }, { xAxis: hpbw.secondZero}
@@ -241,7 +274,7 @@ export class ChartComponent implements OnInit {
             yAxisIndex: 1,
             type: 'line',
             showSymbol: false,
-            data: state.v.map(u => [u.x, u.y]),
+            data: state.map(u => [u.x, u.y]),
             // markArea: {
             //   name: 'HPBW',
             //   itemStyle: {

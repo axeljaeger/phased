@@ -7,20 +7,13 @@
         </mat-expansion-panel-header>
         <app-aperture-view [transducers]="transducers()" [transducerDiameter]="diameter()" />
     </mat-expansion-panel>
-    <mat-expansion-panel hideToggle>
-        <mat-expansion-panel-header>
-            <mat-panel-title data-testid="section-beamforming">
-                KPIs
-            </mat-panel-title>
-        </mat-expansion-panel-header>
-        <app-kpi [kpis]="kpis()" />
-    </mat-expansion-panel>
-    <mat-expansion-panel hideToggle>
+    <mat-expansion-panel hideToggle expanded>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Charts
+            Results
           </mat-panel-title>
         </mat-expansion-panel-header>
+    <app-kpi [kpis]="kpis()" />
     <app-chart />
 </mat-expansion-panel>
 <mat-expansion-panel hideToggle>
