@@ -1,16 +1,29 @@
-<div class="sidebar-panel" style="padding: 2ex; display: flex; flex-direction: column; gap: 2ex">
-    <section>
-      Transducer positions
-      <div>
-        <button mat-icon-button color="primary"><mat-icon>download</mat-icon></button>
-        <button mat-icon-button color="primary"><mat-icon>content_copy</mat-icon></button>
-      </div>
-    </section>
-    <section>
-      Chart data
-      <div>
-        <button mat-icon-button color="primary" (click)="download()"><mat-icon>download</mat-icon></button>
-        <button mat-icon-button color="primary"><mat-icon>content_copy</mat-icon></button>
-      </div>
-    </section>
-  </div>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Transducer positions</mat-card-title>
+    <mat-card-subtitle>For manufacturing</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p>
+      Export transducer positions as CSV or copy to clipboard.
+    </p>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-icon-button color="primary"><mat-icon>download</mat-icon></button>
+    <button mat-icon-button color="primary"><mat-icon>content_copy</mat-icon></button>  </mat-card-actions>
+</mat-card>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Charts data</mat-card-title>
+    <mat-card-subtitle>Herding group</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p>
+      Export chart data
+    </p>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-icon-button color="primary" (click)="download()"><mat-icon>download</mat-icon></button>
+    <button mat-icon-button color="primary"><mat-icon>content_copy</mat-icon></button>
+  </mat-card-actions>
+</mat-card>

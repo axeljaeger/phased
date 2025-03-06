@@ -1,0 +1,12 @@
+:host {
+    display: flex;
+    flex-direction: column;
+}
+
+mat-button-toggle-group {
+    align-self: flex-end;
+}
+
+td {
+    text-align: center;
+}

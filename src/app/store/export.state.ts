@@ -6,32 +6,51 @@ export interface Point {
   y: number;
 }
 
-export interface Result {
+
+export enum ResultSpace {
+  UV = 'uv',
+  AZEL = 'azel',
+}
+
+export interface ResultValues {
   u: Point[];
   v: Point[];
+}
+
+export type Result = {
+  u: Point[];
+  v: Point[];
+  resultUnits: ResultSpace;
 }
 
 const initialState: Result = {
   u: [],
   v: [],
+  resultUnits: ResultSpace.UV,
 };
 
 export const ExportActions = createActionGroup({
   source: 'Export',
   events: {
-    setResults: props<Result>(),
+    setResultValues: props<ResultValues>(),
+    setResultUnit: props<{ unit: ResultSpace }>(),
   },
 });
 
 const reducer = createReducer(
   initialState,
-  on(ExportActions.setResults, (state, args): Result =>
+  on(ExportActions.setResultValues, (state, args): Result =>
   ({
     ...state,
-    u: args.u,
-    v: args.v,
+    ...args,
   })
   ),
+  on(ExportActions.setResultUnit, (state, { unit }): Result =>
+  ({
+    ...state,
+    resultUnits: unit,
+  })
+  )
 );
 
 export const exportFeature = createFeature({
