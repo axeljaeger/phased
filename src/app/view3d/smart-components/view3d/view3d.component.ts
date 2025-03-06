@@ -20,7 +20,7 @@ import { environmentFeature } from 'src/app/store/environment.state';
 import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
 import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
 import { ExportRendererComponent } from '../../renderers/export/export.component';
-import { ExportActions, Result } from 'src/app/store/export.state';
+import { ExportActions, Result, ResultValues } from 'src/app/store/export.state';
 import { UraInteractionRendererComponent } from '../../renderers/ura-interaction/ura-interaction-renderer.component';
 
 
@@ -76,9 +76,9 @@ export class View3dComponent {
     this.store.dispatch(BeamformingActions.setV({ v: Math.sin(el) }));
   }
 
-  onNewResults(results: Result) {
+  onNewResults(results: ResultValues) {
     if (results) {
-      this.store.dispatch(ExportActions.setResults(results));
+      this.store.dispatch(ExportActions.setResultValues(results));
     }
   }
 }

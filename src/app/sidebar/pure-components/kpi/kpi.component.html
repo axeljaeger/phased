@@ -1,14 +1,28 @@
+<mat-button-toggle-group hideSingleSelectionIndicator [formControl]="resultSpaceControl">
+    <mat-button-toggle [value]="ResultSpace.UV">
+      UV
+    </mat-button-toggle>
+    <mat-button-toggle [value]="ResultSpace.AZEL">
+      AZ/EL
+    </mat-button-toggle>
+  </mat-button-toggle-group>
 <table>
     <tr>
+        <th></th>
         <th>HPBW</th>
-        <td>{{ kpis()?.hpbw?.width | number: '1.2-2' }}</td>
-    </tr>
-    <tr>
         <th>FNBW</th>
-        <td>{{ kpis()?.fnbw?.width  | number: '1.2-2'}}</td>
+        <th>SLR</th>
     </tr>
     <tr>
-        <th>SLR</th>
-        <td>{{ kpis() }}</td>
+        <th>u</th>
+        <td>{{ kpis()?.hpbw?.width | number: '1.2-2' }}</td>
+        <td>{{ kpis()?.fnbw?.width  | number: '1.2-2'}}</td>
+        <td>0</td>
+    </tr>
+    <tr>
+        <th>v</th>
+        <td>{{ kpis()?.hpbw?.width | number: '1.2-2' }}</td>
+        <td>{{ kpis()?.fnbw?.width  | number: '1.2-2'}}</td>
+        <td>0</td>
     </tr>
 </table>

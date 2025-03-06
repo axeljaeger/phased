@@ -8,7 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { Results, ResultsActions } from 'src/app/store/viewportConfig.state';
+import { Results, ResultsActions, ViewportFeature } from 'src/app/store/viewportConfig.state';
 
 @Component({
     selector: 'app-farfield',
@@ -21,9 +21,12 @@ export class FarfieldComponent implements OnInit {
   fb = inject(FormBuilder);
   
   public farfieldVisible = this.fb.control(false);
-  public tesselationLevel = this.fb.control(1);
 
   ngOnInit(): void {
+    this.store.select(ViewportFeature.selectResultEnabled(Results.Farfield)).subscribe(visible => {
+      this.farfieldVisible.setValue(visible, {emitEvent: false});
+    });
+
     this.farfieldVisible.valueChanges.subscribe(val => {
       this.store.dispatch(ResultsActions.setResultVisible({result: Results.Farfield, visible: val!}));
     });

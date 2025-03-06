@@ -158,6 +158,7 @@ export class TransducerBufferComponent extends BabylonConsumer
         excitationBuffer.length
       );
       this.uniformExcitationBuffer.update();
+      console.log("Buffer updated");
     }
   }
 }

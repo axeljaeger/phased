@@ -1,5 +1,14 @@
 mat-card-title {
     color: var(--mat-card-subtitle-text-color);
+    font-size: 16px;
+    line-height: normal;
+    font-style: italic;
+}
+
+// Used for author
+mat-card-subtitle{
+    font-size: 14px;
+    line-height: normal;
 }
 
 a, a:visited, a:active {

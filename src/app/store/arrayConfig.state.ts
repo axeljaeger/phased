@@ -196,7 +196,7 @@ export const arrayConfigFeature = createFeature({
                 return newVal;
           }, 0)
       }); 
-      const samplePattern = createSelector(selectPattern,       (pattern) => range(-1, 1, 0.01).map((x) => pattern(x)));
+      const samplePattern = createSelector(selectPattern,       (pattern) => range(-1, 1, 0.001).map((x) => ({x, y: Math.abs(pattern(x)) / 64})));
       const sampleDerrivate = createSelector(selectDerivativeX, (derrivative) => range(-1, 1, 0.01).map((val) => derrivative(val)));
       const selectFnbw = createSelector(selectPattern, selectDerivativeX, (f,df) => {
         const firstZero = newtonMethod(f, df, 0 - 0.001, 1e-7, 100);
@@ -208,7 +208,8 @@ export const arrayConfigFeature = createFeature({
         return { firstZero, secondZero, width: secondZero! - firstZero! };
       });
       const selectHpbw = createSelector(selectPattern, selectDerivativeX, (f,df) => {
-        const ff = (x : number) => f(x) - 0.5;
+        const max = f(0);
+        const ff = (x : number) => f(x) - 0.5 * max;
         const firstZero = newtonMethod(ff, df, 0 - 0.001, 1e-7, 100);
         const secondZero = newtonMethod(ff, df, 0 + 0.001, 1e-7, 100);
 
@@ -218,7 +219,7 @@ export const arrayConfigFeature = createFeature({
       });
 
 
-      return { selectTransducers, isUra, selectFnbw, selectHpbw, samplePattern, sampleDerrivate };
+      return { selectTransducers, isUra, selectFnbw, selectHpbw, samplePattern, sampleDerrivate, selectPattern };
   }
 });
 
