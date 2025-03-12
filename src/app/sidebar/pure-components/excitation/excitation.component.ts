@@ -1,9 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
+
 import { Store } from '@ngrx/store';
-import { EnvironmentActions, environmentFeature, EnvironmentState, Multiplier } from 'src/app/store/environment.state';
+
+import { ArrayConfigActions, arrayConfigFeature, FrequencyMultiplier } from 'src/app/store/arrayConfig.state';
 
 @Component({
   selector: 'app-excitation',
@@ -21,22 +26,23 @@ import { EnvironmentActions, environmentFeature, EnvironmentState, Multiplier } 
 })
 export class ExcitationComponent implements OnInit {
   ngOnInit(): void {
-    this.store.select(environmentFeature.selectEnvironmentState).subscribe((env : EnvironmentState) => {
-      this.form.patchValue(env, { emitEvent: false });
-    });
+    this.store.select(arrayConfigFeature.selectEnvironment)
+      .pipe(takeUntilDestroyed()).subscribe(env => 
+      this.form.patchValue(env, { emitEvent: false })
+    );
 
-    this.form.valueChanges.subscribe(val => {
-      this.store.dispatch(EnvironmentActions.setExcitationFrequency(val));
-    });
+    this.form.valueChanges
+      .pipe(takeUntilDestroyed()).subscribe(val => 
+      this.store.dispatch(ArrayConfigActions.setExcitationFrequency(val))
+    );
   }
   
   fb = inject(FormBuilder);
   store = inject(Store);
-  public Multiplier = Multiplier;
   public form = this.fb.group({
-    multiplier: [Multiplier.kHz],
+    excitationFrequencyMultiplier: ['kHz' as FrequencyMultiplier],
     excitationFrequencyBase: [0],
   });
 
-  public environment = this.store.selectSignal(environmentFeature.selectEnvironmentState);
+  public environment = this.store.selectSignal(arrayConfigFeature.selectEnvironment);
 }

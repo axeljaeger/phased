@@ -18,7 +18,6 @@ import { version } from '../../../../../package.json';
 import { InfoComponent } from '../info/info.component';
 import { TransducerComponent } from '../transducer/transducer.component';
 import { ExportComponent } from '../export/export.component';
-import { EnvironmentActions, environmentFeature, EnvironmentState } from 'src/app/store/environment.state';
 
 @Component({
     selector: 'app-sidebar-container',
@@ -44,15 +43,14 @@ export class SidebarContainerComponent {
     private store = inject(Store);
     public beamformingEnabled = this.store.selectSignal(beamformingFeature.selectEnabled);
     public transducers = this.store.selectSignal(arrayConfigFeature.selectTransducers);
-    public environment = this.store.selectSignal(environmentFeature.selectEnvironmentState);
+    public environment = this.store.selectSignal(arrayConfigFeature.selectEnvironment);
     public array = this.store.selectSignal(arrayConfigFeature.selectArrayConfigState);
 
     public version = version;
 
     selectedTab = model('library');
     
-    loadPreset(preset: {config: ArrayConfig, environment: EnvironmentState}) {
-        this.store.dispatch(ArrayConfigActions.setConfig(preset.config));
-        this.store.dispatch(EnvironmentActions.setEnvironment(preset.environment));
+    loadPreset(preset: ArrayConfig) {
+        this.store.dispatch(ArrayConfigActions.setConfig(preset));
     }
 }

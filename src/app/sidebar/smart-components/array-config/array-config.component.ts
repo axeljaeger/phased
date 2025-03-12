@@ -1,12 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
-import { Store } from '@ngrx/store';
-import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from '../../../store/arrayConfig.state'
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -15,6 +13,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCheckbox } from '@angular/material/checkbox';
 
+import { Store } from '@ngrx/store';
+
+import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from '../../../store/arrayConfig.state'
 
 @Component({
     selector: 'app-array-config',
@@ -48,21 +49,19 @@ export class ArrayConfigComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.store.select(arrayConfigFeature.selectArrayConfigState).subscribe(config => {
+    this.store.select(arrayConfigFeature.selectArrayConfigState)
+      .pipe(takeUntilDestroyed()).subscribe(config => 
       this.arrayConfig.patchValue({
         ...config.config,
         ...config.config.type === 'ura' ? {
         pitchX: config.config.pitchX * 1e3,
         pitchY: config.config.pitchY * 1e3,
         } : {},
-      },
-        {
-          emitEvent: false, // Avoid infinite recursion
-        });
-    });
+      }, { emitEvent: false })
+    );
 
-    this.arrayConfig.valueChanges.subscribe(
-      (value) => this.store.dispatch(ArrayConfigActions.setConfig({config: {
+    this.arrayConfig.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => 
+      this.store.dispatch(ArrayConfigActions.setConfig({config: {
         ...value,
         ...value.type === 'ura' && value.pitchX !== undefined && value.pitchX !== null ? { pitchX: value.pitchX * 1e-3 } : {},
         ...value.type === 'ura' && value.pitchY !== undefined && value.pitchY !== null ? { pitchY: value.pitchY * 1e-3 } : {},

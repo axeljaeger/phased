@@ -1,4 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -50,7 +52,7 @@ export class BeamformingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fg.valueChanges.subscribe(val => {      
+    this.fg.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {      
       this.store.dispatch(BeamformingActions.set({
         enabled: val.beamformingEnabled!,
         interactive: val.beamformingInteractive!,
@@ -67,7 +69,7 @@ export class BeamformingComponent implements OnInit {
       ].forEach(c => val.beamformingEnabled ? c.enable({emitEvent: false}) : c.disable({emitEvent: false}));
     });
 
-    this.anglesGroup.valueChanges.subscribe(val => {
+    this.anglesGroup.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {
       const az = Angle.FromDegrees(val.az!).radians();
       const el = Angle.FromDegrees(val.el!).radians();
       
@@ -78,7 +80,7 @@ export class BeamformingComponent implements OnInit {
       this.store.dispatch(BeamformingActions.setV({ v }));
     });
 
-    this.store.select(beamformingFeature.selectBeamformingState).subscribe(config => {
+    this.store.select(beamformingFeature.selectBeamformingState).pipe(takeUntilDestroyed()).subscribe(config => {
       this.fg.patchValue({
         beamformingEnabled: config?.enabled,
         beamformingInteractive: config?.interactive,

@@ -16,7 +16,6 @@ import { BeamformingRendererComponent } from '../../renderers/beamforming/beamfo
 import { SelectionActions, selectionFeature } from 'src/app/store/selection.state';
 import { Results, ViewportFeature } from 'src/app/store/viewportConfig.state';
 import { RayleighFeature } from 'src/app/store/rayleigh.state';
-import { environmentFeature } from 'src/app/store/environment.state';
 import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
 import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
 import { ExportRendererComponent } from '../../renderers/export/export.component';
@@ -50,12 +49,12 @@ export class View3dComponent {
   rayleighAspect = this.store.selectSignal(RayleighFeature.selectAspect);
   rayleighResultSet = this.store.selectSignal(RayleighFeature.selectResultSet);
   farfieldEnabled = this.store.selectSignal(ViewportFeature.selectResultEnabled(Results.Farfield));
-  k = this.store.selectSignal(environmentFeature.selectK);
+  k = this.store.selectSignal(arrayConfigFeature.selectK);
   ura = this.store.selectSignal(arrayConfigFeature.isUra);
   
   arrayConfig = this.store.selectSignal(arrayConfigFeature.selectArrayConfigState);
   transducers = this.store.selectSignal(arrayConfigFeature.selectTransducers);
-  environment = this.store.selectSignal(environmentFeature.selectEnvironmentState);
+  environment = this.store.selectSignal(arrayConfigFeature.selectEnvironment);
   selection =   this.store.selectSignal(selectionFeature.selectSelectionState);
   beamforming = this.store.selectSignal(beamformingFeature.selectBeamformingState);
   transducerDiameter = this.store.selectSignal(arrayConfigFeature.selectTransducerDiameter);

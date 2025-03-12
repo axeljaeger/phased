@@ -1,13 +1,16 @@
 import {
   Component,
   ContentChildren,
+  DestroyRef,
+  forwardRef,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
   QueryList,
   SimpleChanges,
-  forwardRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { Scene } from '@babylonjs/core/scene';
@@ -61,6 +64,8 @@ const diff = (previous: Array<any>, next: Array<any>) =>
 })
 export class TransducerBufferComponent extends BabylonConsumer
   implements OnChanges, OnDestroy {
+  destroyRef = inject(DestroyRef);
+
   @Input() transducers: Array<Transducer> | null;
   @Input() beamforming: Beamforming | null;
   @Input() k: number | null;
@@ -111,11 +116,11 @@ export class TransducerBufferComponent extends BabylonConsumer
 
     this.consumers.changes
       .pipe(
+        takeUntilDestroyed(this.destroyRef),
         map((list) => list.toArray()),
         startWith([], this.consumers.toArray()),
         pairwise()
-      )
-      .subscribe(([prev, next]) => {
+      ).subscribe(([prev, next]) => {
         const { added } = diff(prev, next);
         added.forEach((consumer) => {
           if (implementsOnTransducerBufferCreated(consumer)) {
