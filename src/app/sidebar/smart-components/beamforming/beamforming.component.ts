@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -31,7 +31,7 @@ const normalizeAngle = (angle: number) => {
     templateUrl: './beamforming.component.html',
     styleUrl: './beamforming.component.scss'
 })
-export class BeamformingComponent implements OnInit {
+export class BeamformingComponent {
   store = inject(Store);  
   fb = inject(FormBuilder);
 
@@ -51,7 +51,7 @@ export class BeamformingComponent implements OnInit {
     this.store.dispatch(BeamformingActions.reset());
   }
 
-  ngOnInit(): void {
+  constructor() {
     this.fg.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {      
       this.store.dispatch(BeamformingActions.set({
         enabled: val.beamformingEnabled!,

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -24,8 +24,8 @@ import { ArrayConfigActions, arrayConfigFeature, FrequencyMultiplier } from 'src
   templateUrl: './excitation.component.html',
   styleUrl: './excitation.component.scss'
 })
-export class ExcitationComponent implements OnInit {
-  ngOnInit(): void {
+export class ExcitationComponent {
+  constructor() {
     this.store.select(arrayConfigFeature.selectEnvironment)
       .pipe(takeUntilDestroyed()).subscribe(env => 
       this.form.patchValue(env, { emitEvent: false })
