@@ -1,4 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { ResultAspect } from '../../../view3d/materials/rayleigh.material';
@@ -21,7 +23,7 @@ import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-
       MatButtonToggle, MatButtonToggleGroup
     ]
 })
-export class RayleighComponent implements OnInit {
+export class RayleighComponent {
   private store = inject(Store);
   private fb = inject(FormBuilder);
 
@@ -34,17 +36,17 @@ export class RayleighComponent implements OnInit {
   public ResultAspect = ResultAspect;
   public ResultSet = ResultSet;
 
-  ngOnInit(): void {
-    this.rayleighVisible.valueChanges.subscribe(val => {
+  constructor() {
+    this.rayleighVisible.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {
       this.store.dispatch(ResultsActions.setResultVisible({ result: Results.RayleighIntegral, visible: val! }));
     });
 
-    this.rayleighAspect.valueChanges.subscribe(val => {
+    this.rayleighAspect.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {
       this.store.dispatch(RayleighResultActions.setResultAspect({ aspect: val! }));
     })
-    this.rayleighVisible$.subscribe(val => this.rayleighVisible.patchValue(val, { emitEvent: false }));
+    this.rayleighVisible$.pipe(takeUntilDestroyed()).subscribe(val => this.rayleighVisible.patchValue(val, { emitEvent: false }));
 
-    this.resultSet.valueChanges.subscribe(val => {
+    this.resultSet.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {
       this.store.dispatch(RayleighResultActions.setResultSet({ resultSet: val! }));
     })
   }

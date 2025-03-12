@@ -4,13 +4,16 @@ import {
   ChangeDetectionStrategy,
   Component,
   ContentChildren,
+  DestroyRef,
   ElementRef,
   HostListener,
+  inject,
   NgZone,
   OnInit,
   QueryList,
   ViewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
@@ -54,10 +57,10 @@ export class BabylonJSViewComponent
   public scene: Scene;
   camera: ArcRotateCamera;
 
-  constructor(
-    private ngZone: NgZone,
-    private elRef: ElementRef,
-  ) {}
+  private ngZone = inject(NgZone);
+  private elRef = inject(ElementRef);
+  private destroyRef = inject(DestroyRef);
+  
   ngAfterContentChecked(): void {
     this.ngZone.runOutsideAngular(() => {
       if (this.scene) {
@@ -97,7 +100,8 @@ export class BabylonJSViewComponent
       .pipe(
         map((list) => list.toArray()),
         startWith([], this.renderers.toArray()),
-        pairwise()
+        pairwise(),
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(([prev, next]) => {
         const { added } = diff(prev, next);

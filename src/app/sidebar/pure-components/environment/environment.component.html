@@ -1,12 +1,12 @@
 <ng-container [formGroup]="form">
     <mat-button-toggle-group hideSingleSelectionIndicator formControlName="environmentHint">
-        <mat-button-toggle [value]="EnvironmentHint.Air">
+        <mat-button-toggle value="Air">
           Air
         </mat-button-toggle>
-        <mat-button-toggle [value]="EnvironmentHint.Water">
+        <mat-button-toggle value="Water">
           Water
         </mat-button-toggle>
-        <mat-button-toggle [value]="EnvironmentHint.Custom">
+        <mat-button-toggle value="Custom">
         Custom
         </mat-button-toggle>
       </mat-button-toggle-group>

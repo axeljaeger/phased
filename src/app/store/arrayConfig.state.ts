@@ -2,6 +2,8 @@ import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { createActionGroup, createFeature, createReducer, createSelector, on, props } from '@ngrx/store';
 import { presets } from '../presets';
 
+export type Nullable<T> = { [K in keyof T]: T[K] | null };
+
 const newtonMethod = (
   f: (x: number) => number, 
   df: (x: number) => number, 
@@ -68,6 +70,25 @@ export interface CircularConfig {
   elementCount: number;
 }
 
+export type FrequencyMultiplier = 'Hz' | 'kHz' | 'MHz';
+
+const FrequencyMultiplierValue : Record<FrequencyMultiplier, number> = {
+  'Hz': 1,
+  'kHz': 1e3,
+  'MHz': 1e6
+};
+
+export const frequencyFromBase = (base : number, multiplier : FrequencyMultiplier) => base * FrequencyMultiplierValue[multiplier];
+
+export type EnvironmentHint = 'Air' | 'Water' | 'Custom';
+export interface Environment {
+  environmentHint: EnvironmentHint;
+  speedOfSound: number;
+
+  excitationFrequencyBase: number;
+  excitationFrequencyMultiplier: FrequencyMultiplier; // rename to frequencyMultiplier
+}
+
 export interface SpiralConfig {
   type: 'spiral';
   diameter: number;
@@ -86,6 +107,7 @@ export interface UraConfig {
 
 export interface ArrayConfig {
   name: string;
+  environment: Environment;
   citation: Citation | null;
   config: UraConfig | CircularConfig | SpiralConfig;
   transducerDiameter: number;
@@ -103,12 +125,14 @@ export const ArrayConfigActions = createActionGroup({
   events: {
     setConfig: props<ArrayConfig>(),
     setTransducerDiameter: props<{ diameter: number | null}>(),
+    setEnvironment: props<Nullable<Partial<Environment>>>(),
+    setExcitationFrequency: props<Nullable<Partial<{excitationFrequencyBase: number, excitationFrequencyMultiplier: FrequencyMultiplier}>>>(),
   },
 });
 
 const reducer = createReducer(
-  presets[0].config,
-  on(ArrayConfigActions.setConfig, (state, newConfig): ArrayConfig => {
+  presets[0], // initialState
+  on(ArrayConfigActions.setConfig, (state, newConfig) : ArrayConfig => {
     return {
       ...state,
       ...newConfig,
@@ -119,13 +143,30 @@ const reducer = createReducer(
       ...state,
       transducerDiameter: diameter ?? state.transducerDiameter
     };
-  })
+  }),
+    on(ArrayConfigActions.setEnvironment, (state, args) => ({
+      ...state,
+      environment: {
+        ...state.environment,
+        environmentHint: args.environmentHint ?? state.environment.environmentHint,
+        speedOfSound: args.environmentHint === 'Air' ? 343 : args.environmentHint === 'Water' ? 1480 : args.speedOfSound ?? state.environment.speedOfSound
+      }
+    })),
+    on(ArrayConfigActions.setExcitationFrequency, (state, args) => ({
+      ...state,
+      environment: {
+        ...state.environment,
+        excitationFrequencyBase: args.excitationFrequencyBase ?? state.environment.excitationFrequencyBase,
+        excitationFrequencyMultiplier: args.excitationFrequencyMultiplier ?? state.environment.excitationFrequencyMultiplier
+      }
+    }))
 );
 
 export const arrayConfigFeature = createFeature({
   name: 'arrayConfig',
   reducer,
-  extraSelectors: ({ selectArrayConfigState, selectConfig }) => {
+  extraSelectors: ({ selectArrayConfigState, selectConfig, selectEnvironment }) => {
+      const selectK = createSelector(selectEnvironment, state => 2 * Math.PI * frequencyFromBase(state.excitationFrequencyBase, state.excitationFrequencyMultiplier) / state.speedOfSound);
       const selectTransducers = createSelector(
       selectArrayConfigState,
       (arrayConfig: ArrayConfig) => {
@@ -166,22 +207,19 @@ export const arrayConfigFeature = createFeature({
       });
 
       const isUra = createSelector(selectConfig, config => config.type === 'ura');
-      const selectPattern = createSelector(selectTransducers, transducers => {
+      const selectPattern = createSelector(selectTransducers, selectK, (transducers, k)=> {
         return (x : number) => 
-          
           transducers.reduce((acc, t) => {
-            const k = 732.73;            
                 const argv = { x: t.pos.x * x, y: t.pos.y * 0 };
                 //float argument = k*(argv.x+argv.y) + element.delay*omega;
                 const argument = k * (argv.x+argv.y) //+ element.phasor.x;
             return acc + Math.cos(argument) 
           },0) });
       ;
-      const selectDerivativeX = createSelector(selectTransducers, (transducers) => {
+      const selectDerivativeX = createSelector(selectTransducers, selectK, (transducers, k) => {
         return (x : number) =>
           // Sum up over all transducers at particular position x
           transducers.reduce((acc, t) => {
-            const k = 732.73;            
                 const argv = { x: t.pos.x * x, y: t.pos.y * 0 };
                 //float argument = k*(argv.x+argv.y) + element.delay*omega;
                 const argument = k * (argv.x+argv.y) //+ element.phasor.x;
@@ -218,8 +256,7 @@ export const arrayConfigFeature = createFeature({
         return { firstZero, secondZero, width: secondZero! - firstZero! };
       });
 
-
-      return { selectTransducers, isUra, selectFnbw, selectHpbw, samplePattern, sampleDerrivate, selectPattern };
+      return { selectTransducers, isUra, selectFnbw, selectHpbw, samplePattern, sampleDerrivate, selectPattern, selectK };
   }
 });
 

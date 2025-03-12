@@ -1,4 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -16,18 +17,18 @@ import { Results, ResultsActions, ViewportFeature } from 'src/app/store/viewport
     styleUrls: ['./farfield.component.scss'],
     imports: [MatExpansionModule, MatIconModule, MatCheckboxModule, ReactiveFormsModule, MatDividerModule, MatSliderModule]
 })
-export class FarfieldComponent implements OnInit {
+export class FarfieldComponent {
   store = inject(Store);
   fb = inject(FormBuilder);
   
   public farfieldVisible = this.fb.control(false);
 
-  ngOnInit(): void {
-    this.store.select(ViewportFeature.selectResultEnabled(Results.Farfield)).subscribe(visible => {
+  constructor() {
+    this.store.select(ViewportFeature.selectResultEnabled(Results.Farfield)).pipe(takeUntilDestroyed()).subscribe(visible => {
       this.farfieldVisible.setValue(visible, {emitEvent: false});
     });
 
-    this.farfieldVisible.valueChanges.subscribe(val => {
+    this.farfieldVisible.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {
       this.store.dispatch(ResultsActions.setResultVisible({result: Results.Farfield, visible: val!}));
     });
   }

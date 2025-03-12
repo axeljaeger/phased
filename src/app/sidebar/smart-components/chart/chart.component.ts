@@ -1,4 +1,6 @@
-import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { createSelector, Store } from '@ngrx/store';
 import { exportFeature, ResultSpace } from 'src/app/store/export.state';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,7 +25,6 @@ import {
 } from 'echarts/components';
 import { ECBasicOption } from 'echarts/types/dist/shared';
 import { arrayConfigFeature } from 'src/app/store/arrayConfig.state';
-import { combineLatest, map, startWith } from 'rxjs';
 
 const seriesTemplate = {
 name: 'u',
@@ -62,6 +63,7 @@ markArea: {
 })
 export class ChartComponent implements OnInit {
   private readonly store = inject(Store);
+  destroyRef = inject(DestroyRef);
 
   @ViewChild('echartDiv', { static: true })
   echartDiv: ElementRef<HTMLElement>;
@@ -287,7 +289,7 @@ export class ChartComponent implements OnInit {
             // }
           }
         ]
-      }))).subscribe(options => {
+      }))).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(options => {
       myChart.setOption(options, false);
     });
 

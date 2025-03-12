@@ -1,9 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+
+import { Store } from '@ngrx/store';
+
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
-import { Store } from '@ngrx/store';
-import { EnvironmentActions, environmentFeature, EnvironmentHint, EnvironmentState } from 'src/app/store/environment.state';
+
+import { EnvironmentHint, arrayConfigFeature, ArrayConfigActions } from 'src/app/store/arrayConfig.state';
 
 @Component({
   selector: 'app-environment',
@@ -19,24 +23,25 @@ import { EnvironmentActions, environmentFeature, EnvironmentHint, EnvironmentSta
   templateUrl: './environment.component.html',
   styleUrl: './environment.component.scss'
 })
-export class EnvironmentComponent implements OnInit {
+export class EnvironmentComponent {
   fb = inject(FormBuilder);
   store = inject(Store);
-  public EnvironmentHint = EnvironmentHint;
 
   public form = this.fb.group({
     speedOfSound: [{value: 0, disabled: true}],
-    environmentHint: [EnvironmentHint.Air]
+    environmentHint: ['Air' as EnvironmentHint],
   });
 
-  ngOnInit(): void {
-    this.store.select(environmentFeature.selectEnvironmentState).subscribe((env : EnvironmentState) => {
-      this.form.patchValue(env, { emitEvent: false });
-    });
+  constructor(){
+    this.store.select(arrayConfigFeature.selectEnvironment)
+      .pipe(takeUntilDestroyed()).subscribe(env => 
+      this.form.patchValue(env, { emitEvent: false })
+    );
 
-    this.form.valueChanges.subscribe(val => {
-      this.store.dispatch(EnvironmentActions.setEnvironment(this.form.value));
-      this.form.controls.environmentHint.value === EnvironmentHint.Custom ?
+    this.form.valueChanges
+      .pipe(takeUntilDestroyed()).subscribe(val => {
+      this.store.dispatch(ArrayConfigActions.setEnvironment(this.form.value));
+      this.form.controls.environmentHint.value === 'Custom' ?
         this.form.controls.speedOfSound.enable({emitEvent: false}) : 
         this.form.controls.speedOfSound.disable({emitEvent: false});
     });

@@ -4,7 +4,6 @@ import { environment } from './environments/environment';
 import { AppComponent } from './app/app.component';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { selectionFeature } from './app/store/selection.state';
-import { environmentFeature } from './app/store/environment.state';
 import { provideState, provideStore } from '@ngrx/store';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { bootstrapApplication } from '@angular/platform-browser';
@@ -21,16 +20,17 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
     providers: [
-        provideStore(),
         provideAnimations(),
         { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
+        provideStore(),
         provideState(arrayConfigFeature),
-        provideState(environmentFeature),
+        provideState(beamformingFeature),
+        
+        provideState(exportFeature),
+        
         provideState(RayleighFeature),
         provideState(selectionFeature),
         provideState(ViewportFeature),
-        provideState(beamformingFeature),
-        provideState(exportFeature),
         provideStoreDevtools({
             maxAge: 25,
             logOnly: environment.production, // Restrict extension to log-only mode
