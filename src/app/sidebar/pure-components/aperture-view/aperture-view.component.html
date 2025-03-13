@@ -1,4 +1,9 @@
-<svg [attr.viewBox]="bb()" style="height: 150px; width: 150px">  
+<svg [attr.viewBox]="bb()" style="height: 150px; width: 150px">
+    @let arrayDia = arrayDiameter();
+    @if (arrayDia !== null) {
+        <circle [attr.r]="arrayDia / 2" style="fill: none; stroke: gray; stroke-width: 0.0001" />
+    }
+    
     @for (point of transducersMapped(); track point) {
         <circle 
         [attr.cx]="point.pos.x"

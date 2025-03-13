@@ -37,6 +37,13 @@ export class ResultContainerComponent {
     public farfieldVisible = this.store.selectSignal(ViewportFeature.selectResultEnabled(Results.Farfield));
     public transducers = this.store.selectSignal(arrayConfigFeature.selectTransducers);
     public diameter = this.store.selectSignal(arrayConfigFeature.selectTransducerDiameter);
+    public arrayDiameter = computed(() => {
+        const val = this.store.selectSignal(arrayConfigFeature.selectArrayConfigState)();
+        if (val.config.type === 'circular' || val.config.type === 'spiral') {
+            return val.config.diameter
+        }
+        return null;
+    });
     public transducersCount = computed(() => this.transducers().length);
     public rayleighVisible = this.store.selectSignal(ViewportFeature.selectResultEnabled(Results.RayleighIntegral));
 }
