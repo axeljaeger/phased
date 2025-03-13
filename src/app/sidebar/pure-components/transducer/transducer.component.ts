@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -19,11 +19,11 @@ import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from 'src/app/sto
   templateUrl: './transducer.component.html',
   styleUrl: './transducer.component.scss'
 })
-export class TransducerComponent implements OnInit {
+export class TransducerComponent {
   store = inject(Store);
   public diameter = new FormControl(0);
 
-  ngOnInit(): void {
+  constructor() {
     this.diameter.valueChanges
       .pipe(takeUntilDestroyed()).subscribe(val => 
       this.store.dispatch(ArrayConfigActions.setTransducerDiameter({diameter: val ? val * 1e-3 : null}))

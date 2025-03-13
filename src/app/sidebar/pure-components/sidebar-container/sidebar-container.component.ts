@@ -19,6 +19,7 @@ import { InfoComponent } from '../info/info.component';
 import { TransducerComponent } from '../transducer/transducer.component';
 import { ExportComponent } from '../export/export.component';
 
+export type SidebarTab = 'library' | 'setup' | 'export'; 
 @Component({
     selector: 'app-sidebar-container',
     templateUrl: './sidebar-container.component.html',
@@ -48,7 +49,7 @@ export class SidebarContainerComponent {
 
     public version = version;
 
-    selectedTab = model('library');
+    selectedTab = model<SidebarTab>('library');
     
     loadPreset(preset: ArrayConfig) {
         this.store.dispatch(ArrayConfigActions.setConfig(preset));
