@@ -5,7 +5,11 @@
                 Aperture
             </mat-panel-title>
         </mat-expansion-panel-header>
-        <app-aperture-view [transducers]="transducers()" [transducerDiameter]="diameter()" />
+        <app-aperture-view 
+          [transducers]="transducers()" 
+          [transducerDiameter]="diameter()"
+          [arrayDiameter]="arrayDiameter()"
+          />
     </mat-expansion-panel>
     <mat-expansion-panel hideToggle expanded>
         <mat-expansion-panel-header>

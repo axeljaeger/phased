@@ -111,5 +111,30 @@ export const presets : ArrayConfig[] = [
     },
     transducerDiameter: 0.001,
     citation: null,
+ },
+    {
+        name: "L11-5gH @8 MHz",
+        environment: {
+            speedOfSound: 1480,
+            environmentHint: 'Water',
+            excitationFrequencyBase: 8,
+            excitationFrequencyMultiplier: 'MHz'
+        },
+        config: {
+            type: 'ura',
+            elementsX: 128,
+            elementsY: 1,
+            pitchX: 0.0003,
+            pitchY: 0.0003,
+        },
+        transducerDiameter: 0.0002,
+        citation: {
+            kind: 'Industrial',
+            url: "https://verasonics.com/general-imaging-transducers/",
+            urlTitle: "Product overview",
+            title: "General Imaging Transducers",
+            authors: "Verasonics, Inc.",
+            year: 2025,
+        },
     }
 ]
