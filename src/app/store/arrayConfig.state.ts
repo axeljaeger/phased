@@ -234,7 +234,7 @@ export const arrayConfigFeature = createFeature({
                 return newVal;
           }, 0)
       }); 
-      const samplePattern = createSelector(selectPattern,       (pattern) => range(-1, 1, 0.001).map((x) => ({x, y: Math.abs(pattern(x)) / 64})));
+      const samplePattern = createSelector(selectPattern, selectTransducers, (pattern, transducers) => range(-1, 1, 0.001).map((x) => ({x, y: Math.abs(pattern(x)) / transducers.length})));
       const sampleDerrivate = createSelector(selectDerivativeX, (derrivative) => range(-1, 1, 0.01).map((val) => derrivative(val)));
       const selectFnbw = createSelector(selectPattern, selectDerivativeX, (f,df) => {
         const firstZero = newtonMethod(f, df, 0 - 0.001, 1e-7, 100);
