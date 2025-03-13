@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, output } from '@angular/core';
+import { Component, output } from '@angular/core';
 
 import { presets } from '../../../presets'
 import { MatSelectionList, MatListItem, MatListItemTitle, MatListItemIcon, MatListItemLine } from '@angular/material/list';
@@ -11,10 +11,7 @@ import { ArrayConfig } from 'src/app/store/arrayConfig.state';
   templateUrl: './library.component.html',
   styleUrl: './library.component.scss'
 })
-export class LibraryComponent implements AfterViewInit {
-  ngAfterViewInit(): void {
-    this.loadPreset.emit(this.presets[0]);
-  }
+export class LibraryComponent {
   presets = presets;
   loadPreset = output<ArrayConfig>();
 

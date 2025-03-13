@@ -1,0 +1,10 @@
+<div style="
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    gap: 1ex;">
+    <app-library (loadPreset)="loadPreset($event)" />
+    @if (array().citation) {
+        <app-info [array]="array()" />
+    }
+</div>
