@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -34,7 +34,7 @@ import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from '../../../st
         MatTabsModule,
     ]
 })
-export class ArrayConfigComponent implements OnInit {
+export class ArrayConfigComponent {
   private store = inject(Store);
   private fb = inject(FormBuilder);
   public arrayConfig = this.fb.group({
@@ -48,7 +48,7 @@ export class ArrayConfigComponent implements OnInit {
       startWithZero: this.fb.control(false),
   });
 
-  ngOnInit(): void {
+  constructor() {
     this.store.select(arrayConfigFeature.selectArrayConfigState)
       .pipe(takeUntilDestroyed()).subscribe(config => 
       this.arrayConfig.patchValue({
