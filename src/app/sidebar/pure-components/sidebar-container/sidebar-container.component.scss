@@ -2,8 +2,39 @@
 
 :host {
     display: grid;
-    grid-template-rows: 1fr min-content;
+    grid-template-rows: 1fr min-content  min-content;
     gap: 2ex;
+}
+
+nav {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+nav a {
+    display: flex;
+    align-items: center;
+    padding: 1ex 1ex;
+    background-color: var(--mat-sys-surface);
+}
+
+nav a:hover {
+    background-color: #222222;
+}
+
+
+nav a:first-child {
+    border-top-left-radius: var(--mat-expansion-container-shape, 12px);
+    border-bottom-left-radius: var(--mat-expansion-container-shape, 12px);
+}
+
+nav a:last-child {
+    border-top-right-radius: var(--mat-expansion-container-shape, 12px);
+    border-bottom-right-radius: var(--mat-expansion-container-shape, 12px);
+}
+
+nav a.active {
+    background-color: var(--mdc-switch-selected-handle-color);
 }
 
 .mat-headline-small {
@@ -33,3 +64,7 @@ a, a:visited, a:active {
     color: #e6e1e6;
     text-decoration: none;
   }
+
+router-outlet {
+    display: contents;
+}
