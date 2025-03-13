@@ -68,8 +68,6 @@ export class ChartComponent implements OnInit {
   @ViewChild('echartDiv', { static: true })
   echartDiv: ElementRef<HTMLElement>;
 
-  transducers = this.store.selectSignal(arrayConfigFeature.selectTransducers);
-
   ngOnInit(): void {
     
 
@@ -123,7 +121,7 @@ export class ChartComponent implements OnInit {
           verticalAlign: 'middle',
           padding: [10, 10, 10, 10], // Optional für Feinanpassung
           color: '#e6e1e6',
-          formatter: (value : number) => `${value.toFixed(0)}°`,
+          formatter: (value : number) =>`${value.toFixed(0)}°`,
       },
       splitLine: {
         show: true,
@@ -230,6 +228,50 @@ export class ChartComponent implements OnInit {
       arrayConfigFeature.selectHpbw,
       exportFeature.selectResultUnits,
       (state, fnbw, hpbw, resultSpace) => ({
+        xAxis: [{
+          name: 'x',
+          type: 'value',
+          axisLabel: {
+              inside: false,
+              align: 'center',
+              verticalAlign: 'middle',
+              padding: [10, 10, 10, 10], // Optional für Feinanpassung
+              color: '#e6e1e6',
+              formatter: (value : number) => resultSpace === 'uv' ?  `${value.toFixed(1)}` : `${value.toFixed(0)}°`,
+          },
+          splitNumber: 4,
+          min: resultSpace === 'uv' ? -1 : -90,
+          max: resultSpace === 'uv' ? 1 : 90,
+          splitLine: {
+            show: true,
+            lineStyle: {
+                color: '#444444', // Grün für Y-Achse
+                width: 1,
+                type: 'solid'
+            }
+          }
+        },
+        {
+          gridIndex: 1,
+          name: 'x2',
+          type: 'value',
+          axisLabel: {
+              inside: false,
+              align: 'center',
+              verticalAlign: 'middle',
+              padding: [0, 0, 0, 0], // Optional für Feinanpassung
+              color: '#e6e1e6'
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+                color: '#444444', // Grün für Y-Achse
+                width: 1,
+                type: 'solid'
+            }
+          }
+        },
+      ],
         series: [
           {
             name: 'u',
