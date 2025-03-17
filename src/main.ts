@@ -26,6 +26,7 @@ const routes : Routes = [
   { path: 'library', component: LibraryContainerComponent },
   { path: 'setup', component: SetupContainerComponent },
   { path: 'export', component: ExportComponent },
+  { path: '',   redirectTo: '/library', pathMatch: 'full' },
 ];
 
 bootstrapApplication(AppComponent, {
