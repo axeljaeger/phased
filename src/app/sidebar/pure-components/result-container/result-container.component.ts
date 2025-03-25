@@ -9,8 +9,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { Results, ViewportFeature } from 'src/app/store/viewportConfig.state';
 
 import { version } from '../../../../../package.json';
-import { KPIComponent } from '../kpi/kpi.component';
+import { HoveredKpi, KPIComponent } from '../kpi/kpi.component';
 import { ApertureViewComponent } from '../aperture-view/aperture-view.component';
+import { ExportActions } from 'src/app/store/export.state';
 
 @Component({
     selector: 'app-result-container',
@@ -30,10 +31,11 @@ export class ResultContainerComponent {
     public version = version;
     private store = inject(Store);
     kpis = this.store.selectSignal(createSelector(
-        arrayConfigFeature.selectFnbw,
-        arrayConfigFeature.selectHpbw,
-        (fnbw, hpbw) => ({ fnbw, hpbw })
-    ));
+        arrayConfigFeature.selectFnbwU,
+        arrayConfigFeature.selectHpbwU,
+        arrayConfigFeature.selectFnbwV,
+        arrayConfigFeature.selectHpbwV,
+        (fnbwu, hpbwu, fnbwv, hpbwv) => ( {u: { fnbw: fnbwu, hpbw: hpbwu }, v: { fnbw: fnbwv, hpbw: hpbwv }})));
     public farfieldVisible = this.store.selectSignal(ViewportFeature.selectResultEnabled(Results.Farfield));
     public transducers = this.store.selectSignal(arrayConfigFeature.selectTransducers);
     public diameter = this.store.selectSignal(arrayConfigFeature.selectTransducerDiameter);
@@ -46,4 +48,7 @@ export class ResultContainerComponent {
     });
     public transducersCount = computed(() => this.transducers().length);
     public rayleighVisible = this.store.selectSignal(ViewportFeature.selectResultEnabled(Results.RayleighIntegral));
+    public setHoveredKpi(hoveredKpi: HoveredKpi) {
+        this.store.dispatch(ExportActions.setHoveredKpi({ hoveredKpi }));
+    }
 }

@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 test.describe('Sidebar', () => {
   test('Can open environment', async ({ page }) => {
     await page.locator('mat-expansion-panel-header[role="button"]:has-text("Environment")').click();
-    await expect(page.locator('text=Air, c = 434 m/s')).toBeVisible();
+    await expect(page.locator('text=Air, c = 343 m/s')).toBeVisible();
   });
 
   test('Can open array config', async ({ page }) => {

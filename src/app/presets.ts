@@ -47,7 +47,7 @@ export const presets : ArrayConfig[] = [
 {
     name: "Line 6 0.5lambda",
     environment: {
-        speedOfSound: 434,
+        speedOfSound: 343,
         environmentHint: 'Air',
         excitationFrequencyBase: 40,
         excitationFrequencyMultiplier: 'kHz'
@@ -72,7 +72,7 @@ export const presets : ArrayConfig[] = [
 {
     name: "Line 8 0.5lambda wide",
     environment: {
-        speedOfSound: 434,
+        speedOfSound: 343,
         environmentHint: 'Air',
         excitationFrequencyBase: 40,
         excitationFrequencyMultiplier: 'kHz'

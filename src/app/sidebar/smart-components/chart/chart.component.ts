@@ -52,6 +52,9 @@ markArea: {
   }
 }
 
+const condUToAz = (convert: boolean, u : number) => convert ? 180*Math.atan(u / (Math.sqrt(1 - u**2))) / Math.PI : u;
+const condVToEl = (convert: boolean, v : number) => convert ? 180*Math.atan(v / (Math.sqrt(1 - v**2))) / Math.PI : v;
+
 @Component({
     selector: 'app-chart',
     imports: [
@@ -223,11 +226,77 @@ export class ChartComponent implements OnInit {
 
     
     this.store.select(createSelector(
-      arrayConfigFeature.samplePattern,
-      arrayConfigFeature.selectFnbw,
-      arrayConfigFeature.selectHpbw,
+      arrayConfigFeature.samplePatternU,
+      arrayConfigFeature.selectHpbwU,
+      arrayConfigFeature.selectFnbwU,
+      arrayConfigFeature.samplePatternV,
+      arrayConfigFeature.selectHpbwV,
+      arrayConfigFeature.selectFnbwV,
       exportFeature.selectResultUnits,
-      (state, fnbw, hpbw, resultSpace) => ({
+      exportFeature.selectHoveredKpi,
+      (samplesU, hpbwU, fnbwU, samplesV, hpbwV, fnbwV, resultSpace, hoveredKpi) => ({
+        yAxis: [{
+          type: 'log',
+          name: `Normalized Amplitude ${resultSpace === 'uv' ? 'u' : 'AZ'} / dB`,
+          min: 0.01, max: 1.1,
+          minorSplitLine: {
+            show: true,
+            lineStyle: {
+              color: 'lightgray',  // Farbe der kleinen Zwischen-Gitterlinien
+              type: 'dotted'
+            }
+          },
+          axisLabel: {
+            color: '#e6e1e6',
+            formatter: (value : number) => value !== 0 ? `${10 * Math.log10(value / 1)}` : '',
+            inside: true,
+            align: 'left',
+            verticalAlign: 'middle',
+            padding: [0, 10, 0, 0]
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+                color: '#444444',
+                width: 1,
+                type: 'solid'
+            }
+          }
+        },
+        
+        // V-Space
+        {
+          type: 'log',
+          gridIndex: 1,
+          name: `Normalized Amplitude ${resultSpace === 'uv' ? 'v' : 'EL'} / dB`,
+          nameLocation: "end",
+          nameGap: 10,
+          min: 0.01, max: 1.1,
+          minorSplitLine: {
+            show: true,
+            lineStyle: {
+              color: 'lightgray',  // Farbe der kleinen Zwischen-Gitterlinien
+              type: 'dotted'
+            }
+          },
+          axisLabel: {
+            color: '#e6e1e6',
+            formatter: (value : number) => value !== 0 ? `${10 * Math.log10(value / 1)}` : '',
+            inside: true,
+            align: 'left',
+            verticalAlign: 'middle',
+            padding: [0, 10, 0, 0] // Optional für Feinanpassung
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+                color: '#444444', // Grün für Y-Achse
+                width: 1,
+                type: 'solid'
+            }
+          }
+        },
+        ],
         xAxis: [{
           name: 'x',
           type: 'value',
@@ -251,6 +320,7 @@ export class ChartComponent implements OnInit {
             }
           }
         },
+        // V-Space
         {
           gridIndex: 1,
           name: 'x2',
@@ -260,8 +330,11 @@ export class ChartComponent implements OnInit {
               align: 'center',
               verticalAlign: 'middle',
               padding: [0, 0, 0, 0], // Optional für Feinanpassung
-              color: '#e6e1e6'
+              color: '#e6e1e6',
+              formatter: (value : number) => resultSpace === 'uv' ?  `${value.toFixed(1)}` : `${value.toFixed(0)}°`,
           },
+          min: resultSpace === 'uv' ? -1 : -90,
+          max: resultSpace === 'uv' ? 1 : 90,
           splitLine: {
             show: true,
             lineStyle: {
@@ -280,36 +353,51 @@ export class ChartComponent implements OnInit {
             lineStyle: {
               color: 'rgba(192, 0, 0, 0.8)',
             },
-            data: state.map(u => [resultSpace === ResultSpace.AZEL ? 180*Math.atan((u.x) / (Math.sqrt(1 - u.x**2))) / Math.PI : u.x, u.y]),
+            data: samplesU.map(u => [condUToAz(resultSpace === ResultSpace.AZEL, u.x), u.y]),
             markLine: {
               symbol: ['none', 'none'],
               label: { show: false },
-              data: [{ yAxis: 0.1 }]
+              lineStyle: {
+                color: 'red',
+                width: 2,
+                type: 'dashed'
+              },
+              data:  hoveredKpi === 'HpbwU' ? [
+                { 
+                  grid: 1,
+                  xAxis: condUToAz(resultSpace === ResultSpace.AZEL, hpbwU.firstZero!),
+                }, { xAxis: condUToAz(resultSpace === ResultSpace.AZEL, hpbwU.secondZero!)}
+              ] : hoveredKpi === 'FnbwU' ? [                  
+                { 
+                  grid: 1,
+                  xAxis: condUToAz(resultSpace === ResultSpace.AZEL, fnbwU.firstZero!),
+                }, { xAxis: condUToAz(resultSpace === ResultSpace.AZEL, fnbwU.secondZero!) }
+              ] : [], 
             },
             markArea: {
+              silent: true,
               itemStyle: {
                 color: 'rgba(255, 0, 0, 0.1)'
               },
               label: {
-                position: ['100%', '20%']
+                show: false
               },
               data: [
-                [
+                hoveredKpi === 'HpbwU' ? [
                   { 
-                    name: 'FNBW',
-                    value: Math.abs(fnbw.secondZero! - fnbw.firstZero!),
-                    xAxis: fnbw.firstZero,
-                  }, { xAxis: fnbw.secondZero}
-                ], // xAxis + yAxis für Bereich
-                [
+                    xAxis: condUToAz(resultSpace === ResultSpace.AZEL, hpbwU.firstZero!),
+                  }, { xAxis: condUToAz(resultSpace === ResultSpace.AZEL, hpbwU.secondZero!)}
+                ] : hoveredKpi === 'FnbwU' ? [                  
                   { 
                     grid: 1,
-                    name: 'HBPW',
-
-                    value: Math.abs(hpbw.secondZero! - hpbw.firstZero!),
-                    xAxis: hpbw.firstZero,
-                  }, { xAxis: hpbw.secondZero}
-                ], // xAxis + yAxis für Bereich                       
+                    xAxis: condUToAz(resultSpace === ResultSpace.AZEL, fnbwU.firstZero!),
+                  }, { xAxis: condUToAz(resultSpace === ResultSpace.AZEL, fnbwU.secondZero!) }
+                ] : [
+                    {
+                      grid: 1,
+                      xAxis: 0,
+                    }, { xAxis: 0}
+                ],                     
                 ]
               }
           }, {
@@ -318,33 +406,57 @@ export class ChartComponent implements OnInit {
             yAxisIndex: 1,
             type: 'line',
             showSymbol: false,
-            data: state.map(u => [u.x, u.y]),
-            // markArea: {
-            //   name: 'HPBW',
-            //   itemStyle: {
-            //     color: 'rgba(255, 173, 177, 0.4)'
-            //   },
-            //   data: [
-            //     [{ xAxis: -0.3, yAxis: -1 }, { xAxis: 0.3, yAxis: 1 }], // xAxis + yAxis für Bereich
-            //     [{ xAxis: -0.1 }, { xAxis: 0.1 }]
-            //   ]
-            // }
+            data: samplesV.map(v => [resultSpace === ResultSpace.AZEL ? 180* Math.asin(v.x) / Math.PI : v.x, v.y]),
+            markLine: {
+              symbol: ['none', 'none'],
+              label: { show: false },
+              lineStyle: {
+                color: 'rgba(64, 192, 64, 1.0)',
+                width: 2,
+                type: 'dashed'
+              },
+              data:  hoveredKpi === 'HpbwV' ? [
+                { 
+                  grid: 1,
+                  xAxis: condVToEl(resultSpace === ResultSpace.AZEL, hpbwV.firstZero!),
+                }, { xAxis: condVToEl(resultSpace === ResultSpace.AZEL, hpbwV.secondZero!)}
+              ] : hoveredKpi === 'FnbwV' ? [                  
+                { 
+                  grid: 1,
+                  xAxis: condVToEl(resultSpace === ResultSpace.AZEL, fnbwV.firstZero!),
+                }, { xAxis: condVToEl(resultSpace === ResultSpace.AZEL, fnbwV.secondZero!) }
+              ] : [], 
+            },
+            markArea: {
+              silent: true,
+              itemStyle: {
+                color: 'rgba(0, 255, 0, 0.1)'
+              },
+              label: {
+                show: false
+              },
+              data: [
+                hoveredKpi === 'HpbwV' ? [
+                  { 
+                    xAxis: condVToEl(resultSpace === ResultSpace.AZEL, hpbwV.firstZero!),
+                  }, { xAxis: condVToEl(resultSpace === ResultSpace.AZEL, hpbwV.secondZero!)}
+                ] : hoveredKpi === 'FnbwV' ? [                  
+                  { 
+                    grid: 1,
+                    xAxis: condVToEl(resultSpace === ResultSpace.AZEL, fnbwV.firstZero!),
+                  }, { xAxis: condVToEl(resultSpace === ResultSpace.AZEL, fnbwV.secondZero!) }
+                ] : [
+                    {
+                      grid: 1,
+                      xAxis: 0,
+                    }, { xAxis: 0}
+                ],                     
+                ]
+              }
           }
         ]
       }))).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(options => {
       myChart.setOption(options, false);
     });
-
-
-    // this.store.select(arrayConfigFeature.samplePattern).subscribe(state => {      
-    //   chart.data.datasets[2].data = state;
-    //   chart.update();
-    // });
-
-
-    // this.store.select(arrayConfigFeature.sampleDerrivate).subscribe(state => {
-    //   chart.data.datasets[3].data = state;
-    //   chart.update();
-    // });
   }
 }

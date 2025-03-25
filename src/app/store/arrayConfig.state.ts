@@ -50,7 +50,6 @@ const range = (start :number, end : number, step = 1) => {
 export interface RangeKpi {
   firstZero: number | null;
   secondZero: number | null;
-  width: number;
 }
 
 export type Kind = 'Academic' | 'Industrial';
@@ -207,56 +206,93 @@ export const arrayConfigFeature = createFeature({
       });
 
       const isUra = createSelector(selectConfig, config => config.type === 'ura');
-      const selectPattern = createSelector(selectTransducers, selectK, (transducers, k)=> {
-        return (x : number) => 
-          transducers.reduce((acc, t) => {
-                const argv = { x: t.pos.x * x, y: t.pos.y * 0 };
-                //float argument = k*(argv.x+argv.y) + element.delay*omega;
-                const argument = k * (argv.x+argv.y) //+ element.phasor.x;
+
+      const selectPatternU = createSelector(selectTransducers, selectK, (transducers, k) => 
+         (u : number) => transducers.reduce((acc, t) => {
+            const argv = { x: t.pos.x * u, y: t.pos.y * 0 };
+            //float argument = k*(argv.x+argv.y) + element.delay*omega;
+            const argument = k * (argv.x+argv.y) //+ element.phasor.x;
             return acc + Math.cos(argument) 
-          },0) });
-      ;
-      const selectDerivativeX = createSelector(selectTransducers, selectK, (transducers, k) => {
-        return (x : number) =>
+          },0));
+      
+      const selectPatternV = createSelector(selectTransducers, selectK, (transducers, k) => 
+        (v : number) => transducers.reduce((acc, t) => {
+            const argv = { x: t.pos.x * 0, y: t.pos.y * v };
+            //float argument = k*(argv.x+argv.y) + element.delay*omega;
+            const argument = k * (argv.x+argv.y) //+ element.phasor.x;
+            return acc + Math.cos(argument) 
+          },0));
+
+      const selectDerivativeU = createSelector(selectTransducers, selectK, (transducers, k) =>  (u : number) =>
           // Sum up over all transducers at particular position x
           transducers.reduce((acc, t) => {
-                const argv = { x: t.pos.x * x, y: t.pos.y * 0 };
+                const argv = { x: t.pos.x * u, y: t.pos.y * 0 };
                 //float argument = k*(argv.x+argv.y) + element.delay*omega;
                 const argument = k * (argv.x+argv.y) //+ element.phasor.x;
-
 
                 // We need the derivative of the argument of sin.
                 // As the argument is t.pos.x * x, the derivative is t.pos.x
                 const factor = t.pos.x;
-
                 const addVal = -factor*k*Math.sin(argument);
                 const newVal = acc + addVal;
                 return newVal;
           }, 0)
-      }); 
-      const samplePattern = createSelector(selectPattern, selectTransducers, (pattern, transducers) => range(-1, 1, 0.001).map((x) => ({x, y: Math.abs(pattern(x)) / transducers.length})));
-      const sampleDerrivate = createSelector(selectDerivativeX, (derrivative) => range(-1, 1, 0.01).map((val) => derrivative(val)));
-      const selectFnbw = createSelector(selectPattern, selectDerivativeX, (f,df) => {
+      );
+
+      const selectDerivativeV = createSelector(selectTransducers, selectK, (transducers, k) =>  (v : number) =>
+        // Sum up over all transducers at particular position x
+        transducers.reduce((acc, t) => {
+              const argv = { x: t.pos.x * 0, y: t.pos.y * v};
+              //float argument = k*(argv.x+argv.y) + element.delay*omega;
+              const argument = k * (argv.x+argv.y) //+ element.phasor.x;
+
+              // We need the derivative of the argument of sin.
+              // As the argument is t.pos.x * x, the derivative is t.pos.x
+              const factor = t.pos.y;
+              const addVal = -factor*k*Math.sin(argument);
+              const newVal = acc + addVal;
+              return newVal;
+        }, 0)
+    );
+
+      const samplePatternU = createSelector(selectPatternU, selectTransducers, (pattern, transducers) => range(-1, 1, 0.001).map((u) => ({x: u, y: Math.abs(pattern(u)) / transducers.length})));
+      const samplePatternV = createSelector(selectPatternV, selectTransducers, (pattern, transducers) => range(-1, 1, 0.001).map((v) => ({x: v, y: Math.abs(pattern(v)) / transducers.length})));
+
+      const selectFnbwU = createSelector(selectPatternU, selectDerivativeU, (f,df) => {
         const firstZero = newtonMethod(f, df, 0 - 0.001, 1e-7, 100);
         const secondZero = newtonMethod(f, df, 0 + 0.001, 1e-7, 100);
-
         console.log("FNBW: firstZero: ", firstZero, " secondZero: ", secondZero);
-
-
-        return { firstZero, secondZero, width: secondZero! - firstZero! };
+        return { firstZero, secondZero };
       });
-      const selectHpbw = createSelector(selectPattern, selectDerivativeX, (f,df) => {
+
+      const selectFnbwV = createSelector(selectPatternV, selectDerivativeV, (f,df) => {
+        const firstZero = newtonMethod(f, df, 0 - 0.001, 1e-7, 100);
+        const secondZero = newtonMethod(f, df, 0 + 0.001, 1e-7, 100);
+        console.log("FNBW: firstZero: ", firstZero, " secondZero: ", secondZero);
+        return { firstZero, secondZero };
+      });
+
+      const selectHpbwU = createSelector(selectPatternU, selectDerivativeU, (f,df) => {
         const max = f(0);
         const ff = (x : number) => f(x) - 0.5 * max;
         const firstZero = newtonMethod(ff, df, 0 - 0.001, 1e-7, 100);
         const secondZero = newtonMethod(ff, df, 0 + 0.001, 1e-7, 100);
-
         console.log("HPBW: firstZero: ", firstZero, " secondZero: ", secondZero);
-
-        return { firstZero, secondZero, width: secondZero! - firstZero! };
+        return { firstZero, secondZero };
       });
 
-      return { selectTransducers, isUra, selectFnbw, selectHpbw, samplePattern, sampleDerrivate, selectPattern, selectK };
+      const selectHpbwV = createSelector(selectPatternV, selectDerivativeV, (f,df) => {
+        const max = f(0);
+        const ff = (x : number) => f(x) - 0.5 * max;
+        const firstZero = newtonMethod(ff, df, 0 - 0.001, 1e-7, 100);
+        const secondZero = newtonMethod(ff, df, 0 + 0.001, 1e-7, 100);
+        console.log("HPBW: firstZero: ", firstZero, " secondZero: ", secondZero);
+        return { firstZero, secondZero };
+      });
+
+      return { selectK, selectTransducers, isUra, 
+               samplePatternU, selectPatternU, selectHpbwU, selectFnbwU, 
+               samplePatternV, selectPatternV, selectHpbwV, selectFnbwV };
   }
 });
 

@@ -15,8 +15,8 @@ const { chromium } = require('playwright');
   // Click mat-expansion-panel-header[role="button"]:has-text("Environment")
   await page.locator('mat-expansion-panel-header[role="button"]:has-text("Environment")').click();
 
-  // Click text=Air, c = 434 m/s
-  await page.locator('text=Air, c = 434 m/s').click();
+  // Click text=Air, c = 343 m/s
+  await page.locator('text=Air, c = 343 m/s').click();
 
   // Click mat-expansion-panel-header[role="button"]:has-text("Array config")
   await page.locator('mat-expansion-panel-header[role="button"]:has-text("Array config")').click();
