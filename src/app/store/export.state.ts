@@ -1,5 +1,6 @@
 
 import { createActionGroup, createFeature, createReducer, on, props } from '@ngrx/store';
+import { HoveredKpi } from '../sidebar/pure-components/kpi/kpi.component';
 
 export interface Point {
   x: number;
@@ -21,12 +22,14 @@ export type Result = {
   u: Point[];
   v: Point[];
   resultUnits: ResultSpace;
+  hoveredKpi: HoveredKpi;
 }
 
 const initialState: Result = {
   u: [],
   v: [],
   resultUnits: ResultSpace.UV,
+  hoveredKpi: '',
 };
 
 export const ExportActions = createActionGroup({
@@ -34,6 +37,7 @@ export const ExportActions = createActionGroup({
   events: {
     setResultValues: props<ResultValues>(),
     setResultUnit: props<{ unit: ResultSpace }>(),
+    setHoveredKpi: props<{ hoveredKpi: HoveredKpi }>(),
   },
 });
 
@@ -49,7 +53,13 @@ const reducer = createReducer(
   ({
     ...state,
     resultUnits: unit,
-  })
+  }),
+  ),
+  on(ExportActions.setHoveredKpi, (state, { hoveredKpi }): Result =>
+    ({
+      ...state,
+      hoveredKpi
+    }),
   )
 );
 

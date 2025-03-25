@@ -9,4 +9,14 @@ mat-button-toggle-group {
 
 td {
     text-align: center;
+    cursor: pointer;
+}
+
+td:hover {
+    background-color: #222222;
+    border-radius: 0.5ex;
+}
+
+th {
+    min-width: 4ex;
 }

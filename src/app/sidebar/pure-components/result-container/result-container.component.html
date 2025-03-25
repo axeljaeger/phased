@@ -17,7 +17,7 @@
             Results
           </mat-panel-title>
         </mat-expansion-panel-header>
-    <app-kpi [kpis]="kpis()" />
+    <app-kpi [kpis]="kpis()" (hoveredKpi)="setHoveredKpi($event)" />
     <app-chart />
 </mat-expansion-panel>
 <mat-expansion-panel hideToggle>
