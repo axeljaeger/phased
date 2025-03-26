@@ -1,0 +1,56 @@
+:host {
+    --joystick-bg: #eee;
+    --joystick-axis: #ccc;
+    --joystick-axis-active: #007bff;
+    --joystick-knob: #007bff;
+    --joystick-knob-border: #333;
+  
+    .joystick-svg {
+      user-select: none;
+      touch-action: none;
+    }
+  
+    .joystick-svg.dragging {
+      cursor: grabbing;
+    }
+  
+    .joystick-svg.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+  
+    .background-rect {
+      fill: var(--joystick-bg);
+      cursor: crosshair;
+    }
+  
+    .background-circle {
+      fill: var(--joystick-bg);
+      stroke: var(--joystick-axis);
+      stroke-width: 1;
+      cursor: crosshair;
+    }
+  
+    .axis {
+      stroke: var(--joystick-axis);
+      stroke-width: 1;
+  
+      &.dominant {
+        stroke: var(--joystick-axis-active);
+        stroke-width: 2;
+      }
+    }
+  
+    .joystick-knob {
+      pointer-events: all;
+      cursor: grab;
+      fill: var(--joystick-knob);
+      stroke: var(--joystick-knob-border);
+      stroke-width: 1;
+  
+      &.dragging {
+        cursor: grabbing;
+      }
+    }
+  } 
+  

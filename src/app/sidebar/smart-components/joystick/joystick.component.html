@@ -1,0 +1,58 @@
+<svg
+  [attr.width]="svgSize"
+  [attr.height]="svgSize"
+  [attr.viewBox]="viewBox"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="onPointerUp($event)"
+  (pointercancel)="onPointerUp($event)"
+  (pointerleave)="onPointerUp($event)"
+  (document:keydown)="onKeyDown($event)"
+  (document:keyup)="onKeyUp($event)"
+  class="joystick-svg"
+  [class.disabled]="disabled()"
+  [class.dragging]="dragging"
+>
+  @if (mode() === 'AZEL') {
+    <rect
+      [attr.x]="getCenter() - radius"
+      [attr.y]="getCenter() - radius"
+      [attr.width]="radius * 2"
+      [attr.height]="radius * 2"
+      class="background-rect"
+    />
+  } @else {
+    <circle
+      [attr.cx]="getCenter()"
+      [attr.cy]="getCenter()"
+      [attr.r]="radius"
+      class="background-circle"
+    />
+  }
+
+  <line
+    [attr.x1]="getCenter() - radius"
+    [attr.y1]="getCenter()"
+    [attr.x2]="getCenter() + radius"
+    [attr.y2]="getCenter()"
+    class="axis horizontal"
+    [class.dominant]="dominantAxis === 'x'"
+  />
+
+  <line
+    [attr.x1]="getCenter()"
+    [attr.y1]="getCenter() - radius"
+    [attr.x2]="getCenter()"
+    [attr.y2]="getCenter() + radius"
+    class="axis vertical"
+    [class.dominant]="dominantAxis === 'y'"
+  />
+
+  <circle
+    class="joystick-knob"
+    [class.dragging]="dragging"
+    [attr.cx]="getKnobPosition().cx"
+    [attr.cy]="getKnobPosition().cy"
+    [attr.r]="knobRadius"
+  />
+</svg>
