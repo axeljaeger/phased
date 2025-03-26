@@ -12,6 +12,7 @@ import { Angle } from '@babylonjs/core/Maths/math.path';
 import { NormalizeRadians } from '@babylonjs/core/Maths/math.scalar.functions';
 import { Store } from '@ngrx/store';
 import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
+import { JoystickComponent } from '../joystick/joystick.component';
 
 const normalizeAngle = (angle: number) => {
   return angle > 180 ? angle - 360 : angle;
@@ -26,7 +27,8 @@ const normalizeAngle = (angle: number) => {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    JoystickComponent
 ],
     templateUrl: './beamforming.component.html',
     styleUrl: './beamforming.component.scss'
@@ -100,4 +102,8 @@ export class BeamformingComponent {
       });
     });
   }
+
+  setUV($event: { x: number; y: number; }) {
+    this.store.dispatch(BeamformingActions.set({u: -$event.x, v: -$event.y}));
+  }  
 }
