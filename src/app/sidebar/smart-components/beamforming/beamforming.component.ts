@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +13,7 @@ import { NormalizeRadians } from '@babylonjs/core/Maths/math.scalar.functions';
 import { Store } from '@ngrx/store';
 import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
 import { JoystickComponent } from '../joystick/joystick.component';
+import { map } from 'rxjs';
 
 const normalizeAngle = (angle: number) => {
   return angle > 180 ? angle - 360 : angle;
@@ -48,6 +49,9 @@ export class BeamformingComponent {
     az: this.fb.control({ value: 5, disabled: true }),
     el: this.fb.control({ value: 3, disabled: true }),
   });
+
+  beamformingEnabled = toSignal(this.fg.valueChanges.pipe(takeUntilDestroyed()).pipe(map(val => val.beamformingEnabled)));
+  positionUV = toSignal(this.fg.valueChanges.pipe(takeUntilDestroyed()).pipe(map(val => ({ x: val.beamformingU ?? 0, y: val.beamformingV ?? 0 }))));
 
   resetBeamforming() {
     this.store.dispatch(BeamformingActions.reset());
