@@ -1,6 +1,6 @@
 <ng-container [formGroup]="fg">
   <mat-checkbox formControlName="beamformingEnabled" class="span-all">Enabled</mat-checkbox>
-<app-joystick [mode]="'UV'"  (position)="setUV($event)" />
+<app-joystick [mode]="'UV'" (position)="setUV($event)" [disabled]="!beamformingEnabled()" [positionInput]="positionUV() ?? {x: 0, y: 0}" />
 <span class="span-all">Horizontal</span>
   <mat-form-field>
     <mat-label>u</mat-label>

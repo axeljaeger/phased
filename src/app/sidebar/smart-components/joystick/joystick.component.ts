@@ -52,8 +52,8 @@
   
     readonly syncPosition = effect(() => {
       const pos = this.positionInput();
-      this.x.set(pos.x);
-      this.y.set(pos.y);
+      //this.x.set(pos.x);
+      //this.y.set(pos.y);
     });
   
     readonly emitPosition = effect(() => {
