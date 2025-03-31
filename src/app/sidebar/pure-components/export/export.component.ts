@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { MatCardModule } from '@angular/material/card';
@@ -8,6 +8,8 @@ import { MatIcon } from '@angular/material/icon';
 import { Store } from '@ngrx/store';
 
 import { exportFeature } from 'src/app/store/export.state';
+import { arrayConfigFeature } from 'src/app/store/arrayConfig.state';
+import { map } from 'rxjs';
 
 
 @Component({
@@ -21,8 +23,20 @@ import { exportFeature } from 'src/app/store/export.state';
   styleUrl: './export.component.scss'
 })
 export class ExportComponent {
-      private store = inject(Store);
+  private store = inject(Store);
+  private destroyRef = inject(DestroyRef);
   
+  private transducerPositions = this.store.select(arrayConfigFeature.selectTransducers).pipe(map(transducers => transducers.reduce((acc, t) => 
+    acc + `${t.pos.x.toLocaleString('de-DE')}\t${t.pos.y.toLocaleString('de-DE')}\n`, 
+`# Array configuration exported from: x;y\n`
+  )));
+
+  private chartsString = this.store.select(arrayConfigFeature.samplePatternU).pipe(map(charts => charts.reduce((acc, line) =>
+      acc + `${line.x.toLocaleString('de-DE')}\t${line.y.toLocaleString('de-DE')}\n`,
+`# Chart exported from: x;y\n`
+)));
+
+
   download() : void {
     this.store.select(exportFeature.selectExportState).pipe(takeUntilDestroyed()).subscribe(state => {
       const content = state.u.map((u, index) => `${u.x.toLocaleString()}; ${u.y.toLocaleString()};${state.v[index].y.toLocaleString()}`).join('\n');
@@ -33,5 +47,15 @@ export class ExportComponent {
       a.setAttribute('download', 'response.csv') // Set download filename
       a.click() // Start downloading
     });
+  }
+
+  copyTransducerPositions() {
+    this.transducerPositions.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(transducerString => 
+      navigator.clipboard.writeText(transducerString)
+    );
+  }
+    
+  copyCharts() {
+    this.chartsString.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(chartsString => navigator.clipboard.writeText(chartsString));
   }
 }
