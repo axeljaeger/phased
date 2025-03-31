@@ -40,6 +40,12 @@ export class KPIComponent {
       const hpbwv = kpis.v.hpbw;
       const fnbwv = kpis.v.fnbw;
 
+      const hasHpbwu = hpbwu?.firstZero !== null && hpbwu?.secondZero !== null;
+      const hasFnbwu = fnbwu?.firstZero !== null && fnbwu?.secondZero !== null;
+
+      const hasHpbwv = hpbwv?.firstZero !== null && hpbwv?.secondZero !== null;
+      const hasFnbwv = fnbwv?.firstZero !== null && fnbwv?.secondZero !== null;
+
       if (this.resultSpace() === ResultSpace.AZEL) {
         const hpbwAZ1u = this.uv2azel(hpbwu.firstZero!, 0).az;
         const hpbwAZ2u = this.uv2azel(hpbwu.secondZero!, 0).az;
@@ -47,30 +53,30 @@ export class KPIComponent {
         const fnbwAZ1u = this.uv2azel(fnbwu.firstZero!, 0).az;
         const fnbwAZ2u = this.uv2azel(fnbwu.secondZero!, 0).az;
 
-        const hpbwAZ1v = this.uv2azel(0, hpbwv.firstZero!).az;
-        const hpbwAZ2v = this.uv2azel(0, hpbwv.secondZero!).az;
+        const hpbwAZ1v = this.uv2azel(0, hpbwv.firstZero!).el;
+        const hpbwAZ2v = this.uv2azel(0, hpbwv.secondZero!).el;
 
-        const fnbwAZ1v = this.uv2azel(0, fnbwv.firstZero!).az;
-        const fnbwAZ2v = this.uv2azel(0, fnbwv.secondZero!).az;
+        const fnbwAZ1v = this.uv2azel(0, fnbwv.firstZero!).el;
+        const fnbwAZ2v = this.uv2azel(0, fnbwv.secondZero!).el;
 
         return [
           [ 
             'AZ', 
-            hpbwu ? `${Angle.FromRadians(hpbwAZ2u - hpbwAZ1u).degrees().toFixed(2)}°` : '-', 
-            fnbwu ? `${Angle.FromRadians(fnbwAZ2u - fnbwAZ1u).degrees().toFixed(2)}°` : '-',
+            hasHpbwu !== null ? `${Angle.FromRadians(hpbwAZ2u - hpbwAZ1u).degrees().toFixed(2)}°` : '-', 
+            hasFnbwu && fnbwu?.secondZero !== null ? `${Angle.FromRadians(fnbwAZ2u - fnbwAZ1u).degrees().toFixed(2)}°` : '-',
             '-'
           ],
           [ 
             'EL', 
-            hpbwv ? `${Angle.FromRadians(hpbwAZ2v - hpbwAZ1v).degrees().toFixed(2)}°` : '-', 
-            fnbwv ? `${Angle.FromRadians(fnbwAZ2v - fnbwAZ1v).degrees().toFixed(2)}°` : '-',
+            hasHpbwv ? `${Angle.FromRadians(hpbwAZ2v - hpbwAZ1v).degrees().toFixed(2)}°` : '-', 
+            hasFnbwv ? `${Angle.FromRadians(fnbwAZ2v - fnbwAZ1v).degrees().toFixed(2)}°` : '-',
             '-'
           ],
         ];
       } else {
         return [
-          [ 'u', hpbwu ? (hpbwu.secondZero! - hpbwu.firstZero!).toFixed(2) : '-', fnbwu ? (fnbwu.secondZero! - fnbwu.firstZero!).toFixed(2) : '-', ''],
-          [ 'v', hpbwv ? (hpbwv.secondZero! - hpbwv.firstZero!).toFixed(2) : '-', fnbwv ? (fnbwv.secondZero! - fnbwv.firstZero!).toFixed(2) : '-', ''],
+          [ 'u', hasHpbwu ? (hpbwu.secondZero! - hpbwu.firstZero!).toFixed(2) : '-', hasFnbwu ? (fnbwu.secondZero! - fnbwu.firstZero!).toFixed(2) : '-', ''],
+          [ 'v', hasHpbwv ? (hpbwv.secondZero! - hpbwv.firstZero!).toFixed(2) : '-', hasFnbwv ? (fnbwv.secondZero! - fnbwv.firstZero!).toFixed(2) : '-', ''],
         ];
       }
     }

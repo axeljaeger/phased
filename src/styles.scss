@@ -39,13 +39,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   border-radius: 12px;
 }
 
-.bigTab {
-  @include mat.button-toggle-overrides((
-    selected-state-background-color: var(--mdc-switch-selected-handle-color),
-    background-color: var(--mat-sys-surface),
-  ));
-}
-
 :root {
   @include mat.card-overrides((
     elevated-container-color: var(--mat-sys-surface),
