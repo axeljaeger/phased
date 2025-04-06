@@ -22,6 +22,20 @@ html {
     @include mat.all-component-themes($theme);
 }
 
+html::-webkit-scrollbar {
+  width: 8px;
+  background-color: transparent;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: rgb(36, 36, 36);
+  border-radius: 10px;
+}
+
 html, body { height: 100%; }
 body {
     overflow: hidden;
