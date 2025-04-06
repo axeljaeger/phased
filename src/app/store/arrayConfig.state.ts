@@ -274,7 +274,8 @@ export const arrayConfigFeature = createFeature({
 
       const selectHpbwU = createSelector(selectPatternU, selectDerivativeU, (f,df) => {
         const max = f(0);
-        const ff = (x : number) => f(x) - 0.5 * max;
+        const hbpwfactor = 1.0 / Math.sqrt(2);
+        const ff = (x : number) => f(x) - ((hbpwfactor) * max);
         const firstZero = newtonMethod(ff, df, 0 - 0.001, 1e-7, 100);
         const secondZero = newtonMethod(ff, df, 0 + 0.001, 1e-7, 100);
         console.log("HPBW: firstZero: ", firstZero, " secondZero: ", secondZero);
@@ -283,7 +284,8 @@ export const arrayConfigFeature = createFeature({
 
       const selectHpbwV = createSelector(selectPatternV, selectDerivativeV, (f,df) => {
         const max = f(0);
-        const ff = (x : number) => f(x) - 0.5 * max;
+        const hbpwfactor = 1.0 / Math.sqrt(2);
+        const ff = (x : number) => f(x) - ((hbpwfactor) * max);
         const firstZero = newtonMethod(ff, df, 0 - 0.001, 1e-7, 100);
         const secondZero = newtonMethod(ff, df, 0 + 0.001, 1e-7, 100);
         console.log("HPBW: firstZero: ", firstZero, " secondZero: ", secondZero);
