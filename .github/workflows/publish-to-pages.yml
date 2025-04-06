@@ -12,6 +12,7 @@ jobs:
           npm version ${{ github.event.release.tag_name }} --git-tag-version=false
           npm ci
           npx ng build --base-href https://axeljaeger.github.io/phased/
+          cp dist/phased/browser/index.html dist/phased/browser/404.html
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
