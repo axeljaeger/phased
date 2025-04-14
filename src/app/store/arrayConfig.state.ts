@@ -42,7 +42,7 @@ const newtonMethod = (
 const range = (start :number, end : number, step = 1) => {
   if (step === 0) throw new Error("Step size cannot be zero");
   return Array.from(
-      { length: Math.max(Math.ceil((end - start) / step), 0) },
+      { length: Math.max(Math.ceil((end - start) / step)+1, 0) },
       (_, i) => start + i * step
   );
 };
@@ -254,8 +254,8 @@ export const arrayConfigFeature = createFeature({
               return newVal;
         }, 0)
     );
-
-      const samplePatternU = createSelector(selectPatternU, selectTransducers, (pattern, transducers) => range(-1, 1, 0.001).map((u) => ({x: u, y: Math.abs(pattern(u)) / transducers.length})));
+    const samplePatternU = createSelector(selectPatternU, selectTransducers, (pattern, transducers) => range(-1, 1, 2 / 180).map((u) => ({x: u, y: Math.abs(pattern(u)) / transducers.length})));
+      //const samplePatternU = createSelector(selectPatternU, selectTransducers, (pattern, transducers) => range(-1, 1, 0.001).map((u) => ({x: u, y: Math.abs(pattern(u)) / transducers.length})));
       const samplePatternV = createSelector(selectPatternV, selectTransducers, (pattern, transducers) => range(-1, 1, 0.001).map((v) => ({x: v, y: Math.abs(pattern(v)) / transducers.length})));
 
       const selectFnbwU = createSelector(selectPatternU, selectDerivativeU, (f,df) => {
