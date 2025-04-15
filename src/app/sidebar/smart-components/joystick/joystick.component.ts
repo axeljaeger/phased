@@ -1,28 +1,26 @@
-/* =======================
-   File: joystick.component.ts
-   ======================= */
-
-   import {
+import {
     Component,
     input,
     output,
     signal,
     effect,
   } from '@angular/core';
-  import { CommonModule } from '@angular/common';
   
+  interface Position2D {
+    x: number;
+    y: number;
+  }
+
   @Component({
     selector: 'app-joystick',
     standalone: true,
-    imports: [CommonModule],
     templateUrl: './joystick.component.html',
     styleUrls: ['./joystick.component.scss'],
   })
   export class JoystickComponent {
-    mode = input<'AZEL' | 'UV'>('AZEL');
     disabled = input(false);
-    positionInput = input<{ x: number; y: number }>({ x: 0, y: 0 });
-    position = output<{ x: number; y: number }>();
+    positionInput = input<Position2D>({ x: 0, y: 0 });
+    position = output<Position2D>();
   
     x = signal(0);
     y = signal(0);
@@ -139,20 +137,9 @@
       if (this.shiftPressed) {
         if (Math.abs(newX) > Math.abs(newY)) newY = 0;
         else newX = 0;
-      }
-  
-      if (this.mode() === 'AZEL') {
-        this.x.set(Math.max(-1, Math.min(1, newX)));
-        this.y.set(Math.max(-1, Math.min(1, newY)));
-      } else if (this.mode() === 'UV') {
-        const len = Math.sqrt(newX ** 2 + newY ** 2);
-        if (len > 1) {
-          newX /= len;
-          newY /= len;
-        }
-        this.x.set(newX);
-        this.y.set(newY);
-      }
+      }  
+      this.x.set(Math.max(-1, Math.min(1, newX)));
+      this.y.set(Math.max(-1, Math.min(1, newY)));
     }
   }
   
