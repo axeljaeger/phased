@@ -13,7 +13,6 @@
   [class.disabled]="disabled()"
   [class.dragging]="dragging"
 >
-  @if (mode() === 'AZEL') {
     <rect
       [attr.x]="getCenter() - radius"
       [attr.y]="getCenter() - radius"
@@ -21,14 +20,7 @@
       [attr.height]="radius * 2"
       class="background-rect"
     />
-  } @else {
-    <circle
-      [attr.cx]="getCenter()"
-      [attr.cy]="getCenter()"
-      [attr.r]="radius"
-      class="background-circle"
-    />
-  }
+
 
   <line
     [attr.x1]="getCenter() - radius"

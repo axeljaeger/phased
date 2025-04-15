@@ -14,6 +14,7 @@ import { Store } from '@ngrx/store';
 import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
 import { JoystickComponent } from '../joystick/joystick.component';
 import { map } from 'rxjs';
+import { azElToUV } from 'src/app/utils/uv';
 
 const normalizeAngle = (angle: number) => {
   return angle > 180 ? angle - 360 : angle;
@@ -107,7 +108,9 @@ export class BeamformingComponent {
     });
   }
 
-  setUV($event: { x: number; y: number; }) {
-    this.store.dispatch(BeamformingActions.set({u: -$event.x, v: -$event.y}));
+  setAZEL($event: { x: number; y: number; }) {
+    console.log($event)
+    const uv = azElToUV(-$event.x, -$event.y);
+    this.store.dispatch(BeamformingActions.set(uv));
   }  
 }
