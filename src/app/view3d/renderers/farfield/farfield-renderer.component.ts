@@ -13,11 +13,10 @@ import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { FarfieldMaterial } from '../../materials/farfield.material';
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
 import { Textures, TransducerBufferConsumer } from '../../shared/transducer-buffer.component';
-import { Transducer } from 'src/app/store/arrayConfig.state';
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { TextureSampler } from '@babylonjs/core/Materials/Textures/textureSampler';
 import { Constants } from '@babylonjs/core/Engines/constants';
-import { Environment, frequencyFromBase } from 'src/app/store/arrayConfig.state';
+import { Environment, frequencyFromBase, Transducer} from 'src/app/store/store.service';
 
 const uvMesh: VertexData = (() => {
   const positions = [-1, -1, 0, 1, -1, 0, -1, 1, 0, 1, 1, 0];

@@ -1,9 +1,4 @@
-import { Component, inject } from '@angular/core';
-
-import { Store } from '@ngrx/store';
-import { beamformingFeature } from '../../../store/beamforming.state';
-import { arrayConfigFeature } from '../../../store/arrayConfig.state';
-
+import { Component, computed, inject } from '@angular/core';
 
 import { ArrayConfigComponent } from '../../smart-components/array-config/array-config.component';
 import { BeamformingComponent } from '../../smart-components/beamforming/beamforming.component';
@@ -12,6 +7,7 @@ import { ExcitationComponent } from '../../pure-components/excitation/excitation
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { TransducerComponent } from '../../pure-components/transducer/transducer.component';
+import { StoreService } from 'src/app/store/store.service';
 
 @Component({
   selector: 'app-setup-container',
@@ -31,7 +27,7 @@ import { TransducerComponent } from '../../pure-components/transducer/transducer
   styleUrl: './setup-container.component.scss'
 })
 export class SetupContainerComponent {
-    private store = inject(Store);
-    public beamformingEnabled = this.store.selectSignal(beamformingFeature.selectEnabled);
-    public environment = this.store.selectSignal(arrayConfigFeature.selectEnvironment);
+    private store = inject(StoreService);
+    public beamformingEnabled = computed(() => this.store.beamforming().enabled);
+    public environment = computed(() => this.store.arrayConfig().environment);
 }

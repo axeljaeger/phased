@@ -23,8 +23,8 @@ import { VEC4_ELEMENT_COUNT } from '../../utils/webgl.utils';
 import { BabylonConsumer } from '../interfaces/lifecycle';
 import { map, pairwise, startWith, tap } from 'rxjs/operators';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
-import { Beamforming } from 'src/app/store/beamforming.state';
-import { Transducer } from 'src/app/store/arrayConfig.state';
+import { BeamformingState } from 'src/app/store/beamforming.state';
+import { Transducer } from 'src/app/store/store.service';
 
 export interface Textures {
   viridis: Texture;
@@ -66,8 +66,8 @@ export class TransducerBufferComponent extends BabylonConsumer
   implements OnChanges, OnDestroy {
   destroyRef = inject(DestroyRef);
 
-  @Input() transducers: Array<Transducer> | null;
-  @Input() beamforming: Beamforming | null;
+  @Input() transducers: Transducer[] | null;
+  @Input() beamforming: BeamformingState | null;
   @Input() k: number | null;
 
   @ContentChildren(TransducerBufferConsumer)

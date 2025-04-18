@@ -1,5 +1,5 @@
 import { Component, computed, input } from '@angular/core';
-import { Transducer } from 'src/app/store/arrayConfig.state';
+import { Transducer } from 'src/app/store/store.service';
 
 @Component({
   selector: 'app-aperture-view',

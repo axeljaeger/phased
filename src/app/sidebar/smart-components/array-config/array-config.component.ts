@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -13,9 +13,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCheckbox } from '@angular/material/checkbox';
 
-import { Store } from '@ngrx/store';
-
-import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from '../../../store/arrayConfig.state'
+import { ArrayConfig, StoreService } from 'src/app/store/store.service';
 
 @Component({
     selector: 'app-array-config',
@@ -35,7 +33,7 @@ import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from '../../../st
     ]
 })
 export class ArrayConfigComponent {
-  private store = inject(Store);
+  private store = inject(StoreService);
   private fb = inject(FormBuilder);
   public arrayConfig = this.fb.group({
       type: 'ura',
@@ -49,23 +47,22 @@ export class ArrayConfigComponent {
   });
 
   constructor() {
-    this.store.select(arrayConfigFeature.selectArrayConfigState)
-      .pipe(takeUntilDestroyed()).subscribe(config => 
+    effect(() => {
+      const config = this.store.arrayConfig().config;
       this.arrayConfig.patchValue({
-        ...config.config,
-        ...config.config.type === 'ura' ? {
-        pitchX: config.config.pitchX * 1e3,
-        pitchY: config.config.pitchY * 1e3,
+        ...config,
+        ...config.type === 'ura' ? {
+        pitchX: config.pitchX * 1e3,
+        pitchY: config.pitchY * 1e3,
         } : {},
       }, { emitEvent: false })
-    );
+    });
 
     this.arrayConfig.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => 
-      this.store.dispatch(ArrayConfigActions.setConfig({config: {
+      this.store.setConfig({config: {
         ...value,
         ...value.type === 'ura' && value.pitchX !== undefined && value.pitchX !== null ? { pitchX: value.pitchX * 1e-3 } : {},
         ...value.type === 'ura' && value.pitchY !== undefined && value.pitchY !== null ? { pitchY: value.pitchY * 1e-3 } : {},
-      }} as ArrayConfig))
-    );
+      }} as ArrayConfig));
   }
 }

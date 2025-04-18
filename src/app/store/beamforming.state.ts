@@ -1,73 +1,40 @@
-import { createActionGroup, createFeature, createReducer, emptyProps, on, props } from '@ngrx/store';
+import { signalStoreFeature, withState, withMethods, patchState } from '@ngrx/signals';
 
-export interface Beamforming {
+export interface BeamformingState {
   enabled: boolean;
   interactive: boolean;
   u: number;
   v: number;
 }
 
-const initialState: Beamforming = {
-  enabled: false,
-  interactive: false,
-  u: 0,
-  v: 0,
-};
-
-export const BeamformingActions = createActionGroup({
-  source: 'Beamforming',
-  events: {
-    setU: props<{u: number}>(),
-    setV: props<{v: number}>(),
-    reset: emptyProps(),
-    setEnabled: props<{enabled: boolean}>(),
-    setInteractive: props<{interactive: boolean}>(),
-    set: props<Partial<Beamforming>>(),
-  },
-});
-
-const reducer = createReducer(
-  initialState,
-  on(BeamformingActions.setU, (state, args): Beamforming =>
-  ({
-    ...state,
-    u: args.u
-  })
-  ),
-  on(BeamformingActions.setV, (state, args): Beamforming =>
-  ({
-    ...state,
-    v: args.v
-  })
-  ),
-  on(BeamformingActions.reset, (state): Beamforming =>
-  ({
-    ...state,
+export const withBeamforming = () => signalStoreFeature(
+  withState<{beamforming: BeamformingState}>({ beamforming: {
+    enabled: false,
+    interactive: false,
     u: 0,
     v: 0,
-  })
-  ),
-  on(BeamformingActions.setEnabled, (state, args): Beamforming =>
-  ({
-    ...state,
-    enabled: args.enabled
-  })
-  ),
-  on(BeamformingActions.setInteractive, (state, args): Beamforming =>
-  ({
-    ...state,
-    interactive: args.interactive
-  })
-  ),
-  on(BeamformingActions.set, (state, args): Beamforming =>
-  ({
-    ...state,
-    ...args,
-  })
-  ),
+  }}),
+  withMethods((store) => ({
+    setU: (u: number) => {
+      patchState(store, { beamforming: {...store.beamforming(), u }});
+    },
+    setV: (v: number) => {
+      patchState(store, { beamforming: {...store.beamforming(),v }});
+    },
+    reset: () => {
+      patchState(store, { beamforming: {...store.beamforming(),u: 0, v: 0 }});
+    },
+    setEnabled: (enabled: boolean) => {
+      patchState(store, { beamforming: {...store.beamforming(),enabled }});
+    },
+    setInteractive: (interactive: boolean) => {
+      patchState(store, { beamforming: {...store.beamforming(),interactive }});
+    },
+    setPartial: (partialState: Partial<BeamformingState>) => {
+      patchState(store, {beamforming: {...store.beamforming(), ...partialState }});
+    },
+    resetBeamforming: () => {
+      patchState(store, { beamforming: { ...store.beamforming(), u: 0, v: 0 } });
+    }
+  }))
 );
-
-export const beamformingFeature = createFeature({
-  name: "beamforming",
-  reducer
-});
