@@ -1,9 +1,10 @@
 import { Component, Input, OnChanges, output, SimpleChanges } from '@angular/core';
 import { Textures, TransducerBufferConsumer } from '../../shared/transducer-buffer.component';
 import { ComputeShader, Scene, StorageBuffer, UniformBuffer, WebGPUEngine } from '@babylonjs/core';
-import { Transducer } from 'src/app/store/arrayConfig.state';
 import { Point, ResultValues } from 'src/app/store/export.state';
-import { Beamforming } from 'src/app/store/beamforming.state';
+import { BeamformingState } from 'src/app/store/beamforming.state';
+import { Transducer } from 'src/app/store/store.service';
+
 
 const exportComputeShader = /* glsl */`
 
@@ -69,9 +70,9 @@ export class ExportRendererComponent extends TransducerBufferConsumer
 implements OnChanges {
   results = output<ResultValues>();
   
-  @Input() transducers: Array<Transducer> | null = null;
+  @Input() transducers: Transducer[] | null = null;
   @Input() environment: number | null = null;
-  @Input() beamforming: Beamforming | null;
+  @Input() beamforming: BeamformingState | null;
 
   cs : ComputeShader | null = null;
   uniformBuffer: UniformBuffer;

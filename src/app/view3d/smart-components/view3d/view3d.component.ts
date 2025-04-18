@@ -1,10 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
 } from '@angular/core';
-
-import { Store } from '@ngrx/store';
 
 import { FarfieldRendererComponent } from '../../renderers/farfield/farfield-renderer.component';
 import { RayleighIntegralRendererComponent } from '../../renderers/rayleigh-integral/rayleigh-renderer.component';
@@ -13,14 +12,11 @@ import { ExcitationRendererComponent } from '../../renderers/excitation/excitati
 import { BabylonJSViewComponent } from '../babylon-jsview/babylon-jsview.component';
 
 import { BeamformingRendererComponent } from '../../renderers/beamforming/beamforming-renderer.component';
-import { SelectionActions, selectionFeature } from 'src/app/store/selection.state';
-import { Results, ViewportFeature } from 'src/app/store/viewportConfig.state';
-import { RayleighFeature } from 'src/app/store/rayleigh.state';
-import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
-import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
+import { Results } from 'src/app/store/viewportConfig.state';
 import { ExportRendererComponent } from '../../renderers/export/export.component';
-import { ExportActions, Result, ResultValues } from 'src/app/store/export.state';
+import { ResultValues } from 'src/app/store/export.state';
 import { UraInteractionRendererComponent } from '../../renderers/ura-interaction/ura-interaction-renderer.component';
+import { ArrayConfig, StoreService } from 'src/app/store/store.service';
 
 
 @Component({
@@ -40,44 +36,43 @@ import { UraInteractionRendererComponent } from '../../renderers/ura-interaction
     ]
 })
 export class View3dComponent {
-  store = inject(Store);
-  beamformingInteractive = this.store.selectSignal(beamformingFeature.selectInteractive);
+  store = inject(StoreService);
+  beamformingInteractive = computed(() => this.store.beamforming().interactive);
 
-  rayleighEnabled = this.store.selectSignal(
-    ViewportFeature.selectResultEnabled(Results.RayleighIntegral)
-  );
-  rayleighAspect = this.store.selectSignal(RayleighFeature.selectAspect);
-  rayleighResultSet = this.store.selectSignal(RayleighFeature.selectResultSet);
-  farfieldEnabled = this.store.selectSignal(ViewportFeature.selectResultEnabled(Results.Farfield));
-  k = this.store.selectSignal(arrayConfigFeature.selectK);
-  ura = this.store.selectSignal(arrayConfigFeature.isUra);
+  rayleighEnabled = computed(() => this.store.enabledResults().includes(Results.RayleighIntegral));
+
+  rayleighAspect = this.store.aspect;
+  rayleighResultSet = this.store.resultSet;
+  farfieldEnabled = computed(() => this.store.enabledResults().includes(Results.Farfield));
+  k = this.store.k;
+  ura = computed(() => this.store.arrayConfig().config.type === 'ura');
   
-  arrayConfig = this.store.selectSignal(arrayConfigFeature.selectArrayConfigState);
-  transducers = this.store.selectSignal(arrayConfigFeature.selectTransducers);
-  environment = this.store.selectSignal(arrayConfigFeature.selectEnvironment);
-  selection =   this.store.selectSignal(selectionFeature.selectSelectionState);
-  beamforming = this.store.selectSignal(beamformingFeature.selectBeamformingState);
-  transducerDiameter = this.store.selectSignal(arrayConfigFeature.selectTransducerDiameter);
+  transducers = this.store.transducers;
+  
+  arrayConfig = this.store.arrayConfig;
+  
+  selection =   this.store.selection;
+  beamforming = this.store.beamforming;
   
   public transducerHovered(transducerId: number): void {
-    this.store.dispatch(SelectionActions.set({ transducerId }));
+    this.store.setHovered(transducerId);
   }
 
   public setArrayConfig(arrayConfig: ArrayConfig): void {
-    this.store.dispatch(ArrayConfigActions.setConfig(arrayConfig));
+    this.store.setConfig(arrayConfig);
   }
 
   public setAz(az: number): void {
-    this.store.dispatch(BeamformingActions.setU({ u: -Math.sin(az) }));
+    this.store.setU(-Math.sin(az));
   }
 
   public setEl(el: number): void {
-    this.store.dispatch(BeamformingActions.setV({ v: Math.sin(el) }));
+    this.store.setV(Math.sin(el));
   }
 
   onNewResults(results: ResultValues) {
     if (results) {
-      this.store.dispatch(ExportActions.setResultValues(results));
+      this.store.setResultValues(results);
     }
   }
 }

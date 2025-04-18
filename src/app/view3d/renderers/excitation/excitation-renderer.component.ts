@@ -16,8 +16,8 @@ import '@babylonjs/core/Meshes/thinInstanceMesh';
 import { SelectionState } from 'src/app/store/selection.state';
 import { Scene } from '@babylonjs/core/scene';
 import { BabylonConsumer } from '../../interfaces/lifecycle';
-import { Transducer } from 'src/app/store/arrayConfig.state';
 import { Engine } from '@babylonjs/core/Engines/engine';
+import { Transducer } from 'src/app/store/store.service';
 
 @Component({
     selector: 'app-excitation-renderer',
@@ -27,7 +27,7 @@ import { Engine } from '@babylonjs/core/Engines/engine';
     providers: [{provide: BabylonConsumer, useExisting: forwardRef(() => ExcitationRendererComponent)}],
 })
 export class ExcitationRendererComponent extends BabylonConsumer implements OnChanges {
-  @Input() transducers : Array<Transducer> | null = null;
+  @Input() transducers : Transducer[] | null = null;
   @Input() transducerDiameter : number | null = null;
   @Input() selection : SelectionState | null = null;
 

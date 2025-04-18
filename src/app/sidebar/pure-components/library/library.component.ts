@@ -3,10 +3,10 @@ import { Component, output, inject, AfterViewInit, DestroyRef } from '@angular/c
 import { presets } from '../../../presets'
 import { MatSelectionList, MatListItem, MatListItemTitle, MatListItemIcon, MatListItemLine } from '@angular/material/list';
 import { MatIcon } from '@angular/material/icon';
-import { ArrayConfig } from 'src/app/store/arrayConfig.state';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ArrayConfig } from 'src/app/store/store.service';
 
 @Component({
   selector: 'app-library',

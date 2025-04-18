@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -10,8 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Angle } from '@babylonjs/core/Maths/math.path';
 import { NormalizeRadians } from '@babylonjs/core/Maths/math.scalar.functions';
-import { Store } from '@ngrx/store';
-import { BeamformingActions, beamformingFeature } from 'src/app/store/beamforming.state';
+import { StoreService } from 'src/app/store/store.service';
 
 const normalizeAngle = (angle: number) => {
   return angle > 180 ? angle - 360 : angle;
@@ -32,7 +31,7 @@ const normalizeAngle = (angle: number) => {
     styleUrl: './beamforming.component.scss'
 })
 export class BeamformingComponent {
-  store = inject(Store);  
+  store = inject(StoreService);  
   fb = inject(FormBuilder);
 
   fg = this.fb.group({
@@ -48,17 +47,18 @@ export class BeamformingComponent {
   });
 
   resetBeamforming() {
-    this.store.dispatch(BeamformingActions.reset());
+    this.store.resetBeamforming();
   }
 
   constructor() {
-    this.fg.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {      
-      this.store.dispatch(BeamformingActions.set({
+    this.fg.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {     
+      
+      this.store.setPartial({
         enabled: val.beamformingEnabled!,
         interactive: val.beamformingInteractive!,
         ...(val.beamformingU !== undefined && val.beamformingU !== null) ? { u: val.beamformingU} : {},
         ...(val.beamformingV !== undefined && val.beamformingV !== null) ? { v: val.beamformingV} : {},
-      }));
+      });
 
       [
         this.fg.controls.beamformingU,
@@ -76,11 +76,13 @@ export class BeamformingComponent {
       const u = Math.cos(el) * Math.sin(az);
       const v = Math.sin(el);
 
-      this.store.dispatch(BeamformingActions.setU({ u }));
-      this.store.dispatch(BeamformingActions.setV({ v }));
+      this.store.setU(u);
+      this.store.setV(v);
     });
 
-    this.store.select(beamformingFeature.selectBeamformingState).pipe(takeUntilDestroyed()).subscribe(config => {
+
+    effect(() => {
+      const config = this.store.beamforming();
       this.fg.patchValue({
         beamformingEnabled: config?.enabled,
         beamformingInteractive: config?.interactive,
@@ -97,7 +99,7 @@ export class BeamformingComponent {
       }, 
       { 
         emitEvent: false, // Avoid infinite recursion
-      });
+      });      
     });
   }
 }

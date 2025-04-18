@@ -1,45 +1,23 @@
-import { createAction, createActionGroup, createFeature, createReducer, createSelector, on, props } from '@ngrx/store';
+import { signalStoreFeature, withState, withMethods, withComputed, patchState } from '@ngrx/signals';
 
 export enum Results {
     Farfield,
     RayleighIntegral
 }
 
-interface ViewportState {   
-    enabledResults: Array<Results>
-}
-
-const initialState : ViewportState = { enabledResults: [Results.Farfield]};
-
-export const ResultsActions = createActionGroup({
-  source: 'ViewportConfig',
-  events: {
-    setResultVisible: props<{result: Results, visible : boolean}>(),
-  },
-});
-
-
-const reducer = createReducer(
-initialState,
-  on(ResultsActions.setResultVisible, (state, args) : ViewportState => {
-    const results = new Set<Results>(state.enabledResults);  
-    if (args.visible) {
-        results.add(args.result);
-    } else {
-        results.delete(args.result);
-    }
-    return {...state, enabledResults: [...results]};
-    })
+export const withViewportConfig = () => signalStoreFeature(
+  withState({
+    enabledResults: [Results.Farfield],
+  }),
+  withMethods((store) => ({
+    setResultVisible: (result: Results, visible: boolean) => {
+      const results = new Set(store.enabledResults());
+      if (visible) {
+        results.add(result);
+      } else {
+        results.delete(result);
+      }
+      patchState(store, { enabledResults: [...results] });
+    },
+  })),
 );
-
-export const ViewportFeature = createFeature({
-    name: 'viewportConfig',
-    reducer,
-    extraSelectors: ({selectEnabledResults}) => ({
-        selectResultEnabled: 
-            (result: Results) => 
-                createSelector(
-                    selectEnabledResults, 
-                    (results: Results[]) => results?.includes(result))
-    })
-})

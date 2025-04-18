@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, SimpleChanges, forwardRef, output } from '@angular/core';
+import { Component, OnChanges, OnDestroy, SimpleChanges, forwardRef, input, output } from '@angular/core';
 
 import { PositionGizmo } from '@babylonjs/core/Gizmos/positionGizmo';
 import { CreateIcoSphere } from '@babylonjs/core/Meshes/Builders/icoSphereBuilder';
@@ -7,8 +7,7 @@ import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { BabylonConsumer } from '../../interfaces/lifecycle';
 import { Scene } from '@babylonjs/core';
-import { ArrayConfig } from 'src/app/store/arrayConfig.state';
-
+import { ArrayConfig } from 'src/app/store/store.service';
 
 @Component({
     selector: 'app-ura-interaction',
@@ -17,7 +16,7 @@ import { ArrayConfig } from 'src/app/store/arrayConfig.state';
     providers: [{ provide: BabylonConsumer, useExisting: forwardRef(() => UraInteractionRendererComponent) }]
 })
 export class UraInteractionRendererComponent extends BabylonConsumer implements OnDestroy, OnChanges {
-  @Input() arrayConfig : ArrayConfig | null = null;
+  arrayConfig = input<ArrayConfig | null>();
   arrayConfigChange = output<ArrayConfig>();
   
   private pitchHandle: Mesh;
@@ -47,12 +46,13 @@ export class UraInteractionRendererComponent extends BabylonConsumer implements 
     );
     
     this.pitchGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
-      if (this.arrayConfig && this.arrayConfig.config.type === 'ura') {
+      const arrayConfig = this.arrayConfig();
+      if (arrayConfig && arrayConfig.config.type === 'ura') {
         this.arrayConfigChange.emit({
-          ...this.arrayConfig,
+          ...arrayConfig,
           config: {
-            ...this.arrayConfig.config,
-            pitchX: event.dragPlanePoint.add(this.offset).x * 2 / (this.arrayConfig.config.elementsX-1)
+            ...arrayConfig.config,
+            pitchX: event.dragPlanePoint.add(this.offset).x * 2 / (arrayConfig.config.elementsX-1)
           }
         });
       }
@@ -63,12 +63,13 @@ export class UraInteractionRendererComponent extends BabylonConsumer implements 
       this.offset = this.pitchHandle.position.subtract(event.dragPlanePoint)
     );
     this.pitchGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
-      if (this.arrayConfig && this.arrayConfig.config.type === 'ura') {
+      const arrayConfig = this.arrayConfig();
+      if (arrayConfig && arrayConfig.config.type === 'ura') {
         this.arrayConfigChange.emit({
-          ...this.arrayConfig,
+          ...arrayConfig,
           config: {
-            ...this.arrayConfig.config,
-            pitchY: event.dragPlanePoint.add(this.offset).y * 2 /(this.arrayConfig.config.elementsY-1)
+            ...arrayConfig.config,
+            pitchY: event.dragPlanePoint.add(this.offset).y * 2 / (arrayConfig.config.elementsY-1)
           }
         });
       }
@@ -89,12 +90,13 @@ export class UraInteractionRendererComponent extends BabylonConsumer implements 
       this.offset = this.pitchHandle.position.subtract(event.dragPlanePoint)
     );
     this.numGizmo.xGizmo.dragBehavior.onDragObservable.add(event => {
-      if (this.arrayConfig && this.arrayConfig.config.type === 'ura') {
+      const arrayConfig = this.arrayConfig();
+      if (arrayConfig && arrayConfig.config.type === 'ura') {
         this.arrayConfigChange.emit({
-          ...this.arrayConfig,
+          ...arrayConfig,
           config: {
-            ...this.arrayConfig.config,
-            elementsX: Math.abs(1 + Math.round(2*event.dragPlanePoint.add(this.offset).x / this.arrayConfig.config.pitchX))
+            ...arrayConfig.config,
+            elementsX: Math.abs(1 + Math.round(2*event.dragPlanePoint.add(this.offset).x / arrayConfig.config.pitchX))
           }
         });
       }
@@ -105,13 +107,14 @@ export class UraInteractionRendererComponent extends BabylonConsumer implements 
       this.offset = this.pitchHandle.position.subtract(event.dragPlanePoint)
     );
     this.numGizmo.yGizmo.dragBehavior.onDragObservable.add(event => {
-      if (this.arrayConfig && this.arrayConfig.config.type === 'ura') {
+      const arrayConfig = this.arrayConfig();
+      if (arrayConfig && arrayConfig.config.type === 'ura') {
         this.arrayConfigChange.emit({
-          ...this.arrayConfig,
+          ...arrayConfig,
           config: {
-            ...this.arrayConfig.config,
+            ...arrayConfig.config,
             type: 'ura',
-            elementsY: Math.abs(1 + Math.round(2*event.dragPlanePoint.add(this.offset).y / this.arrayConfig.config.pitchY)),  
+            elementsY: Math.abs(1 + Math.round(2*event.dragPlanePoint.add(this.offset).y / arrayConfig.config.pitchY)),  
           }
         });
       }
@@ -132,14 +135,15 @@ export class UraInteractionRendererComponent extends BabylonConsumer implements 
   }
 
   prepareHandles() : void {
-    if (this.arrayConfig && this.pitchHandle && this.arrayConfig.config.type === 'ura') {
+    const arrayConfig = this.arrayConfig();
+    if (arrayConfig && this.pitchHandle && arrayConfig.config.type === 'ura') {
       this.numHandle.position = new Vector3(
-        this.arrayConfig.config.pitchX * this.arrayConfig.config.elementsX / 2, 
-        this.arrayConfig.config.pitchY * this.arrayConfig.config.elementsY / 2,0);
+        arrayConfig.config.pitchX * arrayConfig.config.elementsX / 2, 
+        arrayConfig.config.pitchY * arrayConfig.config.elementsY / 2,0);
     
         this.pitchHandle.position = new Vector3(
-          this.arrayConfig.config.pitchX * (this.arrayConfig.config.elementsX-1) / 2, 
-          this.arrayConfig.config.pitchY * (this.arrayConfig.config.elementsY-1) / 2,0);
+          arrayConfig.config.pitchX * (arrayConfig.config.elementsX-1) / 2, 
+          arrayConfig.config.pitchY * (arrayConfig.config.elementsY-1) / 2,0);
     }
   }
 }

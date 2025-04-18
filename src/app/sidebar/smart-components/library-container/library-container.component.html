@@ -4,7 +4,7 @@
     overflow: hidden;
     gap: 1ex;">
     <app-library (loadPreset)="loadPreset($event)" />
-    @if (array().citation) {
-        <app-info [array]="array()" />
+    @if (citation()) {
+        <app-info [citation]="citation()" />
     }
 </div>

@@ -1,12 +1,10 @@
-
-import { createActionGroup, createFeature, createReducer, on, props } from '@ngrx/store';
+import { signalStoreFeature, withState, withMethods, patchState } from '@ngrx/signals';
 import { HoveredKpi } from '../sidebar/pure-components/kpi/kpi.component';
 
 export interface Point {
   x: number;
   y: number;
 }
-
 
 export enum ResultSpace {
   UV = 'uv',
@@ -18,52 +16,29 @@ export interface ResultValues {
   v: Point[];
 }
 
-export type Result = {
+interface ExportState {
   u: Point[];
   v: Point[];
   resultUnits: ResultSpace;
   hoveredKpi: HoveredKpi;
 }
 
-const initialState: Result = {
-  u: [],
-  v: [],
-  resultUnits: ResultSpace.UV,
-  hoveredKpi: '',
-};
-
-export const ExportActions = createActionGroup({
-  source: 'Export',
-  events: {
-    setResultValues: props<ResultValues>(),
-    setResultUnit: props<{ unit: ResultSpace }>(),
-    setHoveredKpi: props<{ hoveredKpi: HoveredKpi }>(),
-  },
-});
-
-const reducer = createReducer(
-  initialState,
-  on(ExportActions.setResultValues, (state, args): Result =>
-  ({
-    ...state,
-    ...args,
-  })
-  ),
-  on(ExportActions.setResultUnit, (state, { unit }): Result =>
-  ({
-    ...state,
-    resultUnits: unit,
+export const withExport = () => signalStoreFeature(
+  withState<ExportState>({
+    u: [],
+    v: [],
+    resultUnits: ResultSpace.UV,
+    hoveredKpi: '',
   }),
-  ),
-  on(ExportActions.setHoveredKpi, (state, { hoveredKpi }): Result =>
-    ({
-      ...state,
-      hoveredKpi
-    }),
-  )
+  withMethods((store) => ({
+    setResultValues: (values: ResultValues) => {
+      patchState(store, { ...values });
+    },
+    setResultUnit: (unit: ResultSpace) => {
+      patchState(store, { resultUnits: unit });
+    },
+    setHoveredKpi: (hoveredKpi: HoveredKpi) => {
+      patchState(store, { hoveredKpi });
+    },
+  }))
 );
-
-export const exportFeature = createFeature({
-  name: "export",
-  reducer
-});

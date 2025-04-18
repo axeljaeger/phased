@@ -1,14 +1,12 @@
-import { Component, computed, inject, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
-import { Store } from '@ngrx/store';
-
-import { RangeKpi } from 'src/app/store/arrayConfig.state';
-import { ExportActions, ResultSpace, exportFeature } from 'src/app/store/export.state';
+import { ResultSpace } from 'src/app/store/export.state';
 import { Angle } from '@babylonjs/core/Maths/math.path';
+import { RangeKpi, StoreService } from 'src/app/store/store.service';
 
 export type HoveredKpi = '' | 'HpbwU' | 'FnbwU' | 'HpbwV' | 'FnbwV';
 
@@ -23,11 +21,11 @@ export type HoveredKpi = '' | 'HpbwU' | 'FnbwU' | 'HpbwV' | 'FnbwV';
   styleUrl: './kpi.component.scss'
 })
 export class KPIComponent {
-  readonly store = inject(Store);
+  readonly store = inject(StoreService);
   kpis = input<{ u: {fnbw : RangeKpi, hpbw: RangeKpi}, v: {fnbw : RangeKpi, hpbw: RangeKpi}}>();
   public ResultSpace = ResultSpace;
   public resultSpaceControl = new FormControl<ResultSpace>(ResultSpace.UV);
-  public resultSpace = this.store.selectSignal(exportFeature.selectResultUnits);
+  public resultSpace = this.store.resultUnits;
 
   hoveredKpi = output<HoveredKpi>();
 
@@ -94,15 +92,9 @@ export class KPIComponent {
   }
 
   constructor() {
-    this.store.select(exportFeature.selectResultUnits)
-      .pipe(takeUntilDestroyed()).subscribe((resultSpace : ResultSpace) => {
-      this.resultSpaceControl.setValue(resultSpace, {emitEvent: false});
-    });
+    effect(() => this.resultSpaceControl.setValue(this.store.resultUnits(), {emitEvent: false}));
 
-
-    this.resultSpaceControl.valueChanges
-      .pipe(takeUntilDestroyed()).subscribe((resultSpace) => {
-      this.store.dispatch(ExportActions.setResultUnit({unit: resultSpace!}));
-    });
+    this.resultSpaceControl.valueChanges.pipe(takeUntilDestroyed())
+      .subscribe((resultSpace) => this.store.setResultUnit(resultSpace!) );
   }
 }
