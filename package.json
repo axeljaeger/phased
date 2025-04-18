@@ -84,6 +84,6 @@
     "jest-preset-angular": "^14.5.4",
     "ng-mocks": "^14.13.4",
     "storybook": "^8.6.12",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }
