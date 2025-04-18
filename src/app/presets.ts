@@ -1,4 +1,4 @@
-import { ArrayConfig, EnvironmentHint, FrequencyMultiplier  } from "./store/arrayConfig.state";
+import { ArrayConfig } from "./store/store.service";
 
 export const presets : ArrayConfig[] = [
 {

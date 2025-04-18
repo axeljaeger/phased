@@ -1,8 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { LibraryComponent } from '../../pure-components/library/library.component';
-import { Store } from '@ngrx/store';
-import { ArrayConfig, ArrayConfigActions, arrayConfigFeature } from 'src/app/store/arrayConfig.state';
 import { InfoComponent } from '../../pure-components/info/info.component';
+import { ArrayConfig, StoreService } from 'src/app/store/store.service';
 
 @Component({
   selector: 'app-library-container',
@@ -14,10 +13,11 @@ import { InfoComponent } from '../../pure-components/info/info.component';
   styleUrl: './library-container.component.scss'
 })
 export class LibraryContainerComponent {
-  private store = inject(Store);
-  public array = this.store.selectSignal(arrayConfigFeature.selectArrayConfigState);
+  private store = inject(StoreService);
+  public array = computed(() =>this.store.arrayConfig().config);
+  public citation = computed(() => this.store.arrayConfig().citation);
 
   loadPreset(preset: ArrayConfig) {
-      this.store.dispatch(ArrayConfigActions.setConfig(preset));
+      this.store.setConfig(preset);
   }
 }

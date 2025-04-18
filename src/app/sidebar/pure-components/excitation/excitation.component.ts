@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -6,9 +6,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
 
-import { Store } from '@ngrx/store';
-
-import { ArrayConfigActions, arrayConfigFeature, FrequencyMultiplier } from 'src/app/store/arrayConfig.state';
+import { StoreService, Environment, FrequencyMultiplier } from 'src/app/store/store.service';
 
 @Component({
   selector: 'app-excitation',
@@ -26,23 +24,22 @@ import { ArrayConfigActions, arrayConfigFeature, FrequencyMultiplier } from 'src
 })
 export class ExcitationComponent {
   constructor() {
-    this.store.select(arrayConfigFeature.selectEnvironment)
-      .pipe(takeUntilDestroyed()).subscribe(env => 
-      this.form.patchValue(env, { emitEvent: false })
-    );
+    effect(() => {
+      this.form.patchValue(this.store.arrayConfig().environment, { emitEvent: false })
+    });
 
     this.form.valueChanges
       .pipe(takeUntilDestroyed()).subscribe(val => 
-      this.store.dispatch(ArrayConfigActions.setExcitationFrequency(val))
+        this.store.setEnvironment(val as Partial<Environment>)
     );
   }
   
   fb = inject(FormBuilder);
-  store = inject(Store);
+  store = inject(StoreService);
   public form = this.fb.group({
     excitationFrequencyMultiplier: ['kHz' as FrequencyMultiplier],
     excitationFrequencyBase: [0],
   });
 
-  public environment = this.store.selectSignal(arrayConfigFeature.selectEnvironment);
+  public environment = computed(() => this.store.arrayConfig().environment);
 }

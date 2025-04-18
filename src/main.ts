@@ -2,16 +2,8 @@ import { enableProdMode } from '@angular/core';
 
 import { environment } from './environments/environment';
 import { AppComponent } from './app/app.component';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { selectionFeature } from './app/store/selection.state';
-import { provideState, provideStore } from '@ngrx/store';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { ViewportFeature } from './app/store/viewportConfig.state';
-import { RayleighFeature } from './app/store/rayleigh.state';
-import { beamformingFeature } from './app/store/beamforming.state';
-import { arrayConfigFeature } from './app/store/arrayConfig.state';
-import { exportFeature } from './app/store/export.state';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { provideRouter, Routes, withComponentInputBinding } from '@angular/router';
 import { ExportComponent } from './app/sidebar/pure-components/export/export.component';
@@ -22,31 +14,18 @@ if (environment.production) {
   enableProdMode();
 }
 
-const routes : Routes = [
+const routes: Routes = [
   { path: 'library', component: LibraryContainerComponent },
   { path: 'library/:libraryIndex', component: LibraryContainerComponent },
   { path: 'setup', component: SetupContainerComponent },
   { path: 'export', component: ExportComponent },
-  { path: '',   redirectTo: '/library', pathMatch: 'full' },
+  { path: '', redirectTo: '/library', pathMatch: 'full' },
 ];
 
 bootstrapApplication(AppComponent, {
-    providers: [
-        provideAnimations(),
-        { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
-        provideStore(),
-        provideState(arrayConfigFeature),
-        provideState(beamformingFeature),
-        provideState(exportFeature),
-        provideState(RayleighFeature),
-        provideState(selectionFeature),
-        provideState(ViewportFeature),
-        provideRouter(routes, withComponentInputBinding()),
-        provideStoreDevtools({
-            maxAge: 25,
-            logOnly: environment.production, // Restrict extension to log-only mode
-         connectInZone: true}),
-
-    ]
-})
-  .catch(err => console.error(err));
+  providers: [
+    provideAnimations(),
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
+    provideRouter(routes, withComponentInputBinding()),
+  ],
+}).catch((err) => console.error(err));

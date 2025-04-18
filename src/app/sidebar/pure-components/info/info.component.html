@@ -1,9 +1,9 @@
 <mat-card>
     <mat-card-header>
-      <mat-card-subtitle>{{ array()?.citation?.authors }}</mat-card-subtitle>
-      <mat-card-title>{{ array()?.citation?.title }}</mat-card-title>
+      <mat-card-subtitle>{{ citation()?.authors }}</mat-card-subtitle>
+      <mat-card-title>{{ citation()?.title }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <a href="{{ array()?.citation?.url }}" target="_blank">{{ array()?.citation?.urlTitle }}</a>
+      <a href="{{ citation()?.url }}" target="_blank">{{ citation()?.urlTitle }}</a>
     </mat-card-content>
 </mat-card>

@@ -9,11 +9,10 @@ import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Scene } from '@babylonjs/core/scene';
 import { Textures, TransducerBufferConsumer } from '../../shared/transducer-buffer.component';
-import { Transducer } from 'src/app/store/arrayConfig.state';
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { ResultSet } from 'src/app/store/rayleigh.state';
 import { VertexData } from '@babylonjs/core';
-import { Environment } from 'src/app/store/arrayConfig.state';
+import { Environment, Transducer } from 'src/app/store/store.service';
 
 export const cubeCut = (): VertexData => {
   const positions = [
@@ -73,7 +72,7 @@ export const cubeCut = (): VertexData => {
 })
 export class RayleighIntegralRendererComponent extends TransducerBufferConsumer implements OnChanges, OnDestroy {
   // Should no longer be needed or changed to a number.
-  @Input() transducers : Array<Transducer> | null = null;
+  @Input() transducers : Transducer[] | null = null;
 
   @Input() environment : Environment | null = null;
 

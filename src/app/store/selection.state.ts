@@ -1,37 +1,21 @@
-import { 
-  createActionGroup,
-  createFeature, 
-  createReducer,
-  emptyProps, 
-  props,
-  on
-} from '@ngrx/store';
+import { signalStoreFeature, withState, withMethods, patchState } from '@ngrx/signals';
 
 export interface SelectionState {
   hovered: number[];
   selected: number[];
 }
 
-const initialState: SelectionState = {
-  hovered: [],
-  selected: []
-};
-
-export const SelectionActions = createActionGroup({
-  source: 'Selection',
-  events: {
-    clear: emptyProps(),
-    set: props<{ transducerId: number }>(),
-  },
-});
-
-const reducer = createReducer(
-  initialState,
-  on(SelectionActions.set, (state, args): SelectionState => ({ ...state, hovered: [args.transducerId] })),
-  on(SelectionActions.clear, (state): SelectionState => ({ ...state, hovered: [] })),
+export const withSelection = () => signalStoreFeature(
+  withState<{ selection: SelectionState}>({ selection:{
+    hovered: [],
+    selected: [],
+  }}),
+  withMethods((store) => ({
+    setHovered: (transducerId: number) => {
+      patchState(store, { selection: { ...store.selection(), hovered: [transducerId]} });
+    },
+    clearHovered: () => {
+      patchState(store, { selection: { ...store.selection(), hovered: []} });
+    },
+  }))
 );
-
-export const selectionFeature = createFeature({
-  name: 'selection',
-  reducer,
-});

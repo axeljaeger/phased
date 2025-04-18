@@ -1,13 +1,13 @@
-import { Component, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, effect, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
-import { Store } from '@ngrx/store';
 
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatFormField, MatInput, MatLabel, MatSuffix } from '@angular/material/input';
 
-import { EnvironmentHint, arrayConfigFeature, ArrayConfigActions } from 'src/app/store/arrayConfig.state';
+import { StoreService, Environment, EnvironmentHint } from 'src/app/store/store.service';
+
 
 @Component({
   selector: 'app-environment',
@@ -25,25 +25,23 @@ import { EnvironmentHint, arrayConfigFeature, ArrayConfigActions } from 'src/app
 })
 export class EnvironmentComponent {
   fb = inject(FormBuilder);
-  store = inject(Store);
+  store = inject(StoreService);
 
   public form = this.fb.group({
     speedOfSound: [{value: 0, disabled: true}],
     environmentHint: ['Air' as EnvironmentHint],
   });
 
-  constructor(){
-    this.store.select(arrayConfigFeature.selectEnvironment)
-      .pipe(takeUntilDestroyed()).subscribe(env => 
-      this.form.patchValue(env, { emitEvent: false })
-    );
+  private formSignal = toSignal(this.form.valueChanges);
 
-    this.form.valueChanges
-      .pipe(takeUntilDestroyed()).subscribe(val => {
-      this.store.dispatch(ArrayConfigActions.setEnvironment(this.form.value));
+  patchForm = effect(() => this.form.patchValue(this.store.arrayConfig().environment, { emitEvent: false }));
+  updateStore = effect(() => {
+    const val = this.formSignal()
+    if (val !== undefined) {
+      this.store.setEnvironment(val as Partial<Environment>);
       this.form.controls.environmentHint.value === 'Custom' ?
-        this.form.controls.speedOfSound.enable({emitEvent: false}) : 
-        this.form.controls.speedOfSound.disable({emitEvent: false});
-    });
-  }
+      this.form.controls.speedOfSound.enable({emitEvent: false}) : 
+      this.form.controls.speedOfSound.disable({emitEvent: false});
+    }
+  });
 }
