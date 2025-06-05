@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, SimpleChanges, forwardRef, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, forwardRef, input, output } from '@angular/core';
 
 import { TransducerMaterial } from '../../materials/transducer.material';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
@@ -26,10 +26,10 @@ import { Transducer } from 'src/app/store/store.service';
     standalone: true,
     providers: [{provide: BabylonConsumer, useExisting: forwardRef(() => ExcitationRendererComponent)}],
 })
-export class ExcitationRendererComponent extends BabylonConsumer implements OnChanges {
-  @Input() transducers : Transducer[] | null = null;
-  @Input() transducerDiameter : number | null = null;
-  @Input() selection : SelectionState | null = null;
+export class ExcitationRendererComponent extends BabylonConsumer {
+  transducers = input<Transducer[] | null>(null);
+  transducerDiameter = input<number | null>(null);
+  selection = input<SelectionState | null>(null);
 
   hovered = output<number>();
   
@@ -41,14 +41,17 @@ export class ExcitationRendererComponent extends BabylonConsumer implements OnCh
 
   async ngxSceneCreated(scene: Scene): Promise<void> {
     this.initialize3D(scene);
-    this.uploadArrayConfig(this.transducers, this.selection);
+    this.uploadArrayConfig(this.transducers(), this.selection());
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  updateArrayConfig = effect(() => {
+    const transducers = this.transducers();
+    const selection = this.selection();
+
     if (this.transducerMaterial) {
-      this.uploadArrayConfig(this.transducers, this.selection);
+      this.uploadArrayConfig(transducers, selection);
     }
-  }
+  })
   
   public initialize3D(scene : Scene) : void {
     this.transducerMaterial = new TransducerMaterial(scene);
@@ -111,7 +114,7 @@ export class ExcitationRendererComponent extends BabylonConsumer implements OnCh
          )
      )
 
-    this.uploadArrayConfig(this.transducers, this.selection);
+    this.uploadArrayConfig(this.transducers(), this.selection());
   }
 
   private uploadArrayConfig(transducersx: Transducer[] | null, selectionx: SelectionState | null) : void {
@@ -119,7 +122,7 @@ export class ExcitationRendererComponent extends BabylonConsumer implements OnCh
     const selection : SelectionState = selectionx ?? {hovered: [], selected: [] };
     const buffers = (transducers ?? []).reduce(
       (buffers, transducer, index) => {
-        Matrix.Scaling(this.transducerDiameter!, this.transducerDiameter!, this.transducerDiameter!).multiply(Matrix.Translation(
+        Matrix.Scaling(this.transducerDiameter()!, this.transducerDiameter()!, this.transducerDiameter()!).multiply(Matrix.Translation(
           transducer.pos.x,
           transducer.pos.y,
           transducer.pos.z

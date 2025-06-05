@@ -1,8 +1,6 @@
-import { Component, DestroyRef, ElementRef, OnInit, ViewChild, effect, inject } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, effect, inject, viewChild } from '@angular/core';
 
 import { ResultSpace } from 'src/app/store/export.state';
-import { MatButtonModule } from '@angular/material/button';
-import { MatExpansionModule } from '@angular/material/expansion';
 
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
@@ -54,10 +52,6 @@ const condVToEl = (convert: boolean, v : number) => convert ? 180*Math.atan(v / 
 
 @Component({
     selector: 'app-chart',
-    imports: [
-      MatButtonModule,
-      MatExpansionModule
-    ],
     templateUrl: './chart.component.html',
     styleUrl: './chart.component.scss'
 })
@@ -65,8 +59,7 @@ export class ChartComponent implements OnInit {
   private readonly store = inject(StoreService);
   destroyRef = inject(DestroyRef);
 
-  @ViewChild('echartDiv', { static: true })
-  echartDiv: ElementRef<HTMLElement>;
+  echartDiv = viewChild.required<ElementRef<HTMLElement>>('echartDiv');
 
   updateChartEffect =     effect(() => {
     const resultUnit = this.store.resultUnits();
@@ -316,7 +309,7 @@ export class ChartComponent implements OnInit {
     ]);
 
 
-    this.myChart = echarts.init(this.echartDiv.nativeElement);
+    this.myChart = echarts.init(this.echartDiv().nativeElement);
 
     const option : ECBasicOption = {
       tooltip: {
