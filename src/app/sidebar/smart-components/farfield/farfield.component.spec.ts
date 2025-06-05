@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideMockStore } from '@ngrx/store/testing';
 
 import { FarfieldComponent } from './farfield.component';
 
@@ -13,9 +12,6 @@ describe('FarfieldComponent', () => {
       imports: [
         FarfieldComponent, NoopAnimationsModule,
       ],
-      providers: [
-        provideMockStore({})
-      ]
     })
     .compileComponents();
 

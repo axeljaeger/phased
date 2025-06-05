@@ -31,7 +31,6 @@
 							"src/assets"
 						],
 						"styles": [
-						  "./node_modules/@angular/material/prebuilt-themes/cyan-orange.css",
 							"src/styles.scss"
 						],
 						"scripts": [],
@@ -103,13 +102,17 @@
 					"builder": "@storybook/angular:start-storybook",
 					"options": {
 						"browserTarget": "phased:build",
-						"port": 4400
+						"port": 4400,
+						"compodoc": false,
+						"styles": [ "src/styles.scss" ]
 					}
 				},
 				"build-storybook": {
 					"builder": "@storybook/angular:build-storybook",
 					"options": {
-						"browserTarget": "phased:build"
+						"browserTarget": "phased:build",
+						"compodoc": false,
+						"styles": [ "src/styles.scss" ]
 					}
 				},
 				"e2e": {
