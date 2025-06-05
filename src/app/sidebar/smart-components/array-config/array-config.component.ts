@@ -5,12 +5,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatButtonModule } from '@angular/material/button';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MatCheckbox } from '@angular/material/checkbox';
 
 import { ArrayConfig, StoreService } from 'src/app/store/store.service';
@@ -20,16 +15,11 @@ import { ArrayConfig, StoreService } from 'src/app/store/store.service';
     templateUrl: './array-config.component.html',
     styleUrls: ['./array-config.component.scss'],
     imports: [
-        MatButtonModule,
         MatButtonToggleModule,
-        MatExpansionModule,
         MatFormFieldModule,
-        MatIconModule,
         MatInputModule,
-        MatMenuModule,
         ReactiveFormsModule,
         MatCheckbox,
-        MatTabsModule,
     ]
 })
 export class ArrayConfigComponent {

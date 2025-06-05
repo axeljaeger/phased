@@ -1,5 +1,4 @@
 import { Component, computed, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconButton } from '@angular/material/button';

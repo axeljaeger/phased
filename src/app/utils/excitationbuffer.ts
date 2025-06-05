@@ -10,8 +10,6 @@ export interface ExcitationElement {
     amplitude: number;
   }
 
-// Think about using tagged template to directly replace
-// the MAX_ELEMENTS. But need extension of glsl tag function.
 export const excitationBufferInclude = /* wgsl */`
   struct ExcitationElement { // size per element: 8
     position : vec4<f32>, // offset 0

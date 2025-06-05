@@ -4,7 +4,7 @@ import { Mesh } from '@babylonjs/core/Meshes/mesh';
 
 import { Scene } from '@babylonjs/core/scene';
 import { BabylonConsumer } from '../../interfaces/lifecycle';
-import { RotationGizmo } from '@babylonjs/core';
+import { RotationGizmo } from '@babylonjs/core/Gizmos/rotationGizmo';
 
 @Component({
     selector: 'app-beamforming-renderer',

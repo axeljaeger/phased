@@ -3,17 +3,16 @@ import {
   AfterViewChecked,
   ChangeDetectionStrategy,
   Component,
-  ContentChildren,
-  DestroyRef,
+  contentChildren,
+  effect,
   ElementRef,
   HostListener,
   inject,
   NgZone,
   OnInit,
-  QueryList,
-  ViewChild,
+  signal,
+  viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 import { AxesViewer } from '@babylonjs/core/Debug/axesViewer';
@@ -27,14 +26,8 @@ import { NullEngine } from '@babylonjs/core/Engines/nullEngine';
 import { BabylonConsumer, implementsOnSceneCreated } from '../../interfaces/lifecycle';
 import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine';
 import { ShaderStore } from '@babylonjs/core/Engines/shaderStore';
-import { map, pairwise, startWith } from 'rxjs';
-import { Color4 } from '@babylonjs/core';
-
-const diff = (previous: Array<any>, next: Array<any>) =>
-({
-  added: next.filter((val) => !previous.includes(val)),
-  removed: previous.filter((val) => !next.includes(val)),
-});
+import { diff } from 'src/app/utils/utils';
+import { Color4 } from '@babylonjs/core/Maths/math.color';
 
 @Component({
   selector: 'app-babylon-jsview',
@@ -47,25 +40,39 @@ const diff = (previous: Array<any>, next: Array<any>) =>
 export class BabylonJSViewComponent
   implements AfterViewChecked, OnInit, AfterContentChecked
 {
-  @ViewChild('view3dcanvas', { static: true })
-  canvasRef: ElementRef<HTMLCanvasElement>;
-
-  @ContentChildren(BabylonConsumer)
-  renderers: QueryList<BabylonConsumer>;
+  canvasRef = viewChild.required<ElementRef<HTMLCanvasElement>>('view3dcanvas');
+  renderers = contentChildren(BabylonConsumer);
+  
+updateRenderers = (() => {
+  let prev: BabylonConsumer[] = [];
+  return effect(() => {
+    const next = this.renderers();
+    const scene = this.scene();
+    if (scene) {
+      const { added } = diff(prev, next);
+      for (const renderer of added) {
+        if (implementsOnSceneCreated(renderer)) {
+          renderer.ngxSceneCreated(scene);
+        }
+      }
+      prev = [...next];
+    }
+  });
+})();
 
   engine: WebGPUEngine | NullEngine;
-  public scene: Scene;
+  public scene = signal<Scene | null>(null);
   camera: ArcRotateCamera;
 
   private ngZone = inject(NgZone);
   private elRef = inject(ElementRef);
-  private destroyRef = inject(DestroyRef);
   
   ngAfterContentChecked(): void {
     this.ngZone.runOutsideAngular(() => {
-      if (this.scene) {
+      const scene = this.scene();
+      if (scene) {
         this.engine.beginFrame();
-        this.scene.render();
+        scene.render();
         this.engine.endFrame();
       }
     });
@@ -73,9 +80,10 @@ export class BabylonJSViewComponent
 
   ngAfterViewChecked(): void {
     this.ngZone.runOutsideAngular(() => {
-      if (this.scene) {
+      const scene = this.scene();
+      if (scene) {
         this.engine.beginFrame();
-        this.scene.render();
+        scene.render();
         this.engine.endFrame();
       }
     });
@@ -83,39 +91,24 @@ export class BabylonJSViewComponent
 
   @HostListener('window:resize')
   resize(): void {
-    const rect = this.elRef.nativeElement.getBoundingClientRect();
-    this.canvasRef.nativeElement.width = rect.width;
-    this.canvasRef.nativeElement.height = rect.height;
+    const ne = this.canvasRef().nativeElement;
+    const { width, height } = this.elRef.nativeElement.getBoundingClientRect();
 
-    this.canvasRef.nativeElement.style.width = rect.width + 'px';
-    this.canvasRef.nativeElement.style.height = rect.height + 'px';
+    ne.width = width;
+    ne.height = height;
+
+    ne.style.width = `${width}px`;
+    ne.style.height = `${height}px`;
 
     this.engine.resize(true);
   }
 
   async ngOnInit(): Promise<void> {
-    await this.initEngine(this.canvasRef);
-    
-    this.renderers.changes
-      .pipe(
-        map((list) => list.toArray()),
-        startWith([], this.renderers.toArray()),
-        pairwise(),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(([prev, next]) => {
-        const { added } = diff(prev, next);
-        added.map((renderer) => {
-          implementsOnSceneCreated(renderer)
-          ? renderer.ngxSceneCreated(this.scene)
-          : Promise.resolve() 
-        });
-      });
-
-    await this.scene.whenReadyAsync();
+    await this.initEngine(this.canvasRef());
+    await this.scene()?.whenReadyAsync();
     
     this.engine.beginFrame();
-    this.scene.render();
+    this.scene()?.render();
     this.engine.endFrame();
   }
 
@@ -133,8 +126,8 @@ export class BabylonJSViewComponent
         this.engine = new NullEngine();
       }
 
-      this.scene = this.createScene(canvas);
-      this.scene.useRightHandedSystem = true;
+      const scene = this.createScene(canvas);
+      scene.useRightHandedSystem = true;
 
       const renderingOrder = [
         'rayleigh',
@@ -143,34 +136,25 @@ export class BabylonJSViewComponent
         'excitationHidden'
       ];
 
-      this.scene.setRenderingOrder(1, (meshA, meshB) => {
+      scene.setRenderingOrder(1, (meshA, meshB) => {
         const indexA = renderingOrder.indexOf(meshA.getMesh().name);
         const indexB = renderingOrder.indexOf(meshB.getMesh().name);
-        if (indexA === indexB) return 0
-        else if (indexA > indexB) return 1
-        else return -1
+        return Math.sign(indexA - indexB);
       });
 
-      this.scene.onBeforeRenderingGroupObservable.add((groupInfo) => {
-        if (groupInfo.renderingGroupId === 0) {
-          this.engine.setDepthFunction(Engine.LEQUAL);
-        } 
-      });
+      scene.onBeforeRenderingGroupObservable.add(groupInfo => 
+        groupInfo.renderingGroupId === 0 && this.engine.setDepthFunction(Engine.LEQUAL));
 
-      this.scene.onPointerDown = () => {
-        this.engine.runRenderLoop(() => this.camera.update());
-      };
-
-      this.scene.onPointerUp = () => {
-        this.engine.stopRenderLoop();
-      };
-
-      this.scene.onPointerObservable.add((kbInfo) => {
+      scene.onPointerDown = () => this.engine.runRenderLoop(() => this.camera.update());
+      scene.onPointerUp = () => this.engine.stopRenderLoop();
+      
+      scene.onPointerObservable.add((kbInfo) => {
         if (kbInfo.type == 8) {
           //scroll
           this.camera.update();
         }
       });
+      this.scene.set(scene);
     });
     //this.scene.debugLayer.show();
     this.resize();

@@ -6,8 +6,8 @@ import { PointerDragBehavior } from '@babylonjs/core/Behaviors/Meshes/pointerDra
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { BabylonConsumer } from '../../interfaces/lifecycle';
-import { Scene } from '@babylonjs/core';
 import { ArrayConfig } from 'src/app/store/store.service';
+import { Scene } from '@babylonjs/core/scene';
 
 @Component({
     selector: 'app-ura-interaction',
