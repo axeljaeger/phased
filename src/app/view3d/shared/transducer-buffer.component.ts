@@ -1,16 +1,14 @@
 import {
   Component,
-  ContentChildren,
+  contentChildren,
   DestroyRef,
+  effect,
   forwardRef,
   inject,
-  Input,
-  OnChanges,
+  input,
   OnDestroy,
-  QueryList,
-  SimpleChanges,
+  signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
 import { Scene } from '@babylonjs/core/scene';
@@ -21,10 +19,10 @@ import {
 } from '../../utils/excitationbuffer';
 import { VEC4_ELEMENT_COUNT } from '../../utils/webgl.utils';
 import { BabylonConsumer } from '../interfaces/lifecycle';
-import { map, pairwise, startWith, tap } from 'rxjs/operators';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { BeamformingState } from 'src/app/store/beamforming.state';
 import { Transducer } from 'src/app/store/store.service';
+import { diff } from 'src/app/utils/utils';
 
 export interface Textures {
   viridis: Texture;
@@ -50,31 +48,24 @@ export const implementsOnTransducerBufferCreated = (
   candidate !== null &&
   'ngxSceneAndBufferCreated' in candidate;
 
-const diff = (previous: Array<any>, next: Array<any>) =>
-({
-  added: next.filter((val) => !previous.includes(val)),
-  removed: previous.filter((val) => !next.includes(val)),
-});
-
 @Component({
   selector: 'app-transducer-buffer',
   template: '<ng-content/>',
   standalone: true,
   providers: [{provide: BabylonConsumer, useExisting: forwardRef(() => TransducerBufferComponent)}],
 })
-export class TransducerBufferComponent extends BabylonConsumer
-  implements OnChanges, OnDestroy {
+export class TransducerBufferComponent extends BabylonConsumer implements OnDestroy {
   destroyRef = inject(DestroyRef);
 
-  @Input() transducers: Transducer[] | null;
-  @Input() beamforming: BeamformingState | null;
-  @Input() k: number | null;
+  transducers = input<Transducer[] | null>(null);
+  beamforming = input<BeamformingState | null>(null);
+  k = input<number | null>(null);
 
-  @ContentChildren(TransducerBufferConsumer)
-  consumers: QueryList<TransducerBufferConsumer>;
+  consumers = contentChildren(TransducerBufferConsumer);
 
   private uniformExcitationBuffer: UniformBuffer;
   private textures: Textures;
+  public scene = signal<Scene | null>(null);
 
   async ngxSceneCreated(scene: Scene): Promise<void> {
     this.uniformExcitationBuffer = new UniformBuffer(scene.getEngine());
@@ -112,16 +103,18 @@ export class TransducerBufferComponent extends BabylonConsumer
       coolwarm: tex[1] as Texture,
     };
 
-    this.updateBuffer(this.transducers ?? []);
+    this.scene.set(scene);
 
-    this.consumers.changes
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        map((list) => list.toArray()),
-        startWith([], this.consumers.toArray()),
-        pairwise()
-      ).subscribe(([prev, next]) => {
-        const { added } = diff(prev, next);
+    this.updateBuffer(this.transducers() ?? []);
+  }
+
+  updateRenderers = (() => {
+    let prev: TransducerBufferConsumer[] = [];
+    return effect(() => {
+      const next = this.consumers();
+      const scene = this.scene();
+      if (scene) {
+      const { added } = diff(prev, next);
         added.forEach((consumer) => {
           if (implementsOnTransducerBufferCreated(consumer)) {
             consumer.ngxSceneAndBufferCreated(
@@ -131,14 +124,19 @@ export class TransducerBufferComponent extends BabylonConsumer
             );
           }
         });
-      });
-  }
+        prev = [...next];
+      }
+    });
+  })();
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.uniformExcitationBuffer && this.transducers) {
-      this.updateBuffer(this.transducers);
+
+
+  update = effect(() => {
+    const transducers = this.transducers();
+    if (this.uniformExcitationBuffer && transducers) {
+      this.updateBuffer(transducers);
     }
-  }
+  });
 
   ngOnDestroy(): void {
     if (this.uniformExcitationBuffer) {
@@ -150,7 +148,8 @@ export class TransducerBufferComponent extends BabylonConsumer
     if (this.uniformExcitationBuffer) {
       const excitationBuffer = transducers.reduce(
         (buffer, transducer, index) => {
-          const phase = this.beamforming?.enabled ? (this.k ?? 700) * ((this.beamforming?.u ?? 0) * transducer.pos.x + (this.beamforming?.v ?? 0) * transducer.pos.y) : 0;
+          const bf = this.beamforming();
+          const phase = bf?.enabled ? (this.k() ?? 700) * ((bf?.u ?? 0) * transducer.pos.x + (bf?.v ?? 0) * transducer.pos.y) : 0;
           setExcitationElement(transducer.pos, phase, buffer, index);
           return buffer;
         },

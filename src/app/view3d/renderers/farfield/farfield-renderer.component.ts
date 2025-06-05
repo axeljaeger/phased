@@ -1,9 +1,8 @@
 import {
   Component,
-  Input,
-  OnChanges,
+  effect,
+  input,
   OnDestroy,
-  SimpleChanges,
 } from '@angular/core';
 
 import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
@@ -36,20 +35,23 @@ const uvMesh: VertexData = (() => {
     providers: [{provide: TransducerBufferConsumer, useExisting: FarfieldRendererComponent}],
 })
 export class FarfieldRendererComponent extends TransducerBufferConsumer
-  implements OnChanges, OnDestroy
+  implements OnDestroy
 {
-  @Input() transducers: Transducer[] | null = null;
-  @Input() environment: Environment | null = null;
+  transducers = input<Transducer[] | null>(null);
+  environment = input<Environment | null>(null);
+
+  upload = effect(() => {
+    const env = this.environment();
+    const transducers = this.transducers();
+
+    if (this.material) {
+      this.uploadEnvironment(this.environment());
+      this.uploadArrayConfig(this.transducers());
+    }
+  });
 
   private material: FarfieldMaterial;
   private farfieldMesh: Mesh;
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.material) {
-      this.uploadEnvironment(this.environment);
-      this.uploadArrayConfig(this.transducers);
-    }
-  }
 
   ngxSceneAndBufferCreated(scene: Scene, buffer: UniformBuffer, textures: Textures): void {
     this.material = new FarfieldMaterial(scene);
@@ -81,8 +83,8 @@ export class FarfieldRendererComponent extends TransducerBufferConsumer
     };
 
     this.material.setFloat('dynamicRange', 50.0);
-    this.uploadEnvironment(this.environment);
-    this.uploadArrayConfig(this.transducers);
+    this.uploadEnvironment(this.environment());
+    this.uploadArrayConfig(this.transducers());
   }
 
   ngOnDestroy(): void {

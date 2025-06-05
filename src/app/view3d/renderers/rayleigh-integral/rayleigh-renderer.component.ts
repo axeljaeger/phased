@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, OnDestroy } from '@angular/core';
 
 import { Plane } from '@babylonjs/core/Maths/math.plane';
 import { CreatePlane } from '@babylonjs/core/Meshes/Builders/planeBuilder';
@@ -11,8 +11,8 @@ import { Scene } from '@babylonjs/core/scene';
 import { Textures, TransducerBufferConsumer } from '../../shared/transducer-buffer.component';
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { ResultSet } from 'src/app/store/rayleigh.state';
-import { VertexData } from '@babylonjs/core';
 import { Environment, Transducer } from 'src/app/store/store.service';
+import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
 
 export const cubeCut = (): VertexData => {
   const positions = [
@@ -70,16 +70,29 @@ export const cubeCut = (): VertexData => {
     standalone: true,
     providers: [{provide: TransducerBufferConsumer, useExisting: RayleighIntegralRendererComponent}],
 })
-export class RayleighIntegralRendererComponent extends TransducerBufferConsumer implements OnChanges, OnDestroy {
+export class RayleighIntegralRendererComponent extends TransducerBufferConsumer implements OnDestroy {
   // Should no longer be needed or changed to a number.
-  @Input() transducers : Transducer[] | null = null;
-
-  @Input() environment : Environment | null = null;
-
-  @Input() aspect : ResultAspect | null = null;
-  @Input() resultSet : ResultSet | null = null;
+  transducers = input<Transducer[] | null>(null);
+  environment = input<Environment | null>(null);
+  resultSet = input<ResultSet | null>(null);
+  aspect = input<ResultAspect | null>(null);
   
   private material: RayleighMaterial;
+
+  update = effect(() => {
+    if (this.material) {
+      this.uploadEnvironment(this.environment());
+      this.uploadArrayConfig(this.transducers());
+      this.material.setResultAspect(this.aspect());
+    }
+
+    const resultSet = this.resultSet();
+    if (resultSet !== null) {
+      this.xzPlane.setEnabled(resultSet === ResultSet.XZPlane);
+      this.yzPlane.setEnabled(resultSet === ResultSet.YZPlane);
+      this.cubeCut.setEnabled(resultSet === ResultSet.CutCube);
+    }
+  });
 
   private xzPlane : Mesh;
   private yzPlane : Mesh;
@@ -130,23 +143,9 @@ export class RayleighIntegralRendererComponent extends TransducerBufferConsumer 
     this.cubeCut.setEnabled(false);
 
     this.material.setFloat('dynamicRange', 10);
-    this.material.setResultAspect(this.aspect);
-    this.uploadArrayConfig(this.transducers);
-    this.uploadEnvironment(this.environment);
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.material) {
-      this.uploadEnvironment(this.environment);
-      this.uploadArrayConfig(this.transducers);
-      this.material.setResultAspect(this.aspect);
-    }
-
-    if (changes.resultSet && this.xzPlane && this.yzPlane) {
-      this.xzPlane.setEnabled(this.resultSet === ResultSet.XZPlane);
-      this.yzPlane.setEnabled(this.resultSet === ResultSet.YZPlane);
-      this.cubeCut.setEnabled(this.resultSet === ResultSet.CutCube);
-    }
+    this.material.setResultAspect(this.aspect());
+    this.uploadArrayConfig(this.transducers());
+    this.uploadEnvironment(this.environment());
   }
 
   ngOnDestroy(): void {

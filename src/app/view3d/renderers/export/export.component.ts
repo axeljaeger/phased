@@ -1,10 +1,14 @@
-import { Component, Input, OnChanges, output, SimpleChanges } from '@angular/core';
+import { Component, effect, input, output } from '@angular/core';
 import { Textures, TransducerBufferConsumer } from '../../shared/transducer-buffer.component';
-import { ComputeShader, Scene, StorageBuffer, UniformBuffer, WebGPUEngine } from '@babylonjs/core';
 import { Point, ResultValues } from 'src/app/store/export.state';
 import { BeamformingState } from 'src/app/store/beamforming.state';
 import { Transducer } from 'src/app/store/store.service';
 
+import { ComputeShader } from '@babylonjs/core/Compute/computeShader';
+import { UniformBuffer } from '@babylonjs/core/Materials/uniformBuffer';
+import { StorageBuffer } from '@babylonjs/core/Buffers/storageBuffer';
+import { Scene } from '@babylonjs/core/scene';
+import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine';
 
 const exportComputeShader = /* glsl */`
 
@@ -66,13 +70,16 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     template: '<ng-content />',
     providers: [{ provide: TransducerBufferConsumer, useExisting: ExportRendererComponent }]
 })
-export class ExportRendererComponent extends TransducerBufferConsumer
-implements OnChanges {
+export class ExportRendererComponent extends TransducerBufferConsumer {
   results = output<ResultValues>();
   
-  @Input() transducers: Transducer[] | null = null;
-  @Input() environment: number | null = null;
-  @Input() beamforming: BeamformingState | null;
+  transducers = input<Transducer[] | null>(null);
+  environment = input<number | null>(null);
+  beamforming = input<BeamformingState | null>(null);
+
+  calcDataCall = effect(() => {
+    this.calcData();
+  });
 
   cs : ComputeShader | null = null;
   uniformBuffer: UniformBuffer;
@@ -112,15 +119,11 @@ implements OnChanges {
     this.calcData();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.calcData();
-  }
-
   calcData() : void {
     if (this.cs && this.resultBuffer) {
       console.log("Calculating data");
-      this.uniformBuffer.updateFloat("k", this.environment!);
-      const numElements = this.transducers!.length;
+      this.uniformBuffer.updateFloat("k", this.environment()!);
+      const numElements = this.transducers()!.length;
       this.uniformBuffer.updateInt("numElements", numElements);
       this.uniformBuffer.updateInt("numPoints", this.numPoints);
       this.uniformBuffer.update();

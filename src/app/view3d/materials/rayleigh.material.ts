@@ -6,7 +6,7 @@ import { ShaderLanguage } from '@babylonjs/core/Materials/shaderLanguage';
 
 import { TextureSampler } from '@babylonjs/core/Materials/Textures/textureSampler';
 import { Constants } from '@babylonjs/core/Engines/constants';
-import { BaseTexture } from '@babylonjs/core';
+import { BaseTexture } from '@babylonjs/core/Materials/Textures/baseTexture';
 
 const rayleighVertexShaderCode = /* wgsl*/ `
   #include<sceneUboDeclaration>

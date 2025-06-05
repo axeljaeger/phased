@@ -57,13 +57,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   @include mat.card-overrides((
     elevated-container-color: var(--mat-sys-surface),
   ));
+
+  & {
   --mdc-list-list-item-hover-leading-icon-color: var(--mat-full-pseudo-checkbox-selected-icon-color);
+  }
 }
 
 .mat-expansion-panel-body {
   mat-button-toggle-group {
     @include mat.button-toggle-density(-5);
-    margin-bottom: 1ex;
+    & {
+      margin-bottom: 1ex;
+    }
   }
 
   mat-form-field {
