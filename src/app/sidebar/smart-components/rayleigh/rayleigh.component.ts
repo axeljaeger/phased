@@ -8,12 +8,13 @@ import { Results } from 'src/app/store/viewportConfig.state';
 import { ResultSet } from 'src/app/store/rayleigh.state';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { StoreService } from 'src/app/store/store.service';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
     selector: 'app-rayleigh',
     templateUrl: './rayleigh.component.html',
     styleUrls: ['./rayleigh.component.scss'],
-    imports: [ ReactiveFormsModule, MatButtonToggle, MatButtonToggleGroup ]
+    imports: [ ReactiveFormsModule, MatButtonToggle, MatButtonToggleGroup, MatCheckboxModule ]
 })
 export class RayleighComponent {
   private store = inject(StoreService);

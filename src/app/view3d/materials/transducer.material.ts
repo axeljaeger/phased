@@ -5,8 +5,6 @@ import '@babylonjs/core/Shaders/ShadersInclude/instancesDeclaration'
 import '@babylonjs/core/Shaders/ShadersInclude/instancesVertex'
 import { ShaderLanguage } from '@babylonjs/core/Materials/shaderLanguage';
 
-const glsl = (x: TemplateStringsArray) => x;
-
 const transducerVertexShaderCode = /* wgsl */`
   #include<sceneUboDeclaration>
   #include<meshUboDeclaration>

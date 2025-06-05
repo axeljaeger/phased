@@ -10,7 +10,7 @@ import { StorageBuffer } from '@babylonjs/core/Buffers/storageBuffer';
 import { Scene } from '@babylonjs/core/scene';
 import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine';
 
-const exportComputeShader = /* glsl */`
+const exportComputeShader = /* wgsl */`
 
 struct Uniforms {
   k : f32,
