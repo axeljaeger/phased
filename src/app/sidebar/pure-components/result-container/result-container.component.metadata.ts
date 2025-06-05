@@ -8,7 +8,6 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ResultContainerComponent } from './result-container.component';
 
 import { MatInputModule } from '@angular/material/input';
-import { provideMockStore } from '@ngrx/store/testing';
 
 export const initialState = {
     arrayConfig: {
@@ -39,6 +38,5 @@ export const moduleMetaData = {
     ],
     providers: [
       FormBuilder,
-      provideMockStore({ initialState }),  
   ]
 };

@@ -103,13 +103,15 @@
 					"builder": "@storybook/angular:start-storybook",
 					"options": {
 						"browserTarget": "phased:build",
-						"port": 4400
+						"port": 4400,
+						"compodoc": false
 					}
 				},
 				"build-storybook": {
 					"builder": "@storybook/angular:build-storybook",
 					"options": {
-						"browserTarget": "phased:build"
+						"browserTarget": "phased:build",
+						"compodoc": false
 					}
 				},
 				"e2e": {
