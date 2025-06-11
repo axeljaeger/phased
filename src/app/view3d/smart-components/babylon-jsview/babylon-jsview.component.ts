@@ -25,6 +25,9 @@ import { excitationBufferInclude } from '../../../utils/excitationbuffer';
 import { NullEngine } from '@babylonjs/core/Engines/nullEngine';
 import { BabylonConsumer, implementsOnSceneCreated } from '../../interfaces/lifecycle';
 import { WebGPUEngine } from '@babylonjs/core/Engines/webgpuEngine';
+
+import "@babylonjs/core/Engines/WebGPU/Extensions/engine.computeShader";
+
 import { ShaderStore } from '@babylonjs/core/Engines/shaderStore';
 import { diff } from 'src/app/utils/utils';
 import { Color4 } from '@babylonjs/core/Maths/math.color';
