@@ -74,7 +74,7 @@
     "chromatic": "^12.2.0",
     "eslint": "^9.24.0",
     "eslint-plugin-storybook": "^9.0.9",
-    "jest": "^29.7.0",
+    "jest": "^30.0.0",
     "jest-canvas-mock": "^2.5.2",
     "jest-preset-angular": "^14.5.5",
     "ng-mocks": "^14.13.4",
