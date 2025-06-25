@@ -61,7 +61,7 @@
     "@angular/compiler-cli": "19.2.14",
     "@babel/core": "^7.27.3",
     "@chromatic-com/storybook": "^4.0.1",
-    "@playwright/test": "^1.52.0",
+    "@playwright/test": "^1.53.1",
     "@storybook/addon-docs": "^9.0.13",
     "@storybook/addon-links": "^9.0.13",
     "@storybook/angular": "^9.0.13",
