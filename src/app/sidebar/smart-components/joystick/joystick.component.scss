@@ -5,52 +5,37 @@
     --joystick-knob: var(--mat-stepper-header-edit-state-icon-background-color);
     --joystick-knob-border: #333;
   
-    .joystick-svg {
-      user-select: none;
-      touch-action: none;
-    }
+  svg {
+    user-select: none;
+    touch-action: none;
+    cursor: crosshair;
   
-    .joystick-svg.dragging {
-      cursor: grabbing;
-    }
-  
-    .joystick-svg.disabled {
+    &.disabled {
       opacity: 0.4;
       pointer-events: none;
     }
-  
-    .background-rect {
-      fill: var(--joystick-bg);
-      cursor: crosshair;
+  }
+
+  path {
+    stroke: var(--joystick-axis);
+    stroke-width: 1;
+
+    &.dominant {
+      stroke: var(--joystick-axis-active);
+      stroke-width: 2;
     }
-  
-    .background-circle {
-      fill: var(--joystick-bg);
-      stroke: var(--joystick-axis);
-      stroke-width: 1;
-      cursor: crosshair;
+  }
+
+  circle {
+    pointer-events: all;
+    cursor: grab;
+    fill: var(--joystick-knob);
+    stroke: var(--joystick-knob-border);
+    stroke-width: 1;
+
+    &.dragging {
+      cursor: grabbing;
     }
-  
-    .axis {
-      stroke: var(--joystick-axis);
-      stroke-width: 1;
-  
-      &.dominant {
-        stroke: var(--joystick-axis-active);
-        stroke-width: 2;
-      }
-    }
-  
-    .joystick-knob {
-      pointer-events: all;
-      cursor: grab;
-      fill: var(--joystick-knob);
-      stroke: var(--joystick-knob-border);
-      stroke-width: 1;
-  
-      &.dragging {
-        cursor: grabbing;
-      }
-    }
-  } 
+  }
+}
   

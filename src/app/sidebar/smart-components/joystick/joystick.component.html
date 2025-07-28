@@ -1,4 +1,4 @@
-<svg
+<svg #svgContainer
   [attr.width]="svgSize"
   [attr.height]="svgSize"
   [attr.viewBox]="viewBox"
@@ -7,43 +7,16 @@
   (pointerup)="onPointerUp($event)"
   (pointercancel)="onPointerUp($event)"
   (pointerleave)="onPointerUp($event)"
-  (document:keydown)="onKeyDown($event)"
-  (document:keyup)="onKeyUp($event)"
-  class="joystick-svg"
   [class.disabled]="disabled()"
-  [class.dragging]="dragging"
 >
-    <rect
-      [attr.x]="getCenter() - radius"
-      [attr.y]="getCenter() - radius"
-      [attr.width]="radius * 2"
-      [attr.height]="radius * 2"
-      class="background-rect"
-    />
+  <path [attr.d]="horizontalLine" [class.dominant]="dominantAxis() === 'x'" />
+  <path [attr.d]="verticalLine" [class.dominant]="dominantAxis() === 'y'" />
 
-  <line
-    [attr.x1]="getCenter() - radius"
-    [attr.y1]="getCenter()"
-    [attr.x2]="getCenter() + radius"
-    [attr.y2]="getCenter()"
-    class="axis horizontal"
-    [class.dominant]="dominantAxis === 'x'"
-  />
-
-  <line
-    [attr.x1]="getCenter()"
-    [attr.y1]="getCenter() - radius"
-    [attr.x2]="getCenter()"
-    [attr.y2]="getCenter() + radius"
-    class="axis vertical"
-    [class.dominant]="dominantAxis === 'y'"
-  />
+  @let screenPosition = this.screenPosition();
 
   <circle
-    class="joystick-knob"
     [class.dragging]="dragging"
-    [attr.cx]="getKnobPosition().cx"
-    [attr.cy]="getKnobPosition().cy"
-    [attr.r]="knobRadius"
-  />
+    [attr.cx]="screenPosition.x"
+    [attr.cy]="screenPosition.y"
+    [attr.r]="knobRadius" />
 </svg>
