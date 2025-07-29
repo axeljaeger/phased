@@ -1,0 +1,22 @@
+<svg #svgContainer
+  [attr.width]="svgSize"
+  [attr.height]="svgSize"
+  [attr.viewBox]="viewBox"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="onPointerUp($event)"
+  (pointercancel)="onPointerUp($event)"
+  (pointerleave)="onPointerUp($event)"
+  [class.disabled]="disabled()"
+>
+  <path [attr.d]="horizontalLine" [class.dominant]="dominantAxis() === 'x'" />
+  <path [attr.d]="verticalLine" [class.dominant]="dominantAxis() === 'y'" />
+
+  @let screenPosition = this.screenPosition();
+
+  <circle
+    [class.dragging]="dragging"
+    [attr.cx]="screenPosition.x"
+    [attr.cy]="screenPosition.y"
+    [attr.r]="knobRadius" />
+</svg>

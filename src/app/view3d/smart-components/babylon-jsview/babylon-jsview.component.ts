@@ -106,6 +106,7 @@ updateRenderers = (() => {
     this.engine.resize(true);
   }
 
+  // FIXME: Should this be an effect?
   async ngOnInit(): Promise<void> {
     await this.initEngine(this.canvasRef());
     await this.scene()?.whenReadyAsync();

@@ -1,0 +1,41 @@
+:host {
+    --joystick-bg: transparent;
+    --joystick-axis: var(--mat-expansion-container-text-color, var(--mat-sys-on-surface));
+    --joystick-axis-active: var(--mat-stepper-header-edit-state-icon-background-color);
+    --joystick-knob: var(--mat-stepper-header-edit-state-icon-background-color);
+    --joystick-knob-border: #333;
+  
+  svg {
+    user-select: none;
+    touch-action: none;
+    cursor: crosshair;
+  
+    &.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+  }
+
+  path {
+    stroke: var(--joystick-axis);
+    stroke-width: 1;
+
+    &.dominant {
+      stroke: var(--joystick-axis-active);
+      stroke-width: 2;
+    }
+  }
+
+  circle {
+    pointer-events: all;
+    cursor: grab;
+    fill: var(--joystick-knob);
+    stroke: var(--joystick-knob-border);
+    stroke-width: 1;
+
+    &.dragging {
+      cursor: grabbing;
+    }
+  }
+}
+  

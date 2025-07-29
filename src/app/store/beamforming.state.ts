@@ -1,10 +1,13 @@
 import { signalStoreFeature, withState, withMethods, patchState } from '@ngrx/signals';
 
-export interface BeamformingState {
+export interface UVCoordinates {
+  u: number;
+  v: number
+}
+
+export interface BeamformingState extends UVCoordinates  {
   enabled: boolean;
   interactive: boolean;
-  u: number;
-  v: number;
 }
 
 export const withBeamforming = () => signalStoreFeature(
