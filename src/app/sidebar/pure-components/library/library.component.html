@@ -1,6 +1,6 @@
 
 <mat-selection-list role="list">
-    @for (preset of presets; track preset.name) {
+    @for (preset of presets(); track preset.name) {
         <mat-list-item role="listitem" [routerLink]="['/library', $index]">
             <mat-icon matListItemIcon>{{ 
                 preset.citation?.kind === 'Academic' ? 'school' : 
