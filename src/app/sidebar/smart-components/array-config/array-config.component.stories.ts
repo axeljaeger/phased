@@ -3,18 +3,12 @@ import { ArrayConfigComponent } from "./array-config.component";
 import * as componentMetadata from "./array-config.component.metadata";
 
 import { StoryFn, Meta, moduleMetadata, applicationConfig } from "@storybook/angular";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 export default {
   title: "Array config",
   component: ArrayConfigComponent,
   argTypes: {},
-  decorators: [moduleMetadata(componentMetadata.moduleMetaData), 
-    applicationConfig({
-    
-      providers: [importProvidersFrom(NoopAnimationsModule)]
-    })
-  ],
+  decorators: [ moduleMetadata(componentMetadata.moduleMetaData) ],
   parameters: {
     viewport: {
       defaultViewport: "sidebarPanel",
@@ -22,6 +16,7 @@ export default {
     backgrounds: {
       default: 'dark',
     },
+    layout: 'centered',
   },
 } as Meta<ArrayConfigComponent>;
 

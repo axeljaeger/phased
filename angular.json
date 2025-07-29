@@ -107,7 +107,8 @@
 						"browserTarget": "phased:build",
 						"port": 4400,
 						"compodoc": false,
-						"styles": [ "src/styles.scss" ]
+						"styles": [ "src/styles.scss" ],
+						"experimentalZoneless": true
 					}
 				},
 				"build-storybook": {
@@ -115,7 +116,8 @@
 					"options": {
 						"browserTarget": "phased:build",
 						"compodoc": false,
-						"styles": [ "src/styles.scss" ]
+						"styles": [ "src/styles.scss" ],
+						"experimentalZoneless": true
 					}
 				},
 				"test": {

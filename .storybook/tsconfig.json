@@ -12,8 +12,8 @@
     "../projects/**/*.spec.ts"
   ],
   "include": [
-    "../src/**/*",
-    "../projects/**/*"
+    "../src/**/*.stories.ts",
+    "./preview.ts"
   ],
   "files": [
     "./typings.d.ts"
