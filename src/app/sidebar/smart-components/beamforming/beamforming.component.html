@@ -1,25 +1,15 @@
 <ng-container [formGroup]="fg">
   <mat-checkbox formControlName="beamformingEnabled" class="span-all">Enabled</mat-checkbox>
-<span class="span-all">Horizontal</span>
-  <mat-form-field>
-    <mat-label>u</mat-label>
-    <input matInput type="number" formControlName="beamformingU" min="-5" max="5" step="0.001">
-  </mat-form-field>
+<app-joystick (position)="setUV($event)" [disabled]="!beamformingEnabled()" [positionInput]="positionUV()" class="span-all"/>
   <mat-form-field>
     <mat-label>AZ</mat-label>
     <input matInput type="number" min="-180" max="180" step="0.1" [formControl]="anglesGroup.controls.az">
     <span matTextSuffix>°</span>
-  </mat-form-field>
-<span class="span-all">Vertical</span>
-  <mat-form-field>
-    <mat-label>v</mat-label>
-    <input matInput type="number" formControlName="beamformingV" min="-1" max="1" step="0.001">
   </mat-form-field>
   <mat-form-field>
     <mat-label>EL</mat-label>
     <input matInput type="number" min="-180" max="180" step="0.1" [formControl]="anglesGroup.controls.el">
     <span matTextSuffix>°</span>
   </mat-form-field>
-  <mat-checkbox formControlName="beamformingInteractive" class="span-all">Interactive</mat-checkbox>
-  <button mat-raised-button color="primary" (click)="resetBeamforming()" class="span-all">Reset</button>
+  <button type="button" mat-raised-button color="primary" (click)="resetBeamforming()" class="span-all">Reset</button>
 </ng-container>

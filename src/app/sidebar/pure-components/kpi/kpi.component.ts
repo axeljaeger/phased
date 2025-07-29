@@ -7,6 +7,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ResultSpace } from 'src/app/store/export.state';
 import { Angle } from '@babylonjs/core/Maths/math.path';
 import { RangeKpi, StoreService } from 'src/app/store/store.service';
+import { uv2azel } from 'src/app/utils/uv';
 
 export type HoveredKpi = '' | 'HpbwU' | 'FnbwU' | 'HpbwV' | 'FnbwV';
 
@@ -45,17 +46,17 @@ export class KPIComponent {
       const hasFnbwv = fnbwv?.firstZero !== null && fnbwv?.secondZero !== null;
 
       if (this.resultSpace() === ResultSpace.AZEL) {
-        const hpbwAZ1u = this.uv2azel(hpbwu.firstZero!, 0).az;
-        const hpbwAZ2u = this.uv2azel(hpbwu.secondZero!, 0).az;
+        const hpbwAZ1u = uv2azel({ u: hpbwu.firstZero!, v: 0}).az;
+        const hpbwAZ2u = uv2azel({ u: hpbwu.secondZero!, v: 0}).az;
 
-        const fnbwAZ1u = this.uv2azel(fnbwu.firstZero!, 0).az;
-        const fnbwAZ2u = this.uv2azel(fnbwu.secondZero!, 0).az;
+        const fnbwAZ1u = uv2azel({ u: fnbwu.firstZero!, v: 0}).az;
+        const fnbwAZ2u = uv2azel({ u: fnbwu.secondZero!, v: 0}).az;
 
-        const hpbwAZ1v = this.uv2azel(0, hpbwv.firstZero!).el;
-        const hpbwAZ2v = this.uv2azel(0, hpbwv.secondZero!).el;
+        const hpbwAZ1v = uv2azel({ u: 0, v: hpbwv.firstZero! }).el;
+        const hpbwAZ2v = uv2azel({ u: 0, v: hpbwv.secondZero! }).el;
 
-        const fnbwAZ1v = this.uv2azel(0, fnbwv.firstZero!).el;
-        const fnbwAZ2v = this.uv2azel(0, fnbwv.secondZero!).el;
+        const fnbwAZ1v = uv2azel({ u: 0, v: fnbwv.firstZero! }).el;
+        const fnbwAZ2v = uv2azel({ u: 0, v: fnbwv.secondZero! }).el;
 
         return [
           [ 
@@ -83,13 +84,6 @@ export class KPIComponent {
       ['', '', '', '']
     ];
   });
-
-
-  public uv2azel = (u:number, v:number) => {
-    const el = Math.asin(v);
-    const az = Math.atan(u / Math.sqrt(1-u**2-v**2));
-    return { az, el };
-  }
 
   constructor() {
     effect(() => this.resultSpaceControl.setValue(this.store.resultUnits(), {emitEvent: false}));

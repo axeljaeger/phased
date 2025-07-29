@@ -105,7 +105,7 @@ export class TransducerBufferComponent extends BabylonConsumer implements OnDest
 
     this.scene.set(scene);
 
-    this.updateBuffer(this.transducers() ?? []);
+    this.updateBuffer(this.transducers() ?? [], null);
   }
 
   updateRenderers = (() => {
@@ -133,8 +133,9 @@ export class TransducerBufferComponent extends BabylonConsumer implements OnDest
 
   update = effect(() => {
     const transducers = this.transducers();
+    const beamforming = this.beamforming();
     if (this.uniformExcitationBuffer && transducers) {
-      this.updateBuffer(transducers);
+      this.updateBuffer(transducers, beamforming);
     }
   });
 
@@ -144,11 +145,10 @@ export class TransducerBufferComponent extends BabylonConsumer implements OnDest
     }
   }
 
-  updateBuffer(transducers: Transducer[]): void {
+  updateBuffer(transducers: Transducer[], bf: BeamformingState | null): void {
     if (this.uniformExcitationBuffer) {
       const excitationBuffer = transducers.reduce(
         (buffer, transducer, index) => {
-          const bf = this.beamforming();
           const phase = bf?.enabled ? (this.k() ?? 700) * ((bf?.u ?? 0) * transducer.pos.x + (bf?.v ?? 0) * transducer.pos.y) : 0;
           setExcitationElement(transducer.pos, phase, buffer, index);
           return buffer;
@@ -162,7 +162,6 @@ export class TransducerBufferComponent extends BabylonConsumer implements OnDest
         excitationBuffer.length
       );
       this.uniformExcitationBuffer.update();
-      console.log("Buffer updated");
     }
   }
 }

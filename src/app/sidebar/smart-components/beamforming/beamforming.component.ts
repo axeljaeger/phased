@@ -1,5 +1,5 @@
-import { Component, effect, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, effect, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,8 +8,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Angle } from '@babylonjs/core/Maths/math.path';
-import { NormalizeRadians } from '@babylonjs/core/Maths/math.scalar.functions';
 import { StoreService } from 'src/app/store/store.service';
+import { JoystickComponent } from '../joystick/joystick.component';
+import { azElToUV, uv2azel } from 'src/app/utils/uv';
+import { UVCoordinates } from 'src/app/store/beamforming.state';
 
 const normalizeAngle = (angle: number) => {
   return angle > 180 ? angle - 360 : angle;
@@ -23,7 +25,8 @@ const normalizeAngle = (angle: number) => {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    JoystickComponent
 ],
     templateUrl: './beamforming.component.html',
     styleUrl: './beamforming.component.scss'
@@ -35,15 +38,17 @@ export class BeamformingComponent {
   fg = this.fb.group({
     beamformingEnabled: this.fb.control(false),
     beamformingInteractive: this.fb.control({value: false, disabled: true}),
-    beamformingU: this.fb.control({value: 0, disabled: true}),
-    beamformingV: this.fb.control({value: 0, disabled: true}),
   });
 
   anglesGroup = this.fb.group({
-    az: this.fb.control({ value: 5, disabled: true }),
-    el: this.fb.control({ value: 3, disabled: true }),
+    az: this.fb.control({ value: 0, disabled: true }),
+    el: this.fb.control({ value: 0, disabled: true }),
   });
 
+  fgs = toSignal(this.fg.valueChanges.pipe(takeUntilDestroyed()));
+  beamformingEnabled = computed(() => this.fgs()?.beamformingEnabled);
+  positionUV = this.store.beamforming;
+  
   resetBeamforming() {
     this.store.resetBeamforming();
   }
@@ -54,13 +59,9 @@ export class BeamformingComponent {
       this.store.setPartial({
         enabled: val.beamformingEnabled!,
         interactive: val.beamformingInteractive!,
-        ...(val.beamformingU !== undefined && val.beamformingU !== null) ? { u: val.beamformingU} : {},
-        ...(val.beamformingV !== undefined && val.beamformingV !== null) ? { v: val.beamformingV} : {},
       });
 
       [
-        this.fg.controls.beamformingU,
-        this.fg.controls.beamformingV,
         this.anglesGroup.controls.az,
         this.anglesGroup.controls.el,
         this.fg.controls.beamformingInteractive,
@@ -70,34 +71,33 @@ export class BeamformingComponent {
     this.anglesGroup.valueChanges.pipe(takeUntilDestroyed()).subscribe(val => {
       const az = Angle.FromDegrees(val.az!).radians();
       const el = Angle.FromDegrees(val.el!).radians();
-      
-      const u = Math.cos(el) * Math.sin(az);
-      const v = Math.sin(el);
-
-      this.store.setU(u);
-      this.store.setV(v);
+      this.store.setPartial(azElToUV(az, el));
     });
-
 
     effect(() => {
       const config = this.store.beamforming();
       this.fg.patchValue({
         beamformingEnabled: config?.enabled,
         beamformingInteractive: config?.interactive,
-        beamformingU: config?.u,
-        beamformingV: config?.v
       }, 
       { 
-        emitEvent: false, // Avoid infinite recursion
+        emitEvent: false,
       });
 
-      config && this.anglesGroup.patchValue({
-        az: normalizeAngle(Angle.FromRadians(NormalizeRadians(Math.atan(config.u / Math.sqrt(1 - config.u**2 - config.v**2)))).degrees()),
-        el: normalizeAngle(Angle.FromRadians(NormalizeRadians(Math.asin(config.v))).degrees()),
-      }, 
+      const azEL = uv2azel({u: config.u, v: config.v});
+      const azElDeg = {
+        az: normalizeAngle(Angle.FromRadians(azEL.az).degrees()),
+        el: normalizeAngle(Angle.FromRadians(azEL.el).degrees())
+      }
+
+      config && this.anglesGroup.patchValue(azElDeg, 
       { 
         emitEvent: false, // Avoid infinite recursion
       });      
     });
   }
+
+  setUV(uv: UVCoordinates) {
+    this.store.setPartial(uv);
+  }  
 }
