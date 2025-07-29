@@ -1,7 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { RayleighComponent } from './rayleigh.component';
+
+import { describe, beforeEach, it, expect } from 'vitest';
+import { provideZonelessChangeDetection } from '@angular/core';
+
 
 describe('RayleighComponent', () => {
   let component: RayleighComponent;
@@ -9,7 +12,10 @@ describe('RayleighComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ NoopAnimationsModule, RayleighComponent ],
+      imports: [ RayleighComponent ],
+      providers: [
+        provideZonelessChangeDetection(),
+      ]
     })
     .compileComponents();
 

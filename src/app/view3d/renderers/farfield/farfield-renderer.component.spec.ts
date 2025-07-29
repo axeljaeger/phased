@@ -1,6 +1,9 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { Observable } from 'rxjs';
+
+import { describe, beforeEach, it, expect } from 'vitest';
 
 
 describe('FarfieldRendererEffects', () => {
@@ -9,9 +12,10 @@ describe('FarfieldRendererEffects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-
+      providers: [
+        provideZonelessChangeDetection(),
+      ]
     });
-
   });
 
   it('should be created', () => {
