@@ -59,7 +59,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   ));
 
   & {
-  --mdc-list-list-item-hover-leading-icon-color: var(--mat-full-pseudo-checkbox-selected-icon-color);
+  --mat-list-list-item-hover-leading-icon-color: var(--mat-pseudo-checkbox-full-selected-icon-color);
   }
 }
 
