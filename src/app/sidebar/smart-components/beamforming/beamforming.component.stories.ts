@@ -3,7 +3,6 @@ import { BeamformingComponent } from "./beamforming.component";
 import * as componentMetadata from "./beamforming.component.metadata";
 
 import { StoryFn, Meta, moduleMetadata, applicationConfig } from "@storybook/angular";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 export default {
   title: "Beamforming",
@@ -11,8 +10,7 @@ export default {
   argTypes: {},
   decorators: [moduleMetadata(componentMetadata.moduleMetaData), 
     applicationConfig({
-    
-      providers: [importProvidersFrom(NoopAnimationsModule)]
+      providers: []
     })
   ],
   parameters: {
@@ -22,6 +20,7 @@ export default {
     backgrounds: {
       default: 'dark',
     },
+    layout: 'centered'
   },
 } as Meta<BeamformingComponent>;
 

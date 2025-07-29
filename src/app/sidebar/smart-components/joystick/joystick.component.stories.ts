@@ -4,35 +4,27 @@ import { JoystickComponent } from './joystick.component';
 const meta: Meta<JoystickComponent> = {
   title: 'Controls/Joystick',
   component: JoystickComponent,
-  tags: ['autodocs'],
   argTypes: {
     position: { action: 'position' }, // 👈 Aktiviert das Actions-Panel
+  },
+  parameters: {
+    layout: 'centered',
   },
 };
 
 export default meta;
 type Story = StoryObj<JoystickComponent>;
 
-export const AZEL: Story = {
+export const Enabled: Story = {
   args: {
-    mode: 'AZEL',
     disabled: false,
-    positionInput: { x: 0, y: 0 },
-  },
-};
-
-export const UV: Story = {
-  args: {
-    mode: 'UV',
-    disabled: false,
-    positionInput: { x: 0, y: 0 },
+    positionInput: { u: 0, v: 0 },
   },
 };
 
 export const Disabled: Story = {
   args: {
-    mode: 'UV',
     disabled: true,
-    positionInput: { x: 0, y: 0 },
+    positionInput: { u: 0, v: 0 },
   },
 };
