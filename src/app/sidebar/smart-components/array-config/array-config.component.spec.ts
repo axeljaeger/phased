@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ArrayConfigComponent } from './array-config.component';
+
+import { describe, beforeEach, it, expect } from 'vitest';
+import { provideZonelessChangeDetection } from '@angular/core';
 
 describe('ArrayConfigComponent', () => {
   let component: ArrayConfigComponent;
@@ -9,7 +11,10 @@ describe('ArrayConfigComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ ArrayConfigComponent, NoopAnimationsModule ],
+      imports: [ ArrayConfigComponent ],
+      providers: [
+        provideZonelessChangeDetection(),
+      ]
     })
     .compileComponents();
 

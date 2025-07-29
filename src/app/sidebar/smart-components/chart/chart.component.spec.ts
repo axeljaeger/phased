@@ -2,13 +2,19 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChartComponent } from './chart.component';
 
+import { describe, beforeEach, it, expect } from 'vitest';
+import { provideZonelessChangeDetection } from '@angular/core';
+
 describe('ChartComponent', () => {
   let component: ChartComponent;
   let fixture: ComponentFixture<ChartComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ChartComponent]
+      imports: [ChartComponent],
+      providers: [
+        provideZonelessChangeDetection(),
+      ]
     })
     .compileComponents();
     

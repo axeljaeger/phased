@@ -8,6 +8,8 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { SidebarContainerComponent } from './sidebar-container.component';
 
 import { MatInputModule } from '@angular/material/input';
+import { provideZonelessChangeDetection } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 export const initialState = {
     arrayConfig: {
@@ -38,5 +40,10 @@ export const moduleMetaData = {
     ],
     providers: [
       FormBuilder,
-  ]
+      provideZonelessChangeDetection(),
+      {
+        provide: ActivatedRoute,
+        useValue: {},
+      }
+    ]
 };

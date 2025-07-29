@@ -1,4 +1,4 @@
-import { enableProdMode } from '@angular/core';
+import { enableProdMode, provideZonelessChangeDetection } from '@angular/core';
 
 import { environment } from './environments/environment';
 import { AppComponent } from './app/app.component';
@@ -25,5 +25,6 @@ bootstrapApplication(AppComponent, {
   providers: [
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
     provideRouter(routes, withComponentInputBinding()),
+    provideZonelessChangeDetection(),
   ],
 }).catch((err) => console.error(err));

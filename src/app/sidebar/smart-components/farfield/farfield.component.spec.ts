@@ -1,7 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { FarfieldComponent } from './farfield.component';
+
+import { describe, beforeEach, it, expect } from 'vitest';
+import { provideZonelessChangeDetection } from '@angular/core';
+
 
 describe('FarfieldComponent', () => {
   let component: FarfieldComponent;
@@ -9,9 +12,10 @@ describe('FarfieldComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        FarfieldComponent, NoopAnimationsModule,
-      ],
+      imports: [ FarfieldComponent ],
+      providers: [
+        provideZonelessChangeDetection(),
+      ]
     })
     .compileComponents();
 

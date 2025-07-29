@@ -22,9 +22,6 @@
 					"options": {
 						"outputPath": "dist/phased",
 						"index": "src/index.html",
-						"polyfills": [
-							"src/polyfills.ts"
-						],
 						"tsConfig": "tsconfig.app.json",
 						"assets": [
 							"src/favicon.ico",
@@ -68,7 +65,13 @@
 									"maximumError": "4kb"
 								}
 							]
-						}
+						},
+						            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
 					},
 					"defaultConfiguration": ""
 				},
@@ -115,16 +118,12 @@
 						"styles": [ "src/styles.scss" ]
 					}
 				},
-				"e2e": {
-					"builder": "@angular-devkit/build-angular:protractor",
+				"test": {
+					"builder": "@angular/build:unit-test",
 					"options": {
-						"protractorConfig": "e2e/protractor.conf.js",
-						"devServerTarget": "phased:serve"
-					},
-					"configurations": {
-						"production": {
-							"devServerTarget": "phased:serve:production"
-						}
+						"tsConfig": "tsconfig.spec.json",
+						"runner": "vitest",
+						"buildTarget": "::development"
 					}
 				}
 			}
