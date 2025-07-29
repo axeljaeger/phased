@@ -50,7 +50,7 @@
     "@storybook/angular": "^9.0.15",
     "@types/node": "^24.0.1",
     "@types/react": "^19.1.9",
-    "@types/react-dom": "^19.1.6",
+    "@types/react-dom": "^19.1.7",
     "@typescript-eslint/eslint-plugin": "^8.34.0",
     "@typescript-eslint/parser": "^8.34.0",
     "chromatic": "^13.1.2",
