@@ -18,9 +18,10 @@
     <mat-card-subtitle>Export results</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <p>
-      Export chart data
-    </p>
+    <mat-checkbox
+      [(ngModel)]="formatToLocale">
+      Format to locale
+    </mat-checkbox>
   </mat-card-content>
   <mat-card-actions>
     <button mat-icon-button color="primary" (click)="download()"><mat-icon>download</mat-icon></button>
