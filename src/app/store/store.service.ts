@@ -10,6 +10,7 @@ import { withSelection } from './selection.state';
 import { withRayleigh } from './rayleigh.state';
 import { withExport } from './export.state';
 import { withBeamforming } from './beamforming.state';
+import { azElToUV } from '../utils/uv';
 
 export type Nullable<T> = { [K in keyof T]: T[K] | null };
 
@@ -235,6 +236,16 @@ export const StoreService = signalStore(
             return acc + Math.cos(argument) 
     },0));
 
+    const patternUV = computed(() =>
+        (u: number, v: number) => transducers().reduce((acc, t) => {
+            const argv = { x: t.pos.x * u, y: t.pos.y * v };
+            //float argument = k*(argv.x+argv.y) + element.delay*omega;
+            const argument = k() * (argv.x + argv.y) //+ element.phasor.x;
+            return acc + Math.cos(argument);
+        }, 0)
+    );
+
+
     const derivativeU = computed(() =>  (u : number) =>
         // Sum up over all transducers at particular position x
         transducers().reduce((acc, t) => {
@@ -270,6 +281,15 @@ export const StoreService = signalStore(
     const samplePatternU = computed(() => range(-1, 1, 2 / 180).map((u) => ({x: u, y: Math.abs(patternU()(u)) / transducers().length})));
         //const samplePatternU = createSelector(selectPatternU, selectTransducers, (pattern, transducers) => range(-1, 1, 0.001).map((u) => ({x: u, y: Math.abs(pattern(u)) / transducers.length})));
     const samplePatternV = computed(() => range(-1, 1, 0.001).map((v) => ({x: v, y: Math.abs(patternV()(v)) / transducers().length})));
+
+    const crossPattern = computed(() => range(-90, 90, 1).map((angle) => {
+      const rad = angle * Math.PI / 180;
+      const u = azElToUV(rad, 0).u;
+      const v = azElToUV(0, rad).v;
+      const az = patternUV()(u, 0);
+      const el = patternUV()(0, v);
+      return { angle, az, el };
+    }));
 
     const fnbwU = computed(() => {
         const firstZero = newtonMethod(patternU(), derivativeU(), 0 - 0.001, 1e-7, 100);
@@ -307,7 +327,7 @@ export const StoreService = signalStore(
 
     return { k, transducers, patternU, patternV, derivativeU, derivativeV, 
              samplePatternU, samplePatternV, fnbwU, fnbwV, hpbwU, hpbwV,
-             };
+             crossPattern };
   }),
   withViewportConfig(),
   withSelection(),
