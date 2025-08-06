@@ -1,8 +1,11 @@
-import { Component, computed, DestroyRef, inject } from '@angular/core';
+import { Component, computed, DestroyRef, inject, model } from '@angular/core';
+
+import { FormsModule } from '@angular/forms';
 
 import { MatCardModule } from '@angular/material/card';
-import { MatIconButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
+import { MatIconButton } from '@angular/material/button';
 
 import { StoreService } from 'src/app/store/store.service';
 
@@ -12,6 +15,8 @@ import { StoreService } from 'src/app/store/store.service';
     MatIcon,
     MatIconButton,
     MatCardModule,
+    MatCheckbox,
+    FormsModule
   ],
   templateUrl: './export.component.html',
   styleUrl: './export.component.scss'
@@ -20,15 +25,29 @@ export class ExportComponent {
   private store = inject(StoreService);
   private destroyRef = inject(DestroyRef);
   
-  private transducerPositions = computed(() => this.store.transducers().reduce((acc, t) => 
-    acc + `${t.pos.x.toLocaleString('de-DE')}\t${t.pos.y.toLocaleString('de-DE')}\n`, 
-`# Array configuration exported from: x;y\n` ));
-  
-  private chartsString = computed(() => this.store.samplePatternU().reduce((acc, line) =>
-      acc + `${line.x.toLocaleString('de-DE')}\t${line.y.toLocaleString('de-DE')}\n`,
-`# Chart exported from: x;y\n`
-));
+  formatToLocale = model(false);
 
+  private transducerPositions = computed(() => this.store.transducers().reduce((acc, t) => 
+  {
+    const localize = this.formatToLocale();
+    const values = [
+      t.pos.x,
+      t.pos.y
+    ].map(value => localize ? value.toLocaleString('de-DE') : value.toString());
+    const [x, y] = values;
+    return acc + `${x}\t${y}\n`;
+  }, `# Array configuration exported from: x;y\n` ));
+
+  private chartsString = computed(() => this.store.crossPattern().reduce((acc, line) => {
+    const localize = this.formatToLocale();
+    const values = [
+      line.angle,
+      line.az,
+      line.el
+    ].map(value => localize ? value.toLocaleString('de-DE') : value.toString());
+    const [angle, az, el] = values;
+    return acc + `${angle}\t${az}\t${el}\n`;
+  }, `# Chart exported from: angle;az;el\n`));
 
   download() : void {
     const u = this.store.u();
