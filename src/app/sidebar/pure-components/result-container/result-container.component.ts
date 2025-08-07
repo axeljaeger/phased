@@ -28,11 +28,7 @@ import { StoreService } from 'src/app/store/store.service';
 export class ResultContainerComponent {
     public version = version;
     private store = inject(StoreService);
-    // FIXME: this should be moved to the store
-    kpis = computed(() => ({
-        u: { fnbw: this.store.fnbwU(), hpbw: this.store.hpbwU() }, 
-        v: { fnbw: this.store.fnbwV(), hpbw: this.store.hpbwV() }
-    }));
+    kpis = computed(() => this.store.lowTechKPis());
 
     public farfieldVisible = computed(() => this.store.enabledResults().includes(Results.Farfield));
     public transducers = this.store.transducers;
