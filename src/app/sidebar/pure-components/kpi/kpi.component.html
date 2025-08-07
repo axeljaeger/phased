@@ -1,11 +1,3 @@
-<mat-button-toggle-group hideSingleSelectionIndicator [formControl]="resultSpaceControl">
-    <mat-button-toggle [value]="ResultSpace.UV">
-      UV
-    </mat-button-toggle>
-    <mat-button-toggle [value]="ResultSpace.AZEL">
-      AZ/EL
-    </mat-button-toggle>
-  </mat-button-toggle-group>
 <table>
     <tr>
         <th></th>
@@ -15,12 +7,14 @@
     </tr> 
     <tr>
       <th>{{ resultRows()[0][0] }}</th>
-      <td (mouseover)="hoveredKpi.emit('HpbwU')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[0][1] }}</td>
-      <td (mouseover)="hoveredKpi.emit('FnbwU')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[0][2] }}</td>
+      <td (mouseover)="hoveredKpi.emit('HpbwAz')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[0][1] | number:'1.0-2' }}°</td>
+      <td (mouseover)="hoveredKpi.emit('FnbwAz')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[0][2] | number:'1.0-2' }}°</td>
+      <td (mouseover)="hoveredKpi.emit('SlrAz')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[0][3] | number:'1.0-2' }}</td>
     </tr>
     <tr>
       <th>{{ resultRows()[1][0] }}</th>
-      <td (mouseover)="hoveredKpi.emit('HpbwV')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[1][1] }}</td>
-      <td (mouseover)="hoveredKpi.emit('FnbwV')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[1][2] }}</td>
+      <td (mouseover)="hoveredKpi.emit('HpbwEl')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[1][1] | number:'1.0-2' }}°</td>
+      <td (mouseover)="hoveredKpi.emit('FnbwEl')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[1][2] | number:'1.0-2' }}° </td>
+      <td (mouseover)="hoveredKpi.emit('SlrEl')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[1][3] | number:'1.0-2' }}</td>
     </tr>
 </table>

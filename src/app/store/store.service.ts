@@ -4,7 +4,6 @@ import { signalStore, withMethods, withState, patchState, withComputed } from '@
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { presets } from '../presets';
 
-
 import { withViewportConfig } from './viewportConfig.state';
 import { withSelection } from './selection.state';
 import { withRayleigh } from './rayleigh.state';
@@ -14,39 +13,99 @@ import { azElToUV } from '../utils/uv';
 
 export type Nullable<T> = { [K in keyof T]: T[K] | null };
 
-const newtonMethod = (
-  f: (x: number) => number, 
-  df: (x: number) => number, 
-  x0: number, 
-  tolerance: number = 1e-7, 
-  maxIterations: number = 100
+////
+        
+type PSFPoint = {
+  angle: number;
+  az: number;
+  el: number;
+};
+
+type LobeMetrics = {
+  leftHPBWCrossing: number | null;
+  rightHPBWCrossing: number | null;
+  leftZeroCrossing: number | null;
+  rightZeroCrossing: number | null;
+  sll: number | null;
+  maxl: number | null;
+};
+
+export type PSFResult = {
+  az: LobeMetrics;
+  el: LobeMetrics;
+};
+
+const findMaxIndex = (arr: number[]): number =>
+  arr.reduce((maxIdx, val, idx, array) => (val > array[maxIdx] ? idx : maxIdx), 0);
+
+const interpolate = (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  yTarget: number
+): number => x1 + ((yTarget - y1) * (x2 - x1)) / (y2 - y1);
+
+const findCrossing = (
+  x: number[],
+  y: number[],
+  threshold: number,
+  startIdx: number,
+  direction: 1 | -1
 ): number | null => {
-  let x = x0;
-
-  for (let i = 0; i < maxIterations; i++) {
-      const fx = f(x);
-      const dfx = df(x);
-
-      // console.log("newton iteration i: ", i, " x: ", x, " fx: ", fx, " dfx: ", dfx);
-
-      if (Math.abs(dfx) < 1e-10) {
-          console.error("Ableitung zu nahe an 0. Abbruch.");
-          return null; // Vermeidung der Division durch Null
-      }
-
-      const d = fx / dfx;
-      const stepSize = Math.min(0.1,Math.abs(d))*Math.sign(d);
-      
-      
-      const xNew = x - stepSize;
-
-      if (Math.abs(xNew - x) < tolerance) return xNew; // Konvergenz erreicht
-
-      x = xNew;
+  let i = startIdx;
+  while (i >= 0 && i < y.length - 1) {
+    const y1 = y[i];
+    const y2 = y[i + 1];
+    if ((y1 - threshold) * (y2 - threshold) < 0) {
+      return interpolate(x[i], y1, x[i + 1], y2, threshold);
+    }
+    i += direction;
   }
-
-  console.error("Maximale Anzahl an Iterationen erreicht.");
   return null;
+};
+
+const analyzeOneAxis = (angles: number[], psf: number[]): LobeMetrics => {
+  const maxIdx = findMaxIndex(psf);
+  const maxVal = psf[maxIdx];
+  const halfPower = maxVal / Math.sqrt(2);
+
+  const leftHPBW = findCrossing(angles, psf, halfPower, maxIdx, -1);
+  const rightHPBW = findCrossing(angles, psf, halfPower, maxIdx, 1);
+
+  const leftZero = findCrossing(angles, psf, 0, maxIdx, -1);
+  const rightZero = findCrossing(angles, psf, 0, maxIdx, 1);
+
+  // FIXME: Use Array.slice
+  const sidelobeVals = angles
+    .map((angle, i) => ({ angle, val: psf[i] }))
+    .filter(({ angle }) =>
+      leftZero !== null && rightZero !== null ? angle < leftZero || angle > rightZero : false
+    )
+    .map(({ val }) => Math.abs(val));
+
+  const maxSidelobe = sidelobeVals.length > 0 ? Math.max(...sidelobeVals) : null;
+  const sll = maxSidelobe !== null ? maxSidelobe : null;
+
+  return {
+    leftHPBWCrossing: leftHPBW,
+    rightHPBWCrossing: rightHPBW,
+    leftZeroCrossing: leftZero,
+    rightZeroCrossing: rightZero,
+    sll,
+    maxl: maxVal !== null ? maxVal : null
+  };
+};
+
+export const analyzePSF = (data: PSFPoint[]): PSFResult => {
+  const angles = data.map(d => d.angle);
+  const azValues = data.map(d => d.az);
+  const elValues = data.map(d => d.el);
+
+  return {
+    az: analyzeOneAxis(angles, azValues),
+    el: analyzeOneAxis(angles, elValues),
+  };
 };
 
 const range = (start :number, end : number, step = 1) => {
@@ -279,7 +338,6 @@ export const StoreService = signalStore(
     );
 
     const samplePatternU = computed(() => range(-1, 1, 2 / 180).map((u) => ({x: u, y: Math.abs(patternU()(u)) / transducers().length})));
-        //const samplePatternU = createSelector(selectPatternU, selectTransducers, (pattern, transducers) => range(-1, 1, 0.001).map((u) => ({x: u, y: Math.abs(pattern(u)) / transducers.length})));
     const samplePatternV = computed(() => range(-1, 1, 0.001).map((v) => ({x: v, y: Math.abs(patternV()(v)) / transducers().length})));
 
     const crossPattern = computed(() => range(-90, 90, 1).map((angle) => {
@@ -291,43 +349,50 @@ export const StoreService = signalStore(
       return { angle, az, el };
     }));
 
-    const fnbwU = computed(() => {
-        const firstZero = newtonMethod(patternU(), derivativeU(), 0 - 0.001, 1e-7, 100);
-        const secondZero = newtonMethod(patternU(), derivativeU(), 0 + 0.001, 1e-7, 100);
-        console.log("FNBW: firstZero: ", firstZero, " secondZero: ", secondZero);
-        return { firstZero, secondZero };
+
+    const lowTechKPis = computed(() => {
+      const pattern = crossPattern();
+      return analyzePSF(pattern);
     });
 
-    const fnbwV = computed(() => {
-        const firstZero = newtonMethod(patternV(), derivativeV(), 0 - 0.001, 1e-7, 100);
-        const secondZero = newtonMethod(patternV(), derivativeV(), 0 + 0.001, 1e-7, 100);
-        console.log("FNBW: firstZero: ", firstZero, " secondZero: ", secondZero);
-        return { firstZero, secondZero };
-    });
 
-    const hpbwU = computed(() => {
-        const max = patternU()(0);
-        const hbpwfactor = 1.0 / Math.sqrt(2);
-        const ff = (x : number) => patternU()(x) - ((hbpwfactor) * max);
-        const firstZero = newtonMethod(ff, derivativeU(), 0 - 0.001, 1e-7, 100);
-        const secondZero = newtonMethod(ff, derivativeU(), 0 + 0.001, 1e-7, 100);
-        console.log("HPBW: firstZero: ", firstZero, " secondZero: ", secondZero);
-        return { firstZero, secondZero };
-    });
+    // const fnbwU = computed(() => {
+    //     const firstZero = newtonMethod(patternU(), derivativeU(), 0 - 0.001, 1e-7, 100);
+    //     const secondZero = newtonMethod(patternU(), derivativeU(), 0 + 0.001, 1e-7, 100);
+    //     console.log("FNBW: firstZero: ", firstZero, " secondZero: ", secondZero);
+    //     return { firstZero, secondZero };
+    // });
 
-    const hpbwV = computed(() => {
-        const max = patternV()(0);
-        const hbpwfactor = 1.0 / Math.sqrt(2);
-        const ff = (x : number) => patternV()(x) - ((hbpwfactor) * max);
-        const firstZero = newtonMethod(ff, derivativeV(), 0 - 0.001, 1e-7, 100);
-        const secondZero = newtonMethod(ff, derivativeV(), 0 + 0.001, 1e-7, 100);
-        console.log("HPBW: firstZero: ", firstZero, " secondZero: ", secondZero);
-        return { firstZero, secondZero };
-    });
+    // const fnbwV = computed(() => {
+    //     const firstZero = newtonMethod(patternV(), derivativeV(), 0 - 0.001, 1e-7, 100);
+    //     const secondZero = newtonMethod(patternV(), derivativeV(), 0 + 0.001, 1e-7, 100);
+    //     console.log("FNBW: firstZero: ", firstZero, " secondZero: ", secondZero);
+    //     return { firstZero, secondZero };
+    // });
+
+    // const hpbwU = computed(() => {
+    //     const max = patternU()(0);
+    //     const hbpwfactor = 1.0 / Math.sqrt(2);
+    //     const ff = (x : number) => patternU()(x) - ((hbpwfactor) * max);
+    //     const firstZero = newtonMethod(ff, derivativeU(), 0 - 0.001, 1e-7, 100);
+    //     const secondZero = newtonMethod(ff, derivativeU(), 0 + 0.001, 1e-7, 100);
+    //     console.log("HPBW: firstZero: ", firstZero, " secondZero: ", secondZero);
+    //     return { firstZero, secondZero };
+    // });
+
+    // const hpbwV = computed(() => {
+    //     const max = patternV()(0);
+    //     const hbpwfactor = 1.0 / Math.sqrt(2);
+    //     const ff = (x : number) => patternV()(x) - ((hbpwfactor) * max);
+    //     const firstZero = newtonMethod(ff, derivativeV(), 0 - 0.001, 1e-7, 100);
+    //     const secondZero = newtonMethod(ff, derivativeV(), 0 + 0.001, 1e-7, 100);
+    //     console.log("HPBW: firstZero: ", firstZero, " secondZero: ", secondZero);
+    //     return { firstZero, secondZero };
+    // });
 
     return { k, transducers, patternU, patternV, derivativeU, derivativeV, 
-             samplePatternU, samplePatternV, fnbwU, fnbwV, hpbwU, hpbwV,
-             crossPattern };
+             samplePatternU, samplePatternV,
+             crossPattern, lowTechKPis };
   }),
   withViewportConfig(),
   withSelection(),

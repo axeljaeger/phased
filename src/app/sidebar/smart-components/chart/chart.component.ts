@@ -1,7 +1,5 @@
 import { Component, DestroyRef, ElementRef, OnInit, effect, inject, viewChild } from '@angular/core';
 
-import { ResultSpace } from 'src/app/store/export.state';
-
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 
@@ -16,10 +14,13 @@ import {
   TransformComponent,
   LegendComponent,
   MarkAreaComponent,
-  MarkLineComponent
+  MarkLineComponent,
 } from 'echarts/components';
 import { ECBasicOption } from 'echarts/types/dist/shared';
 import { StoreService } from 'src/app/store/store.service';
+
+const degreeFormatter = (value : number) => `${value.toFixed(0)}°`;
+const dBFormatter = (value: number) => 20 * Math.log10(Math.abs(value));
 
 const seriesTemplate = {
 name: 'u',
@@ -47,9 +48,6 @@ markArea: {
   }
 }
 
-const condUToAz = (convert: boolean, u : number) => convert ? 180*Math.atan(u / (Math.sqrt(1 - u**2))) / Math.PI : u;
-const condVToEl = (convert: boolean, v : number) => convert ? 180*Math.atan(v / (Math.sqrt(1 - v**2))) / Math.PI : v;
-
 @Component({
     selector: 'app-chart',
     templateUrl: './chart.component.html',
@@ -62,26 +60,37 @@ export class ChartComponent implements OnInit {
   echartDiv = viewChild.required<ElementRef<HTMLElement>>('echartDiv');
 
   updateChartEffect =     effect(() => {
-    const resultUnit = this.store.resultUnits();
     const hoveredKpi = this.store.hoveredKpi();
+    const plotData = this.store.crossPattern();
+
+    const kpis = this.store.lowTechKPis();
+
+    console.log('KPI', kpis);
+
+    const maxAzEl = plotData.reduce((max, sample) => {
+      return {
+        az: Math.max(max.az, Math.abs(sample.az)),
+        el: Math.max(max.el, Math.abs(sample.el))
+      };
+    }, { az: 0, el: 0 });
 
     const config = ({
       yAxis: [{
-        type: 'log',
-        name: `Normalized Amplitude ${resultUnit === 'uv' ? 'u' : 'AZ'} / dB`,
-        min: 0.01, max: 1.1,
+        type: 'value',
+        name: `Normalized Amplitude AZ / dB`,
+        min: -30, max: 0,
         minorSplitLine: {
-          show: true,
+          show: false,
           lineStyle: {
-            color: 'lightgray',  // Farbe der kleinen Zwischen-Gitterlinien
+            color: 'lightgray',
             type: 'dotted'
           }
         },
         axisLabel: {
           color: '#e6e1e6',
-          formatter: (value : number) => value !== 0 ? `${10 * Math.log10(value / 1)}` : '',
-          inside: true,
-          align: 'left',
+          formatter: (value : number) => value,
+          outside: false,
+          align: 'right',
           verticalAlign: 'middle',
           padding: [0, 10, 0, 0]
         },
@@ -97,31 +106,31 @@ export class ChartComponent implements OnInit {
       
       // V-Space
       {
-        type: 'log',
+        type: 'value',
         gridIndex: 1,
-        name: `Normalized Amplitude ${resultUnit === 'uv' ? 'v' : 'EL'} / dB`,
+        name: `Normalized Amplitude EL / dB`,
         nameLocation: "end",
         nameGap: 10,
-        min: 0.01, max: 1.1,
+        min: -30, max: 0,
         minorSplitLine: {
-          show: true,
+          show: false,
           lineStyle: {
-            color: 'lightgray',  // Farbe der kleinen Zwischen-Gitterlinien
+            color: 'lightgray',
             type: 'dotted'
           }
         },
         axisLabel: {
           color: '#e6e1e6',
-          formatter: (value : number) => value !== 0 ? `${10 * Math.log10(value / 1)}` : '',
+          formatter: (value : number) => value,
           inside: true,
-          align: 'left',
+          align: 'right',
           verticalAlign: 'middle',
-          padding: [0, 10, 0, 0] // Optional für Feinanpassung
+          padding: [0, 10, 0, 0]
         },
         splitLine: {
           show: true,
           lineStyle: {
-              color: '#444444', // Grün für Y-Achse
+              color: '#444444',
               width: 1,
               type: 'solid'
           }
@@ -129,23 +138,22 @@ export class ChartComponent implements OnInit {
       },
       ],
       xAxis: [{
-        name: 'x',
         type: 'value',
         axisLabel: {
             inside: false,
             align: 'center',
             verticalAlign: 'middle',
-            padding: [10, 10, 10, 10], // Optional für Feinanpassung
+            padding: [10, 10, 10, 10],
             color: '#e6e1e6',
-            formatter: (value : number) => resultUnit === 'uv' ?  `${value.toFixed(1)}` : `${value.toFixed(0)}°`,
+            formatter: degreeFormatter,
         },
         splitNumber: 4,
-        min: resultUnit === 'uv' ? -1 : -90,
-        max: resultUnit === 'uv' ? 1 : 90,
+        min: -90,
+        max: 90,
         splitLine: {
           show: true,
           lineStyle: {
-              color: '#444444', // Grün für Y-Achse
+              color: '#444444',
               width: 1,
               type: 'solid'
           }
@@ -154,7 +162,6 @@ export class ChartComponent implements OnInit {
       // V-Space
       {
         gridIndex: 1,
-        name: 'x2',
         type: 'value',
         axisLabel: {
             inside: false,
@@ -162,10 +169,11 @@ export class ChartComponent implements OnInit {
             verticalAlign: 'middle',
             padding: [0, 0, 0, 0], // Optional für Feinanpassung
             color: '#e6e1e6',
-            formatter: (value : number) => resultUnit === 'uv' ?  `${value.toFixed(1)}` : `${value.toFixed(0)}°`,
+            formatter: degreeFormatter,
         },
-        min: resultUnit === 'uv' ? -1 : -90,
-        max: resultUnit === 'uv' ? 1 : 90,
+        splitNumber: 4,
+        min: -90,
+        max: 90,
         splitLine: {
           show: true,
           lineStyle: {
@@ -184,7 +192,7 @@ export class ChartComponent implements OnInit {
           lineStyle: {
             color: 'rgba(192, 0, 0, 0.8)',
           },
-          data: this.store.samplePatternU().map(u => [condUToAz(resultUnit === ResultSpace.AZEL, u.x), u.y]),
+          data: plotData.map(sample => [sample.angle, dBFormatter(sample.az / maxAzEl.az)]),
           markLine: {
             symbol: ['none', 'none'],
             label: { show: false },
@@ -193,17 +201,23 @@ export class ChartComponent implements OnInit {
               width: 2,
               type: 'dashed'
             },
-            data: hoveredKpi === 'HpbwU' ? [
+            data: hoveredKpi === 'HpbwAz' ? [
               { 
                 grid: 1,
-                xAxis: condUToAz(resultUnit === ResultSpace.AZEL, this.store.hpbwU().firstZero!),
-              }, { xAxis: condUToAz(resultUnit === ResultSpace.AZEL, this.store.hpbwU().secondZero!)}
-            ] : hoveredKpi === 'FnbwU' ? [                  
+                xAxis: kpis.az.leftHPBWCrossing,
+              }, { xAxis: kpis.az.rightHPBWCrossing }
+            ] : hoveredKpi === 'FnbwAz' ? [                  
               { 
                 grid: 1,
-                xAxis: condUToAz(resultUnit === ResultSpace.AZEL, this.store.fnbwU().firstZero!),
-              }, { xAxis: condUToAz(resultUnit === ResultSpace.AZEL, this.store.fnbwU().secondZero!) }
-            ] : [], 
+                xAxis: kpis.az.leftZeroCrossing,
+              }, { xAxis: kpis.az.rightZeroCrossing }
+            ] : hoveredKpi === 'SlrAz' ? [
+              {
+                grid: 1,
+                yAxis: dBFormatter(kpis.az.sll! / kpis.az.maxl!),
+              }
+            ] :
+            [], 
           },
           markArea: {
             silent: true,
@@ -214,15 +228,15 @@ export class ChartComponent implements OnInit {
               show: false
             },
             data: [
-              hoveredKpi === 'HpbwU' ? [
+              hoveredKpi === 'HpbwAz' ? [
                 { 
-                  xAxis: condUToAz(resultUnit === ResultSpace.AZEL, this.store.hpbwU().firstZero!),
-                }, { xAxis: condUToAz(resultUnit === ResultSpace.AZEL, this.store.hpbwU().secondZero!)}
-              ] : hoveredKpi === 'FnbwU' ? [                  
+                  xAxis: kpis.az.leftHPBWCrossing,
+                }, { xAxis: kpis.az.rightHPBWCrossing }
+              ] : hoveredKpi === 'FnbwAz' ? [                  
                 { 
                   grid: 1,
-                  xAxis: condUToAz(resultUnit === ResultSpace.AZEL, this.store.fnbwU().firstZero!),
-                }, { xAxis: condUToAz(resultUnit === ResultSpace.AZEL, this.store.fnbwU().secondZero!) }
+                  xAxis: kpis.az.leftZeroCrossing,
+                }, { xAxis: kpis.az.rightZeroCrossing }
               ] : [
                   {
                     grid: 1,
@@ -237,7 +251,7 @@ export class ChartComponent implements OnInit {
           yAxisIndex: 1,
           type: 'line',
           showSymbol: false,
-          data: this.store.samplePatternV().map(v => [resultUnit === ResultSpace.AZEL ? 180* Math.asin(v.x) / Math.PI : v.x, v.y]),
+          data: plotData.map(sample => [sample.angle, dBFormatter(sample.el / maxAzEl.el)]),
           markLine: {
             symbol: ['none', 'none'],
             label: { show: false },
@@ -246,17 +260,22 @@ export class ChartComponent implements OnInit {
               width: 2,
               type: 'dashed'
             },
-            data:  hoveredKpi === 'HpbwV' ? [
+            data:  hoveredKpi === 'HpbwEl' ? [
               { 
                 grid: 1,
-                xAxis: condVToEl(resultUnit === ResultSpace.AZEL, this.store.hpbwV().firstZero!),
-              }, { xAxis: condVToEl(resultUnit === ResultSpace.AZEL, this.store.hpbwV().secondZero!)}
-            ] : hoveredKpi === 'FnbwV' ? [                  
+                xAxis: kpis.el.leftHPBWCrossing,
+              }, { xAxis: kpis.el.rightHPBWCrossing }
+            ] : hoveredKpi === 'FnbwEl' ? [                  
               { 
                 grid: 1,
-                xAxis: condVToEl(resultUnit === ResultSpace.AZEL, this.store.fnbwV().firstZero!),
-              }, { xAxis: condVToEl(resultUnit === ResultSpace.AZEL, this.store.fnbwV().secondZero!) }
-            ] : [], 
+                xAxis: kpis.el.leftZeroCrossing,
+              }, { xAxis: kpis.el.rightZeroCrossing }
+            ] : hoveredKpi === 'SlrEl' ? [
+              {
+                grid: 1,
+                yAxis: dBFormatter(kpis.el.sll! / kpis.el.maxl!),
+              }
+            ] :[], 
           },
           markArea: {
             silent: true,
@@ -267,15 +286,15 @@ export class ChartComponent implements OnInit {
               show: false
             },
             data: [
-              hoveredKpi === 'HpbwV' ? [
+              hoveredKpi === 'HpbwEl' ? [
                 { 
-                  xAxis: condVToEl(resultUnit === ResultSpace.AZEL, this.store.hpbwV().firstZero!),
-                }, { xAxis: condVToEl(resultUnit === ResultSpace.AZEL, this.store.hpbwV().secondZero!)}
-              ] : hoveredKpi === 'FnbwV' ? [                  
+                  xAxis: kpis.el.leftHPBWCrossing,
+                }, { xAxis: kpis.el.rightHPBWCrossing }
+              ] : hoveredKpi === 'FnbwEl' ? [                  
                 { 
                   grid: 1,
-                  xAxis: condVToEl(resultUnit === ResultSpace.AZEL, this.store.fnbwV().firstZero!),
-                }, { xAxis: condVToEl(resultUnit === ResultSpace.AZEL, this.store.fnbwV().secondZero!) }
+                  xAxis: kpis.el.leftZeroCrossing,
+                }, { xAxis: kpis.el.rightZeroCrossing }
               ] : [
                   {
                     grid: 1,
@@ -305,7 +324,7 @@ export class ChartComponent implements OnInit {
       LegendComponent,
       LineChart,
       MarkAreaComponent,
-      MarkLineComponent
+      MarkLineComponent,
     ]);
 
 
@@ -336,20 +355,19 @@ export class ChartComponent implements OnInit {
     ],
 
     xAxis: [{
-      name: 'x',
       type: 'value',
       axisLabel: {
           inside: false,
           align: 'center',
           verticalAlign: 'middle',
-          padding: [10, 10, 10, 10], // Optional für Feinanpassung
+          padding: [10, 10, 10, 10],
           color: '#e6e1e6',
           formatter: (value : number) =>`${value.toFixed(0)}°`,
       },
       splitLine: {
         show: true,
         lineStyle: {
-            color: '#444444', // Grün für Y-Achse
+            color: '#444444',
             width: 1,
             type: 'solid'
         }
@@ -357,19 +375,18 @@ export class ChartComponent implements OnInit {
     },
     {
       gridIndex: 1,
-      name: 'x2',
       type: 'value',
       axisLabel: {
           inside: false,
           align: 'center',
           verticalAlign: 'middle',
-          padding: [0, 0, 0, 0], // Optional für Feinanpassung
+          padding: [0, 0, 0, 0],
           color: '#e6e1e6'
       },
       splitLine: {
         show: true,
         lineStyle: {
-            color: '#444444', // Grün für Y-Achse
+            color: '#444444',
             width: 1,
             type: 'solid'
         }
@@ -379,13 +396,13 @@ export class ChartComponent implements OnInit {
 
     
       yAxis: [{
-        type: 'log',
+        type: 'value',
         name: 'Normalized Amplitude x / dB',
         min: 0.01, max: 1.1,
         minorSplitLine: {
           show: true,
           lineStyle: {
-            color: 'lightgray',  // Farbe der kleinen Zwischen-Gitterlinien
+            color: 'lightgray',
             type: 'dotted'
           }
         },
@@ -406,7 +423,7 @@ export class ChartComponent implements OnInit {
           }
         }
       },{
-        type: 'log',
+        type: 'value',
         gridIndex: 1,
         name: 'Normalized Amplitude y / dB',
         nameLocation: "end",
@@ -425,12 +442,12 @@ export class ChartComponent implements OnInit {
           inside: true,
           align: 'left',
           verticalAlign: 'middle',
-          padding: [0, 10, 0, 0] // Optional für Feinanpassung
+          padding: [0, 10, 0, 0]
         },
         splitLine: {
           show: true,
           lineStyle: {
-              color: '#444444', // Grün für Y-Achse
+              color: '#444444',
               width: 1,
               type: 'solid'
           }
