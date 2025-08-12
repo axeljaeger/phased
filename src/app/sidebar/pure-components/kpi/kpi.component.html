@@ -1,20 +1,21 @@
 <table>
-    <tr>
-        <th></th>
-        <th>HPBW</th>
-        <th>FNBW</th>
-        <th>SLR</th>
-    </tr> 
-    <tr>
-      <th>{{ resultRows()[0][0] }}</th>
-      <td (mouseover)="hoveredKpi.emit('HpbwAz')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[0][1] | number:'1.0-2' }}°</td>
-      <td (mouseover)="hoveredKpi.emit('FnbwAz')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[0][2] | number:'1.0-2' }}°</td>
-      <td (mouseover)="hoveredKpi.emit('SlrAz')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[0][3] | number:'1.0-2' }}</td>
-    </tr>
-    <tr>
-      <th>{{ resultRows()[1][0] }}</th>
-      <td (mouseover)="hoveredKpi.emit('HpbwEl')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[1][1] | number:'1.0-2' }}°</td>
-      <td (mouseover)="hoveredKpi.emit('FnbwEl')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[1][2] | number:'1.0-2' }}° </td>
-      <td (mouseover)="hoveredKpi.emit('SlrEl')" (mouseout)="hoveredKpi.emit('')">{{ resultRows()[1][3] | number:'1.0-2' }}</td>
-    </tr>
+  <tr>
+    <th></th>
+    <th>HPBW</th>
+    <th>FNBW</th>
+    <th>SLR</th>
+  </tr>
+  @let res = kpis()!;
+  <tr>
+    <th>AZ</th>
+    <td (mouseover)="hoveredKpi.emit('HpbwAz')" (mouseout)="hoveredKpi.emit('')">{{ res.az.hpbw ? `${res.az.hpbw | number:'1.2-2'}°` : 'N/A' }}</td>
+    <td (mouseover)="hoveredKpi.emit('FnbwAz')" (mouseout)="hoveredKpi.emit('')">{{ res.az.fnbw ? `${res.az.fnbw | number:'1.2-2'}°` : 'N/A' }}</td>
+    <td (mouseover)="hoveredKpi.emit('SlrAz')" (mouseout)="hoveredKpi.emit('')">{{ res.az.fnbw ? `${res.az.slr | number:'1.2-2'}` : 'N/A' }}</td>
+  </tr>
+  <tr>
+    <th>EL</th>
+    <td (mouseover)="hoveredKpi.emit('HpbwEl')" (mouseout)="hoveredKpi.emit('')">{{ res.el.hpbw ? `${res.el.hpbw | number:'1.2-2'}°` : 'N/A' }}</td>
+    <td (mouseover)="hoveredKpi.emit('FnbwEl')" (mouseout)="hoveredKpi.emit('')">{{ res.el.fnbw ? `${res.el.fnbw | number:'1.2-2'}°` : 'N/A' }}</td>
+    <td (mouseover)="hoveredKpi.emit('SlrEl')" (mouseout)="hoveredKpi.emit('')">{{ res.el.fnbw ? `${res.el.slr | number:'1.2-2'}` : 'N/A' }}</td>
+  </tr>
 </table>

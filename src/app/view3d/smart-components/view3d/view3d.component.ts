@@ -11,7 +11,6 @@ import { TransducerBufferComponent } from '../../shared/transducer-buffer.compon
 import { ExcitationRendererComponent } from '../../renderers/excitation/excitation-renderer.component';
 import { BabylonJSViewComponent } from '../babylon-jsview/babylon-jsview.component';
 
-import { BeamformingRendererComponent } from '../../renderers/beamforming/beamforming-renderer.component';
 import { Results } from 'src/app/store/viewportConfig.state';
 import { ExportRendererComponent } from '../../renderers/export/export.component';
 import { ResultValues } from 'src/app/store/export.state';
@@ -26,7 +25,6 @@ import { ArrayConfig, StoreService } from 'src/app/store/store.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         BabylonJSViewComponent,
-        BeamformingRendererComponent,
         ExcitationRendererComponent,
         ExportRendererComponent,
         TransducerBufferComponent,
@@ -37,7 +35,6 @@ import { ArrayConfig, StoreService } from 'src/app/store/store.service';
 })
 export class View3dComponent {
   store = inject(StoreService);
-  beamformingInteractive = computed(() => this.store.beamforming().interactive);
 
   rayleighEnabled = computed(() => this.store.enabledResults().includes(Results.RayleighIntegral));
 
@@ -60,14 +57,6 @@ export class View3dComponent {
 
   public setArrayConfig(arrayConfig: ArrayConfig): void {
     this.store.setConfig(arrayConfig);
-  }
-
-  public setAz(az: number): void {
-    this.store.setU(-Math.sin(az));
-  }
-
-  public setEl(el: number): void {
-    this.store.setV(Math.sin(el));
   }
 
   onNewResults(results: ResultValues) {

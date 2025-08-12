@@ -10,6 +10,8 @@ mat-button-toggle-group {
 td {
     text-align: center;
     cursor: pointer;
+    font-variant-numeric: tabular-nums;
+    width: 7ch;
 }
 
 td:hover {

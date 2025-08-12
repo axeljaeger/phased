@@ -9,10 +9,8 @@ import {
     computed,
     effect,
   } from '@angular/core';
-import { UVCoordinates } from 'src/app/store/beamforming.state';
-import { azElToUV, uv2azel } from 'src/app/utils/uv';
+import { AzElCoordinates } from 'src/app/store/beamforming.state';
   
-
 @Component({
   selector: 'app-joystick',
   standalone: true,
@@ -24,18 +22,17 @@ export class JoystickComponent {
   disabled = input(false);
 
   screenPosition = signal({ x: 0, y: 0 });
-  positionInput = input({ u: 0, v: 0 });
+  positionInput = input({ az: 0, el: 0 });
 
   setInput = effect(() => {
-    const uv = this.positionInput();
-    const { az, el } = uv2azel(uv);
+    const azel = this.positionInput() ?? { az: 0, el: 0 };
     this.screenPosition.set({
-      x: 200 * az / Math.PI,
-      y: -200 * el / Math.PI
+      x: 200 * azel.az / Math.PI,
+      y: -200 * azel.el / Math.PI
     });
   });
 
-  position = output<UVCoordinates>();
+  position = output<AzElCoordinates>();
 
 
   radius = 100;
@@ -130,6 +127,6 @@ export class JoystickComponent {
     const az = Math.PI * this.screenPosition().x / 200;
     const el = -Math.PI * this.screenPosition().y / 200;
 
-    this.position.emit(azElToUV(az, el));
+    this.position.emit({az, el});
   }
 }
