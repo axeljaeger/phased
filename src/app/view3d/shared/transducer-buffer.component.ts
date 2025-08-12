@@ -23,6 +23,7 @@ import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { BeamformingState } from 'src/app/store/beamforming.state';
 import { Transducer } from 'src/app/store/store.service';
 import { diff } from 'src/app/utils/utils';
+import { azElToUV } from 'src/app/utils/uv';
 
 export interface Textures {
   viridis: Texture;
@@ -129,8 +130,6 @@ export class TransducerBufferComponent extends BabylonConsumer implements OnDest
     });
   })();
 
-
-
   update = effect(() => {
     const transducers = this.transducers();
     const beamforming = this.beamforming();
@@ -147,9 +146,11 @@ export class TransducerBufferComponent extends BabylonConsumer implements OnDest
 
   updateBuffer(transducers: Transducer[], bf: BeamformingState | null): void {
     if (this.uniformExcitationBuffer) {
+      const bfuv = azElToUV(bf ?? { az: 0, el: 0 });
+
       const excitationBuffer = transducers.reduce(
         (buffer, transducer, index) => {
-          const phase = bf?.enabled ? (this.k() ?? 700) * ((bf?.u ?? 0) * transducer.pos.x + (bf?.v ?? 0) * transducer.pos.y) : 0;
+          const phase = bf?.beamformingEnabled ? (this.k() ?? 700) * ((bfuv.u ?? 0) * transducer.pos.x + (bfuv.v ?? 0) * transducer.pos.y) : 0;
           setExcitationElement(transducer.pos, phase, buffer, index);
           return buffer;
         },

@@ -5,39 +5,40 @@ export interface UVCoordinates {
   v: number
 }
 
-export interface BeamformingState extends UVCoordinates  {
-  enabled: boolean;
-  interactive: boolean;
+export interface AzElCoordinates {
+  az: number;
+  el: number;
+}
+
+type NullPartial<T> = {
+  [K in keyof T]?: T[K] | null;
+};
+
+export interface BeamformingState extends AzElCoordinates {
+  beamformingEnabled: boolean;
 }
 
 export const withBeamforming = () => signalStoreFeature(
   withState<{beamforming: BeamformingState}>({ beamforming: {
-    enabled: false,
-    interactive: false,
-    u: 0,
-    v: 0,
+    beamformingEnabled: false,
+    az: 0,
+    el: 0,
   }}),
   withMethods((store) => ({
-    setU: (u: number) => {
-      patchState(store, { beamforming: {...store.beamforming(), u }});
-    },
-    setV: (v: number) => {
-      patchState(store, { beamforming: {...store.beamforming(),v }});
+    setBeamforming: (beamforming: BeamformingState) => {
+      patchState(store, { beamforming });
     },
     reset: () => {
-      patchState(store, { beamforming: {...store.beamforming(),u: 0, v: 0 }});
+      patchState(store, { beamforming: {...store.beamforming(), az: 0, el: 0 }});
     },
-    setEnabled: (enabled: boolean) => {
-      patchState(store, { beamforming: {...store.beamforming(),enabled }});
-    },
-    setInteractive: (interactive: boolean) => {
-      patchState(store, { beamforming: {...store.beamforming(),interactive }});
+    setEnabled: (beamformingEnabled: boolean) => {
+      patchState(store, { beamforming: {...store.beamforming(), beamformingEnabled }});
     },
     setPartial: (partialState: Partial<BeamformingState>) => {
       patchState(store, {beamforming: {...store.beamforming(), ...partialState }});
     },
     resetBeamforming: () => {
-      patchState(store, { beamforming: { ...store.beamforming(), u: 0, v: 0 } });
+      patchState(store, { beamforming: { ...store.beamforming(), az: 0, el: 0 } });
     }
   }))
 );

@@ -64,20 +64,13 @@ export class ChartComponent implements OnInit {
     const plotData = this.store.crossPattern();
 
     const kpis = this.store.lowTechKPis();
-
-    console.log('KPI', kpis);
-
-    const maxAzEl = plotData.reduce((max, sample) => {
-      return {
-        az: Math.max(max.az, Math.abs(sample.az)),
-        el: Math.max(max.el, Math.abs(sample.el))
-      };
-    }, { az: 0, el: 0 });
+    const bf = this.store.beamforming();
+    const bfAzEl = bf?.beamformingEnabled ? bf : { az: 0, el: 0 };
 
     const config = ({
       yAxis: [{
         type: 'value',
-        name: `Normalized Amplitude AZ / dB`,
+        name: `Norm. Amplit. AZ / dB @ EL = ${(180 * bfAzEl.el / Math.PI).toFixed(2)}°`,
         min: -30, max: 0,
         minorSplitLine: {
           show: false,
@@ -108,7 +101,7 @@ export class ChartComponent implements OnInit {
       {
         type: 'value',
         gridIndex: 1,
-        name: `Normalized Amplitude EL / dB`,
+        name: `Normalized Amplitude EL / dB @ AZ = ${(180 * bfAzEl.az / Math.PI).toFixed(2)}`,
         nameLocation: "end",
         nameGap: 10,
         min: -30, max: 0,
@@ -192,7 +185,7 @@ export class ChartComponent implements OnInit {
           lineStyle: {
             color: 'rgba(192, 0, 0, 0.8)',
           },
-          data: plotData.map(sample => [sample.angle, dBFormatter(sample.az / maxAzEl.az)]),
+          data: plotData.map(sample => [sample.angle, dBFormatter(sample.az / kpis.numElements)]),
           markLine: {
             symbol: ['none', 'none'],
             label: { show: false },
@@ -201,20 +194,20 @@ export class ChartComponent implements OnInit {
               width: 2,
               type: 'dashed'
             },
-            data: hoveredKpi === 'HpbwAz' ? [
+            data: kpis.az.hpbw !== null && hoveredKpi === 'HpbwAz' ? [
               { 
                 grid: 1,
                 xAxis: kpis.az.leftHPBWCrossing,
               }, { xAxis: kpis.az.rightHPBWCrossing }
-            ] : hoveredKpi === 'FnbwAz' ? [                  
+            ] : kpis.az.fnbw !== null && hoveredKpi === 'FnbwAz' ? [                  
               { 
                 grid: 1,
                 xAxis: kpis.az.leftZeroCrossing,
               }, { xAxis: kpis.az.rightZeroCrossing }
-            ] : hoveredKpi === 'SlrAz' ? [
+            ] : kpis.az.slr !== null && hoveredKpi === 'SlrAz' ? [
               {
                 grid: 1,
-                yAxis: dBFormatter(kpis.az.sll! / kpis.az.maxl!),
+                yAxis: dBFormatter(kpis.az.sll! / kpis.numElements!),
               }
             ] :
             [], 
@@ -228,11 +221,11 @@ export class ChartComponent implements OnInit {
               show: false
             },
             data: [
-              hoveredKpi === 'HpbwAz' ? [
+              kpis.az.hpbw !== null && hoveredKpi === 'HpbwAz' ? [
                 { 
                   xAxis: kpis.az.leftHPBWCrossing,
                 }, { xAxis: kpis.az.rightHPBWCrossing }
-              ] : hoveredKpi === 'FnbwAz' ? [                  
+              ] : kpis.az.fnbw !== null && hoveredKpi === 'FnbwAz' ? [                  
                 { 
                   grid: 1,
                   xAxis: kpis.az.leftZeroCrossing,
@@ -251,7 +244,7 @@ export class ChartComponent implements OnInit {
           yAxisIndex: 1,
           type: 'line',
           showSymbol: false,
-          data: plotData.map(sample => [sample.angle, dBFormatter(sample.el / maxAzEl.el)]),
+          data: plotData.map(sample => [sample.angle, dBFormatter(sample.el / kpis.numElements)]),
           markLine: {
             symbol: ['none', 'none'],
             label: { show: false },
@@ -260,20 +253,20 @@ export class ChartComponent implements OnInit {
               width: 2,
               type: 'dashed'
             },
-            data:  hoveredKpi === 'HpbwEl' ? [
+            data: kpis.el.hpbw !== null && hoveredKpi === 'HpbwEl' ? [
               { 
                 grid: 1,
                 xAxis: kpis.el.leftHPBWCrossing,
               }, { xAxis: kpis.el.rightHPBWCrossing }
-            ] : hoveredKpi === 'FnbwEl' ? [                  
+            ] : kpis.el.fnbw !== null && hoveredKpi === 'FnbwEl' ? [                  
               { 
                 grid: 1,
                 xAxis: kpis.el.leftZeroCrossing,
               }, { xAxis: kpis.el.rightZeroCrossing }
-            ] : hoveredKpi === 'SlrEl' ? [
+            ] : kpis.el.slr !== null && hoveredKpi === 'SlrEl' ? [
               {
                 grid: 1,
-                yAxis: dBFormatter(kpis.el.sll! / kpis.el.maxl!),
+                yAxis: dBFormatter(kpis.el.sll! / kpis.numElements!),
               }
             ] :[], 
           },
@@ -286,11 +279,11 @@ export class ChartComponent implements OnInit {
               show: false
             },
             data: [
-              hoveredKpi === 'HpbwEl' ? [
+              kpis.el.hpbw !== null && hoveredKpi === 'HpbwEl' ? [
                 { 
                   xAxis: kpis.el.leftHPBWCrossing,
                 }, { xAxis: kpis.el.rightHPBWCrossing }
-              ] : hoveredKpi === 'FnbwEl' ? [                  
+              ] : kpis.el.fnbw !== null && hoveredKpi === 'FnbwEl' ? [                  
                 { 
                   grid: 1,
                   xAxis: kpis.el.leftZeroCrossing,
@@ -462,3 +455,5 @@ export class ChartComponent implements OnInit {
     this.myChart.setOption(option);
   }
 }
+
+
