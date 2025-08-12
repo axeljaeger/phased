@@ -28,6 +28,6 @@ import { StoreService } from 'src/app/store/store.service';
 })
 export class SetupContainerComponent {
     private store = inject(StoreService);
-    public beamformingEnabled = computed(() => this.store.beamforming().enabled);
+    public beamformingEnabled = computed(() => this.store.beamforming().beamformingEnabled);
     public environment = computed(() => this.store.arrayConfig().environment);
 }

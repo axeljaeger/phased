@@ -46,7 +46,7 @@ export class BabylonJSViewComponent
   canvasRef = viewChild.required<ElementRef<HTMLCanvasElement>>('view3dcanvas');
   renderers = contentChildren(BabylonConsumer);
   
-updateRenderers = (() => {
+  updateRenderers = (() => {
   let prev: BabylonConsumer[] = [];
   return effect(() => {
     const next = this.renderers();

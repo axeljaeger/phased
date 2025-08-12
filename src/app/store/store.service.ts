@@ -26,11 +26,15 @@ type LobeMetrics = {
   rightHPBWCrossing: number | null;
   leftZeroCrossing: number | null;
   rightZeroCrossing: number | null;
+  hpbw: number | null;
+  fnbw: number | null;
   sll: number | null;
+  slr: number | null;
   maxl: number | null;
 };
 
 export type PSFResult = {
+  numElements: number;
   az: LobeMetrics;
   el: LobeMetrics;
 };
@@ -65,46 +69,54 @@ const findCrossing = (
   return null;
 };
 
-const analyzeOneAxis = (angles: number[], psf: number[]): LobeMetrics => {
+const analyzeOneAxis = (angles: number[], psf: number[], numElements: number): LobeMetrics => {
   const maxIdx = findMaxIndex(psf);
   const maxVal = psf[maxIdx];
   const halfPower = maxVal / Math.sqrt(2);
 
-  const leftHPBW = findCrossing(angles, psf, halfPower, maxIdx, -1);
-  const rightHPBW = findCrossing(angles, psf, halfPower, maxIdx, 1);
+  const leftHPBWCrossing = findCrossing(angles, psf, halfPower, maxIdx, -1);
+  const rightHPBWCrossing = findCrossing(angles, psf, halfPower, maxIdx, 1);
 
-  const leftZero = findCrossing(angles, psf, 0, maxIdx, -1);
-  const rightZero = findCrossing(angles, psf, 0, maxIdx, 1);
+  const leftZeroCrossing = findCrossing(angles, psf, 0, maxIdx, -1);
+  const rightZeroCrossing = findCrossing(angles, psf, 0, maxIdx, 1);
+
+  const hpbw: number | null = rightHPBWCrossing !== null && leftHPBWCrossing !== null ? rightHPBWCrossing - leftHPBWCrossing : null;
+  const fnbw: number | null = rightZeroCrossing !== null && leftZeroCrossing !== null ? rightZeroCrossing - leftZeroCrossing : null;
 
   // FIXME: Use Array.slice
   const sidelobeVals = angles
     .map((angle, i) => ({ angle, val: psf[i] }))
     .filter(({ angle }) =>
-      leftZero !== null && rightZero !== null ? angle < leftZero || angle > rightZero : false
+      leftZeroCrossing !== null && rightZeroCrossing !== null ? angle < leftZeroCrossing || angle > rightZeroCrossing : false
     )
     .map(({ val }) => Math.abs(val));
 
   const maxSidelobe = sidelobeVals.length > 0 ? Math.max(...sidelobeVals) : null;
   const sll = maxSidelobe !== null ? maxSidelobe : null;
+  const slr = sll != null ? 20*Math.log10(sll! / numElements!) : null;
 
   return {
-    leftHPBWCrossing: leftHPBW,
-    rightHPBWCrossing: rightHPBW,
-    leftZeroCrossing: leftZero,
-    rightZeroCrossing: rightZero,
+    leftHPBWCrossing,
+    rightHPBWCrossing,
+    leftZeroCrossing,
+    rightZeroCrossing,
+    hpbw,
+    fnbw,
     sll,
+    slr,
     maxl: maxVal !== null ? maxVal : null
   };
 };
 
-export const analyzePSF = (data: PSFPoint[]): PSFResult => {
+export const analyzePSF = (data: PSFPoint[], numElements: number): PSFResult => {
   const angles = data.map(d => d.angle);
   const azValues = data.map(d => d.az);
   const elValues = data.map(d => d.el);
 
   return {
-    az: analyzeOneAxis(angles, azValues),
-    el: analyzeOneAxis(angles, elValues),
+    numElements,
+    az: analyzeOneAxis(angles, azValues, numElements),
+    el: analyzeOneAxis(angles, elValues, numElements),
   };
 };
 
@@ -241,6 +253,7 @@ Array.from(Array(circularConfig.elementCount).keys()).map(i => {
 export const StoreService = signalStore(
     { providedIn: 'root' },
   withState<{arrayConfig: ArrayConfig}>({arrayConfig: presets[0]}),
+  withBeamforming(),
   withMethods((store) => ({
     setConfig: (newConfig: ArrayConfig) => {
       patchState(store, { arrayConfig: { ...store.arrayConfig(),  ...newConfig} });
@@ -295,13 +308,19 @@ export const StoreService = signalStore(
             return acc + Math.cos(argument) 
     },0));
 
-    const patternUV = computed(() =>
-        (u: number, v: number) => transducers().reduce((acc, t) => {
+    const patternUV = computed(() => {        
+        const kk = k();
+        const bf = store.beamforming();
+        const bfuv = azElToUV(bf);
+
+          return (u: number, v: number) => transducers().reduce((acc, t) => {
+            const phase = bf?.beamformingEnabled ? (kk ?? 700) * ((bfuv.u ?? 0) * t.pos.x + (bfuv.v ?? 0) * t.pos.y) : 0;
             const argv = { x: t.pos.x * u, y: t.pos.y * v };
             //float argument = k*(argv.x+argv.y) + element.delay*omega;
-            const argument = k() * (argv.x + argv.y) //+ element.phasor.x;
+            const argument = kk * (argv.x + argv.y) + phase;
             return acc + Math.cos(argument);
-        }, 0)
+        }, 0);
+      }
     );
 
 
@@ -340,19 +359,35 @@ export const StoreService = signalStore(
     const samplePatternU = computed(() => range(-1, 1, 2 / 180).map((u) => ({x: u, y: Math.abs(patternU()(u)) / transducers().length})));
     const samplePatternV = computed(() => range(-1, 1, 0.001).map((v) => ({x: v, y: Math.abs(patternV()(v)) / transducers().length})));
 
+  
+
     const crossPattern = computed(() => range(-90, 90, 1).map((angle) => {
+      const bf = store.beamforming();
       const rad = angle * Math.PI / 180;
-      const u = azElToUV(rad, 0).u;
-      const v = azElToUV(0, rad).v;
-      const az = patternUV()(u, 0);
-      const el = patternUV()(0, v);
+
+      const steeringAzEl = bf?.beamformingEnabled ? bf : { az: 0, el: 0 };
+      const steeringUV = azElToUV(steeringAzEl);
+      // Evaluate the pattern along two lines
+      // In here, we evalue exactly one data point
+      
+      // Evaluate in AZ direction.
+      // 
+      const u = azElToUV({ az: rad, el: steeringAzEl.el}).u;
+      // Amplitude for the az axis
+      const az = patternUV()(u, -steeringUV.v);
+
+
+      const v = azElToUV({ az: steeringAzEl.az, el: rad}).v;
+      const el = patternUV()(-steeringUV.u, v);
+
       return { angle, az, el };
     }));
 
 
     const lowTechKPis = computed(() => {
       const pattern = crossPattern();
-      return analyzePSF(pattern);
+      const result = analyzePSF(pattern, transducers().length);
+      return result;
     });
 
 
@@ -398,5 +433,4 @@ export const StoreService = signalStore(
   withSelection(),
   withRayleigh(),
   withExport(),
-  withBeamforming()
 );
