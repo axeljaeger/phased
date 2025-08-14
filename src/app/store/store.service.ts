@@ -8,8 +8,13 @@ import { withViewportConfig } from './viewportConfig.state';
 import { withSelection } from './selection.state';
 import { withRayleigh } from './rayleigh.state';
 import { withExport } from './export.state';
-import { withBeamforming } from './beamforming.state';
+import { UVCoordinates, withBeamforming } from './beamforming.state';
 import { azElToUV } from '../utils/uv';
+
+import j1 from '@stdlib/math-base-special-besselj1';
+import { TransducerMaterial } from '../view3d/materials/transducer.material';
+
+export type TransducerModel = 'Point' | 'Piston';
 
 export type Nullable<T> = { [K in keyof T]: T[K] | null };
 
@@ -190,6 +195,7 @@ export interface ArrayConfig {
   environment: Environment;
   citation: Citation | null;
   config: UraConfig | CircularConfig | SpiralConfig;
+  transducerModel: TransducerModel;
   transducerDiameter: number;
 }
 
@@ -263,6 +269,14 @@ export const StoreService = signalStore(
         arrayConfig: { ...store.arrayConfig(),  transducerDiameter: diameter ?? store.arrayConfig().transducerDiameter},
       });
     },
+    setTransducer: (transducer: {
+      transducerDiameter?: number,
+      transducerModel?: TransducerModel
+    }) => {
+      patchState(store, {
+        arrayConfig: { ...store.arrayConfig(), ...transducer }
+      });
+    },
     setEnvironment: (environment: Partial<Environment>) => {
       patchState(store, { 
         arrayConfig:{
@@ -313,9 +327,9 @@ export const StoreService = signalStore(
         const bf = store.beamforming();
         const bfuv = azElToUV(bf);
 
-          return (u: number, v: number) => transducers().reduce((acc, t) => {
+          return (uv: UVCoordinates) => transducers().reduce((acc, t) => {
             const phase = bf?.beamformingEnabled ? (kk ?? 700) * ((bfuv.u ?? 0) * t.pos.x + (bfuv.v ?? 0) * t.pos.y) : 0;
-            const argv = { x: t.pos.x * u, y: t.pos.y * v };
+            const argv = { x: t.pos.x * uv.u, y: t.pos.y * uv.v };
             //float argument = k*(argv.x+argv.y) + element.delay*omega;
             const argument = kk * (argv.x + argv.y) + phase;
             return acc + Math.cos(argument);
@@ -323,6 +337,32 @@ export const StoreService = signalStore(
       }
     );
 
+    const patternElement = computed(() => {
+      const model = store.arrayConfig.transducerModel();
+      switch (model) {
+        case "Point":
+          return (uv: UVCoordinates) => 1;
+        case "Piston":
+          const kl = k();
+          const a = store.arrayConfig.transducerDiameter() / 2;
+
+          return (uv: UVCoordinates) => {
+            const s = Math.hypot(uv.u, uv.v);         // s = sin(theta)
+            if (!isFinite(s) || !isFinite(kl) || !isFinite(a)) return NaN;
+
+            const sClamped = Math.min(Math.max(s, 0), 1);
+
+            const x = kl * a * sClamped;
+            // Grenzfall x→0 stabilisieren: 2*J1(x)/x → 1 (weil J1(x) ~ x/2)
+            if (Math.abs(x) < 1e-8) return 1;
+
+            return (2 * j1(x)) / x;
+          }
+          default: 
+            console.error("Unknown transducer model: ", model);
+            return (uv: UVCoordinates) => 0;
+        }        
+    });
 
     const derivativeU = computed(() =>  (u : number) =>
         // Sum up over all transducers at particular position x
@@ -372,14 +412,23 @@ export const StoreService = signalStore(
       
       // Evaluate in AZ direction.
       // 
+
+      const af = patternUV();
+      const ef = patternElement();
+
       const u = azElToUV({ az: rad, el: steeringAzEl.el}).u;
       // Amplitude for the az axis
-      const az = patternUV()(u, -steeringUV.v);
+      const uarg = {u, v: -steeringUV.v}
+      const azAF = af(uarg);
+      const azEF = ef(uarg);
 
+      const az = azAF * azEF;
 
       const v = azElToUV({ az: steeringAzEl.az, el: rad}).v;
-      const el = patternUV()(-steeringUV.u, v);
-
+      const varg = {u: -steeringUV.u, v};
+      const elAF = af(varg);
+      const elEF = ef(varg);
+      const el = elAF * elEF;
       return { angle, az, el };
     }));
 
