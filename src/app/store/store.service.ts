@@ -12,7 +12,6 @@ import { UVCoordinates, withBeamforming } from './beamforming.state';
 import { azElToUV } from '../utils/uv';
 
 import j1 from '@stdlib/math-base-special-besselj1';
-import { TransducerMaterial } from '../view3d/materials/transducer.material';
 
 export type TransducerModel = 'Point' | 'Piston';
 
@@ -189,12 +188,18 @@ export interface UraConfig {
   pitchY: number;
 }
 
+export interface HexagonalConfig {
+  type: 'hex';
+  pitch: number;
+  elements: number;
+  omitCenter: boolean;
+}
 
 export interface ArrayConfig {
   name: string;
   environment: Environment;
   citation: Citation | null;
-  config: UraConfig | CircularConfig | SpiralConfig;
+  config: UraConfig | HexagonalConfig | CircularConfig | SpiralConfig;
   transducerModel: TransducerModel;
   transducerDiameter: number;
 }
@@ -230,6 +235,51 @@ const uraPositions = (uraConfig : UraConfig) => {
       }
     }
     return excitation;
+}
+
+const hexagonalPositions = (hexagonalConfig: HexagonalConfig) => {
+  const { pitch, elements, omitCenter } = hexagonalConfig;
+
+  if (!Number.isFinite(pitch) || pitch <= 0) {
+    console.warn("pitch muss > 0 sein.");
+    return [];
+  }
+  if (!Number.isInteger(elements) || elements < 1) {
+    console.warn("elements muss eine ganze Zahl ≥ 1 sein.");
+    return [];
+  }
+
+  // In axialen Koordinaten ist der "Radius" k = elements - 1.
+  const k = elements - 1;
+
+  const points: { name: string; pos: Vector3,  enabled: boolean, selected: boolean }[] = [];
+
+  // Alle axialen Koordinaten (q,r) mit max(|q|,|r|,|s|) <= k, s=-q-r
+  for (let q = -k; q <= k; q++) {
+    const rMin = Math.max(-k, -q - k);
+    const rMax = Math.min(k, -q + k);
+    for (let r = rMin; r <= rMax; r++) {
+      const s = -q - r;
+
+      // Zentrum ggf. weglassen
+      if (omitCenter && q === 0 && r === 0) continue;
+
+      // Axial -> kartesisch.
+      // Basisvektoren so gewählt, dass der Nachbarabstand exakt "pitch" ist:
+      // e1 = (pitch, 0), e2 = (pitch/2, pitch*sqrt(3)/2)
+      const x = pitch * (q + r / 2);
+      const y = pitch * (Math.sqrt(3) / 2) * r;
+
+        points.push({
+          name: `Transducer ${points.length}`,
+          pos: new Vector3(x, y),
+          enabled: false,
+          selected: false
+        });
+      }
+  }
+
+  return points;
 }
 
 const spiralPositions = (spiralConfig: SpiralConfig) =>
@@ -301,6 +351,8 @@ export const StoreService = signalStore(
                 return spiralPositions(arrayConfig);
             case 'circular':
                 return circularPositions(arrayConfig);
+            case 'hex':
+                return hexagonalPositions(arrayConfig);
             default:
                 return [];
         }
