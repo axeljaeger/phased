@@ -25,6 +25,7 @@ export const presets: ArrayConfig[] = [
             year: 2017,
         },
         transducerDiameter: 0.0034,
+        transducerModel: "Point"
     },
     {
         name: "URA 8x8 1.1lambda",
@@ -43,6 +44,7 @@ export const presets: ArrayConfig[] = [
         },
         citation: null,
         transducerDiameter: 0.012,
+        transducerModel: "Point"
     },
     {
         name: "Line 6 0.5lambda",
@@ -68,6 +70,7 @@ export const presets: ArrayConfig[] = [
             pitchY: 0.0043,
         },
         transducerDiameter: 0.0034,
+        transducerModel: "Point"
     },
     {
         name: "Line 8 0.5lambda wide",
@@ -93,6 +96,7 @@ export const presets: ArrayConfig[] = [
             pitchX: 0.0043,
             pitchY: 0.006,
         },
+        transducerModel: "Point"
     },
     {
         name: "Point source",
@@ -111,6 +115,7 @@ export const presets: ArrayConfig[] = [
         },
         transducerDiameter: 0.001,
         citation: null,
+        transducerModel: "Point"
     },
     {
         name: "L11-5gH @8 MHz",
@@ -136,6 +141,7 @@ export const presets: ArrayConfig[] = [
             authors: "Verasonics, Inc.",
             year: 2025,
         },
+        transducerModel: "Point"
     },
     {
         name: "Urtis",
@@ -161,6 +167,7 @@ export const presets: ArrayConfig[] = [
             authors: "Thomas Verellen et. al.",
             year: 2020,
         },
+        transducerModel: "Point"
     },
     {
         name: "HiRIS",
@@ -186,6 +193,7 @@ export const presets: ArrayConfig[] = [
             authors: "Laurijssen et. al.",
             year: 2024,
         },
+        transducerModel: "Point"
     },
     {
         name: "Spiral Array",
@@ -210,5 +218,6 @@ export const presets: ArrayConfig[] = [
             authors: "Allevato et. al.",
             year: 2022,
         },
+        transducerModel: "Point"
     },
 ]
