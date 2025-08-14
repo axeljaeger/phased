@@ -34,6 +34,9 @@ export class ArrayConfigComponent {
       diameter: this.fb.control(0.05),
       elementCount: this.fb.control(5),
       startWithZero: this.fb.control(false),
+      omitCenter: this.fb.control(false),
+      elements: this.fb.control(2),
+      pitch: this.fb.control(5),
   });
 
   constructor() {
@@ -45,6 +48,10 @@ export class ArrayConfigComponent {
         pitchX: config.pitchX * 1e3,
         pitchY: config.pitchY * 1e3,
         } : {},
+        ...config.type === 'hex' ? {
+          elements: config.elements,
+          pitch: config.pitch * 1e3,
+        } : {},
       }, { emitEvent: false })
     });
 
@@ -53,6 +60,7 @@ export class ArrayConfigComponent {
         ...value,
         ...value.type === 'ura' && value.pitchX !== undefined && value.pitchX !== null ? { pitchX: value.pitchX * 1e-3 } : {},
         ...value.type === 'ura' && value.pitchY !== undefined && value.pitchY !== null ? { pitchY: value.pitchY * 1e-3 } : {},
+        ...value.type === 'hex' && value.pitch !== undefined && value.pitch !== null ? { pitch: value.pitch * 1e-3 } : {},
       }} as ArrayConfig));
   }
 }

@@ -220,4 +220,29 @@ export const presets: ArrayConfig[] = [
         },
         transducerModel: "Point"
     },
+        {
+        name: "Hex Array",
+        environment: {
+            speedOfSound: 343,
+            environmentHint: 'Air',
+            excitationFrequencyBase: 40,
+            excitationFrequencyMultiplier: 'kHz'
+        },
+        config: {
+            type: 'hex',
+            elements: 4,
+            pitch: 0.0043,
+            omitCenter: true
+        },
+        transducerDiameter: 0.000325,
+        citation: {
+            kind: 'Academic',
+            url: "https://ieeexplore.ieee.org/document/9278601/",
+            urlTitle: "10.1109/SENSORS47125.2020.9278601",
+            title: "Embedded Air-Coupled Ultrasonic 3D Sonar  System with GPU Acceleration",
+            authors: "Allevato et. al.",
+            year: 2020,
+        },
+        transducerModel: "Point"
+    },
 ]
