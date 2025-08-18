@@ -10,6 +10,9 @@
           [transducerDiameter]="diameter()"
           [arrayDiameter]="arrayDiameter()"
           [transducerModel]="transducerModel()" />
+          <mat-action-row>
+           <button type="button" mat-icon-button color="primary" (click)="exportAperture()"><mat-icon>content_copy</mat-icon></button>
+          </mat-action-row>
     </mat-expansion-panel>
     <mat-expansion-panel hideToggle expanded>
         <mat-expansion-panel-header>
@@ -19,6 +22,9 @@
         </mat-expansion-panel-header>
     <app-kpi [kpis]="kpis()" (hoveredKpi)="setHoveredKpi($event)" />
     <app-chart />
+    <mat-action-row>
+      <button type="button" mat-icon-button color="primary" (click)="exportChart()"><mat-icon>content_copy</mat-icon></button>
+    </mat-action-row>
 </mat-expansion-panel>
 <mat-expansion-panel hideToggle>
     <mat-expansion-panel-header>

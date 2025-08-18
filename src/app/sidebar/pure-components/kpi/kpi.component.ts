@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, inject, input, output } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -18,7 +19,18 @@ export type HoveredKpi = '' | 'HpbwAz' | 'FnbwAz' | 'SlrAz' | 'HpbwEl' | 'FnbwEl
 })
 export class KPIComponent {
   readonly store = inject(StoreService);
+  readonly snackBar = inject(MatSnackBar);
+
   kpis = input<PSFResult>();
 
   hoveredKpi = output<HoveredKpi>();
+
+    copyToClipboard(value: number|null) {
+    if (value !== null) {
+      navigator.clipboard.writeText(value.toString());
+      this.snackBar.open(`Value ${value.toFixed(4)} copied to clipboard`, 'Close', {
+        duration: 1000
+      });
+    }
+  }
 }
