@@ -10,6 +10,8 @@ import { version } from '../../../../../package.json';
 import { HoveredKpi, KPIComponent } from '../kpi/kpi.component';
 import { ApertureViewComponent } from '../aperture-view/aperture-view.component';
 import { StoreService } from 'src/app/store/store.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-result-container',
@@ -22,12 +24,15 @@ import { StoreService } from 'src/app/store/store.service';
         MatIconModule,
         KPIComponent,
         ApertureViewComponent,
-        RayleighComponent
+        RayleighComponent,
+        MatButtonModule
     ]
 })
 export class ResultContainerComponent {
     public version = version;
-    private store = inject(StoreService);
+    private readonly store = inject(StoreService);
+    private readonly snackBar = inject(MatSnackBar);
+
     kpis = computed(() => this.store.lowTechKPis());
 
     public farfieldVisible = computed(() => this.store.enabledResults().includes(Results.Farfield));
@@ -46,4 +51,31 @@ export class ResultContainerComponent {
     public setHoveredKpi(hoveredKpi: HoveredKpi) {
         this.store.setHoveredKpi(hoveredKpi);
     }
+
+  exportAperture() {
+    navigator.clipboard.writeText(
+      this.transducers().reduce((acc, t) => 
+        acc + `${t.pos.x}\t${t.pos.y}\n`, 
+      `# Array configuration exported from: x;y\n` ));
+    this.snackBar.open(`Transducer positions copied to clipboard`, 'Close', {
+      duration: 1000
+    });
+  }
+
+  private chartsString = computed(() => this.store.crossPattern().reduce((acc, line) => {
+    const values = [
+      line.angle,
+      line.az,
+      line.el
+    ].map(value => value.toString());
+    const [angle, az, el] = values;
+    return acc + `${angle}\t${az}\t${el}\n`;
+  }, `# Chart exported from: angle;az;el\n`));
+    
+  exportChart() {
+    navigator.clipboard.writeText(this.chartsString());
+    this.snackBar.open(`Chart data copied to clipboard`, 'Close', {
+      duration: 1000
+    });
+  }
 }

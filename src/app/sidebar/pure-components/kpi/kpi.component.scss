@@ -8,15 +8,33 @@ mat-button-toggle-group {
 }
 
 td {
-    text-align: center;
-    cursor: pointer;
-    font-variant-numeric: tabular-nums;
-    width: 7ch;
+  position: relative;
+  text-align: center;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  width: 7ch;
+  padding-right: 1.5em;   /* Platz für das Icon in der Box */
 }
 
 td:hover {
-    background-color: #222222;
-    border-radius: 0.5ex;
+  background-color: #222222;
+  border-radius: 0.5ex;
+}
+
+td::after {
+  content: "content_copy";
+  font-family: 'Material Icons';
+  position: absolute;
+  right: 0.2em;            /* innerhalb der Box platzieren */
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+td:hover::after {
+  opacity: 1;
 }
 
 th {

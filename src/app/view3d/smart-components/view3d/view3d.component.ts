@@ -29,9 +29,8 @@ import { ArrayConfig, StoreService } from 'src/app/store/store.service';
         ExportRendererComponent,
         TransducerBufferComponent,
         RayleighIntegralRendererComponent,
-        FarfieldRendererComponent,
-        UraInteractionRendererComponent
-    ]
+        FarfieldRendererComponent
+      ]
 })
 export class View3dComponent {
   store = inject(StoreService);
