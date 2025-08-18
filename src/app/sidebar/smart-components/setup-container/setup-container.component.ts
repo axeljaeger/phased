@@ -30,4 +30,5 @@ export class SetupContainerComponent {
     private store = inject(StoreService);
     public beamformingEnabled = computed(() => this.store.beamforming().beamformingEnabled);
     public environment = computed(() => this.store.arrayConfig().environment);
+    public arrayConfig = computed(() => this.store.arrayConfig());
 }

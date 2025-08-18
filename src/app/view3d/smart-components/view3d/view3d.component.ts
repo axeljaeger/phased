@@ -50,7 +50,10 @@ export class View3dComponent {
   
   selection =   this.store.selection;
   beamforming = this.store.beamforming;
-  
+
+  transducerDiameter = computed(() => this.arrayConfig().transducerDiameter);
+  transducerModel = computed(() => this.arrayConfig().transducerModel);
+
   public transducerHovered(transducerId: number): void {
     this.store.setHovered(transducerId);
   }

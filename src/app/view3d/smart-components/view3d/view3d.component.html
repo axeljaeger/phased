@@ -1,22 +1,21 @@
 <app-babylon-jsview>
-  <app-excitation-renderer 
-    [transducers]="transducers()" 
-    [selection]="selection()" 
-    [transducerDiameter]="arrayConfig().transducerDiameter"
+  <app-excitation-renderer [transducers]="transducers()" [selection]="selection()"
+    [transducerDiameter]="arrayConfig().transducerDiameter" [transducerModel]="transducerModel()"
     (hovered)="transducerHovered($event)" />
 
-  @if (ura()) {
-    <app-ura-interaction [arrayConfig]="arrayConfig()" (arrayConfigChange)="setArrayConfig($event)" />
-  }
+  <!-- @if (ura()) {
+  <app-ura-interaction [arrayConfig]="arrayConfig()" (arrayConfigChange)="setArrayConfig($event)" />
+  } -->
 
   <app-transducer-buffer [transducers]="transducers()" [beamforming]="beamforming()" [k]="k()">
     @if (rayleighEnabled()) {
-      <app-rayleigh-integral-renderer [transducers]="transducers()" [environment]="arrayConfig().environment"
-        [aspect]="rayleighAspect()" [resultSet]="rayleighResultSet()" />
+    <app-rayleigh-integral-renderer [transducers]="transducers()" [environment]="arrayConfig().environment"
+      [aspect]="rayleighAspect()" [resultSet]="rayleighResultSet()" />
     }
 
     @if (farfieldEnabled()) {
-      <app-farfield-renderer [transducers]="transducers()" [environment]="arrayConfig().environment" />
+    <app-farfield-renderer [transducers]="transducers()" [environment]="arrayConfig().environment"
+      [diameter]="transducerDiameter()" [transducerModel]="transducerModel()" />
     }
     <app-export-renderer [transducers]="transducers()" [environment]="k()" (results)="onNewResults($event)"
       [beamforming]="beamforming()" />

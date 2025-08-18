@@ -121,7 +121,6 @@ export class ExportRendererComponent extends TransducerBufferConsumer {
 
   calcData() : void {
     if (this.cs && this.resultBuffer) {
-      console.log("Calculating data");
       this.uniformBuffer.updateFloat("k", this.environment()!);
       const numElements = this.transducers()!.length;
       this.uniformBuffer.updateInt("numElements", numElements);

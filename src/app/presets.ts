@@ -25,7 +25,7 @@ export const presets: ArrayConfig[] = [
             year: 2017,
         },
         transducerDiameter: 0.0034,
-        transducerModel: "Point"
+        transducerModel: "Piston"
     },
     {
         name: "URA 8x8 1.1lambda",
@@ -43,8 +43,8 @@ export const presets: ArrayConfig[] = [
             pitchY: 0.012,
         },
         citation: null,
-        transducerDiameter: 0.012,
-        transducerModel: "Point"
+        transducerDiameter: 0.008,
+        transducerModel: "Piston"
     },
     {
         name: "Line 6 0.5lambda",
