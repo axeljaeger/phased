@@ -40,6 +40,7 @@ export class ResultContainerComponent {
         }
         return null;
     });
+    public transducerModel = computed(() => this.store.arrayConfig().transducerModel);
     public transducersCount = computed(() => this.transducers().length);
     public rayleighVisible = computed(() => this.store.enabledResults().includes(Results.RayleighIntegral));
     public setHoveredKpi(hoveredKpi: HoveredKpi) {

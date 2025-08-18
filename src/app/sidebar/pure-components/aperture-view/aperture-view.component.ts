@@ -1,5 +1,5 @@
 import { Component, computed, input } from '@angular/core';
-import { Transducer } from 'src/app/store/store.service';
+import { Transducer, TransducerModel } from 'src/app/store/store.service';
 
 @Component({
   selector: 'app-aperture-view',
@@ -8,6 +8,8 @@ import { Transducer } from 'src/app/store/store.service';
 })
 export class ApertureViewComponent {
   transducers = input<Transducer[]>([]);
+  transducerModel = input<TransducerModel>();
+
   transducerDiameter = input<number>(0);
   arrayDiameter = input<number | null>(null);
   bb = computed(() => {
@@ -30,4 +32,16 @@ export class ApertureViewComponent {
     ...t,
     pos: { x: t.pos.x, y: -t.pos.y }
   })))
+  crossSize = computed(() => {
+    const initial = { left: Infinity, top: -Infinity, right: -Infinity, bottom: Infinity }; 
+
+    const rawBB = this.transducers().reduce((acc, t) => ({
+        left: Math.min(acc.left, t.pos.x),
+        top: Math.max(acc.top, t.pos.y),
+        right: Math.max(acc.right, t.pos.x),
+        bottom: Math.min(acc.bottom, t.pos.y) 
+    }), initial);
+
+    return Math.max(rawBB.right - rawBB.left, rawBB.top - rawBB.bottom, 0.001) * 0.05;
+  });
 }

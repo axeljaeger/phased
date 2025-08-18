@@ -31,9 +31,6 @@ export class TransducerComponent {
   
   updateStoreFromForm = this.transducerConfig.valueChanges
       .pipe(takeUntilDestroyed()).subscribe(val => {
-
-        console.log("value from form: ", val);
-
         this.store.setTransducer({
           ...val.transducerDiameter ? {transducerDiameter: val.transducerDiameter * 1e-3} : {},
           ...val.transducerModel ? {transducerModel: val.transducerModel} : {}

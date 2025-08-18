@@ -39,14 +39,18 @@ export class FarfieldRendererComponent extends TransducerBufferConsumer
 {
   transducers = input<Transducer[] | null>(null);
   environment = input<Environment | null>(null);
+  diameter = input(0);
+  transducerModel = input<'Point' | 'Piston'>('Piston');
 
   upload = effect(() => {
     const env = this.environment();
     const transducers = this.transducers();
+    const dia = this.diameter();
+    const model = this.transducerModel();
 
     if (this.material) {
-      this.uploadEnvironment(this.environment());
-      this.uploadArrayConfig(this.transducers());
+      this.uploadEnvironment(env);
+      this.uploadArrayConfig(transducers);
     }
   });
 
@@ -98,6 +102,8 @@ export class FarfieldRendererComponent extends TransducerBufferConsumer
 
       this.material.setFloat('omega', omega);
       this.material.setFloat('k', omega / environment.speedOfSound);
+      const ka = this.transducerModel() === 'Piston' ? (this.diameter() * omega / environment.speedOfSound) : 0;
+      this.material.setFloat('ka', ka);
     }
   }
 
