@@ -34,15 +34,11 @@ export class ExcitationRendererComponent extends BabylonConsumer {
   selection = input<SelectionState | null>(null);
   hovered = output<number>();
 
-  // Piston transducer view
-  private transducerMaterial: TransducerMaterial;
-  private transducerMaterialHidden: TransducerMaterial;
-
-  private transducerMesh: Mesh;
-  private transducerMeshHidden: Mesh;
-
-  // Point source transducer
   private pointMesh: LinesMesh;
+
+  private pistonTransducerMaterial: TransducerMaterial;
+  private pistonTransducerMesh: Mesh;
+  private pistonTransducerLineMeshHidden: LinesMesh;
 
   async ngxSceneCreated(scene: Scene): Promise<void> {
     this.initialize3D(scene);
@@ -53,28 +49,12 @@ export class ExcitationRendererComponent extends BabylonConsumer {
     const transducers = this.transducers();
     const selection = this.selection();
 
-    if (this.transducerMaterial) {
+    if (this.pistonTransducerMaterial) {
       this.uploadArrayConfig(transducers, selection);
     }
   })
 
   public initialize3D(scene: Scene): void {
-    this.transducerMaterial = new TransducerMaterial(scene);
-    this.transducerMaterial.depthFunction = Engine.ALWAYS;
-    this.transducerMaterial.stencil.enabled = true;
-    this.transducerMaterial.stencil.funcRef = 1;
-    this.transducerMaterial.stencil.func = Engine.EQUAL;
-    this.transducerMaterial.stencil.opStencilDepthPass = Engine.KEEP;
-    this.transducerMaterial.setFloat('innerRadius', 0.85);
-
-    this.transducerMaterialHidden = new TransducerMaterial(scene);
-    this.transducerMaterialHidden.depthFunction = Engine.ALWAYS;
-    this.transducerMaterialHidden.stencil.enabled = true;
-    this.transducerMaterialHidden.stencil.funcRef = 1;
-    this.transducerMaterialHidden.stencil.func = Engine.NOTEQUAL;
-    this.transducerMaterialHidden.stencil.opStencilDepthPass = Engine.KEEP;
-    this.transducerMaterialHidden.setFloat('innerRadius', 0.0);
-
     const origin = new Vector3(0, 0, 0);
     const zPositive = new Vector3(0, 0, -1);
     const aperturePlane = Plane.FromPositionAndNormal(origin, zPositive);
@@ -83,21 +63,42 @@ export class ExcitationRendererComponent extends BabylonConsumer {
       sourcePlane: aperturePlane,
       size: 1,
     };
+    
+    this.pistonTransducerMaterial = new TransducerMaterial(scene);
+    this.pistonTransducerMaterial.depthFunction = Engine.ALWAYS;
+    this.pistonTransducerMaterial.stencil.enabled = true;
+    this.pistonTransducerMaterial.stencil.funcRef = 1;
+    this.pistonTransducerMaterial.stencil.func = Engine.NOTEQUAL;
+    this.pistonTransducerMaterial.stencil.opStencilDepthPass = Engine.KEEP;
+    this.pistonTransducerMaterial.setFloat('innerRadius', 0.0);
 
-    this.transducerMesh = CreatePlane('excitation', apertureOptions, scene);
-    this.transducerMesh.material = this.transducerMaterial;
-    this.transducerMesh.renderingGroupId = 1;
-    this.transducerMesh.thinInstanceEnablePicking = true;
-    this.transducerMesh.pointerOverDisableMeshTesting = false;
+    this.pistonTransducerMesh = CreatePlane('excitationHidden', apertureOptions, scene);
+    this.pistonTransducerMesh.material = this.pistonTransducerMaterial;
+    this.pistonTransducerMesh.renderingGroupId = 1;
+    this.pistonTransducerMesh.thinInstanceEnablePicking = true;
+    this.pistonTransducerMesh.pointerOverDisableMeshTesting = false;
 
-    this.transducerMeshHidden = CreatePlane('excitationHidden', apertureOptions, scene);
-    this.transducerMeshHidden.material = this.transducerMaterialHidden;
-    this.transducerMeshHidden.renderingGroupId = 1;
-    this.transducerMeshHidden.thinInstanceEnablePicking = true;
-    this.transducerMeshHidden.pointerOverDisableMeshTesting = false;
+    const segments = 64;
+    const points = Array.from({ length: segments + 1 }, (_, i) => {
+      const a = (i / segments) * Math.PI * 2;
+      return new Vector3(Math.cos(a) * .5, Math.sin(a) *.5, 0);
+    });
+
+    this.pistonTransducerLineMeshHidden = CreateLineSystem('hiddenLines', {
+      lines: [points]
+    }, scene);
+    this.pistonTransducerLineMeshHidden.renderingGroupId = 1;
+
+    const hiddenLinesMaterial = this.pistonTransducerLineMeshHidden.material!;
+    hiddenLinesMaterial.alpha = 0.99;
+    hiddenLinesMaterial.depthFunction = Engine.ALWAYS;
+    hiddenLinesMaterial.stencil.enabled = true;
+    hiddenLinesMaterial.stencil.funcRef = 1;
+    hiddenLinesMaterial.stencil.func = Engine.EQUAL;
+    hiddenLinesMaterial.stencil.opStencilDepthPass = Engine.KEEP;
 
     const actionManager = new ActionManager(scene);
-    this.transducerMesh.actionManager = actionManager;
+    this.pistonTransducerMesh.actionManager = actionManager;
 
     actionManager.registerAction(
       new ExecuteCodeAction(
@@ -118,7 +119,6 @@ export class ExcitationRendererComponent extends BabylonConsumer {
         (event) => this.hovered.emit(-1)
       )
     )
-
 
     const options = {
       lines: [[
@@ -177,8 +177,10 @@ export class ExcitationRendererComponent extends BabylonConsumer {
         selection: new Float32Array(SCALAR_ELEMENT_COUNT * transducers.length)
       }
     );
-
+      
+    const allMeshes = [this.pointMesh, this.pistonTransducerMesh, this.pistonTransducerLineMeshHidden];
     if (transducers.length > 0) {
+      const pistonMeshes = [this.pistonTransducerMesh, this.pistonTransducerLineMeshHidden];
       switch (this.transducerModel()) {
         case 'Point':
           this.pointMesh.thinInstanceSetBuffer(
@@ -188,13 +190,13 @@ export class ExcitationRendererComponent extends BabylonConsumer {
             false
           );
           this.pointMesh.setEnabled(true);
-          [this.transducerMesh, this.transducerMeshHidden].forEach(mesh => {
+          pistonMeshes.forEach(mesh => {
             mesh.setEnabled(false);
           });
           break;
         case 'Piston':
           this.pointMesh.setEnabled(false);
-          [this.transducerMesh, this.transducerMeshHidden].forEach(mesh => {
+          pistonMeshes.forEach(mesh => {
             mesh.setEnabled(true);
             mesh.thinInstanceSetBuffer(
               'matrix',
@@ -213,7 +215,7 @@ export class ExcitationRendererComponent extends BabylonConsumer {
           break;
       }
     } else {
-      [this.transducerMesh, this.transducerMeshHidden, this.pointMesh].forEach(mesh => {
+      allMeshes.forEach(mesh => {
         mesh.setEnabled(false);
       });
     }
