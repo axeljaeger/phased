@@ -31,6 +31,7 @@ import "@babylonjs/core/Engines/WebGPU/Extensions/engine.computeShader";
 import { ShaderStore } from '@babylonjs/core/Engines/shaderStore';
 import { diff } from 'src/app/utils/utils';
 import { Color4 } from '@babylonjs/core/Maths/math.color';
+import { Angle } from '@babylonjs/core/Maths/math.path';
 
 @Component({
   selector: 'app-babylon-jsview',
@@ -208,7 +209,14 @@ export class BabylonJSViewComponent
       phase %= 360;
     });
 
-    new AxesViewer(scene, 0.005);
+    
+    const xAxis = new Vector3(1, 0, 0).normalize();
+    const yAxis = new Vector3(0, 1, 0).normalize();
+
+    const axis = new AxesViewer(scene, 0.005);
+    axis.xAxis.rotate(yAxis, Angle.FromDegrees(-90).radians());
+    axis.yAxis.rotate(xAxis, Angle.FromDegrees(90).radians());
+    axis.zAxis.rotate(xAxis, Angle.FromDegrees(-90).radians());
 
     return scene;
   }

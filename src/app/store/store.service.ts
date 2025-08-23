@@ -383,7 +383,7 @@ export const StoreService = signalStore(
             const phase = bf?.beamformingEnabled ? (kk ?? 700) * ((bfuv.u ?? 0) * t.pos.x + (bfuv.v ?? 0) * t.pos.y) : 0;
             const argv = { x: t.pos.x * uv.u, y: t.pos.y * uv.v };
             //float argument = k*(argv.x+argv.y) + element.delay*omega;
-            const argument = kk * (argv.x + argv.y) + phase;
+            const argument = kk * (argv.x + argv.y) - phase;
             return acc + Math.cos(argument);
         }, 0);
       }
@@ -470,14 +470,14 @@ export const StoreService = signalStore(
 
       const u = azElToUV({ az: rad, el: steeringAzEl.el}).u;
       // Amplitude for the az axis
-      const uarg = {u, v: -steeringUV.v}
+      const uarg = {u, v: steeringUV.v}
       const azAF = af(uarg);
       const azEF = ef(uarg);
 
       const az = azAF * azEF;
 
       const v = azElToUV({ az: steeringAzEl.az, el: rad}).v;
-      const varg = {u: -steeringUV.u, v};
+      const varg = {u: steeringUV.u, v};
       const elAF = af(varg);
       const elEF = ef(varg);
       const el = elAF * elEF;
