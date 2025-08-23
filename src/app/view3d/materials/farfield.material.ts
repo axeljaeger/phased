@@ -70,7 +70,7 @@ fn element_factor_uv(uv: vec2<f32>, ka: f32) -> f32 {
         let element = excitation.elements[i];
         let argv = element.position.xy*vertexInputs.uv;
         //float argument = k*(argv.x+argv.y) + element.delay*omega;
-        let argument = uniforms.k*(argv.x+argv.y) + element.phasor.x;
+        let argument = uniforms.k*(argv.x+argv.y) - element.phasor.x;
         result += vec2<f32>(cos(argument), sin(argument));
     }
 
