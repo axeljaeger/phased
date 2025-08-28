@@ -1,6 +1,8 @@
 name: Publish to github pages
 run-name: ${{ github.actor }} is publishing to GitHub Actions 🚀
-on: [release]
+on:
+  release:
+    types: [published]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,7 +13,7 @@ jobs:
         run: | 
           npm version ${{ github.event.release.tag_name }} --git-tag-version=false
           npm ci
-          npx ng build --base-href https://axeljaeger.github.io/phased/
+          npx ng build --base-href https://TUDA-MUST.github.io/ITEP/
           cp dist/phased/browser/index.html dist/phased/browser/404.html
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
