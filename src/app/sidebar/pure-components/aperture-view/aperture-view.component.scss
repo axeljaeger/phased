@@ -2,3 +2,14 @@
     display: block; 
     text-align: center;
 }
+
+svg {
+    height: 150px; 
+    width: 150px;
+}
+
+circle.outline {
+    fill: none; 
+    stroke: gray; 
+    stroke-width: 0.0001;
+}

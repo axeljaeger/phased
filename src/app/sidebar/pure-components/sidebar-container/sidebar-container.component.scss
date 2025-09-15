@@ -9,34 +9,31 @@
 nav {
     display: flex;
     justify-content: space-evenly;
-}
-
-nav a {
+    a {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 1ex 1ex;
     background-color: var(--mat-sys-surface);
-}
+    }
+    a:hover {
+        background-color: #222222;
+    }
 
-nav a:hover {
-    background-color: #222222;
-}
+    a:first-child {
+        border-top-left-radius: var(--mat-expansion-container-shape, 12px);
+        border-bottom-left-radius: var(--mat-expansion-container-shape, 12px);
+    }
 
+    a:last-child {
+        border-top-right-radius: var(--mat-expansion-container-shape, 12px);
+        border-bottom-right-radius: var(--mat-expansion-container-shape, 12px);
+    }
 
-nav a:first-child {
-    border-top-left-radius: var(--mat-expansion-container-shape, 12px);
-    border-bottom-left-radius: var(--mat-expansion-container-shape, 12px);
-}
-
-nav a:last-child {
-    border-top-right-radius: var(--mat-expansion-container-shape, 12px);
-    border-bottom-right-radius: var(--mat-expansion-container-shape, 12px);
-}
-
-nav a.active {
-    background-color: var(--mat-slide-toggle-selected-handle-color);
+    a.active {
+        background-color: var(--mat-slide-toggle-selected-handle-color);
+    }
 }
 
 .mat-headline-small {
@@ -53,6 +50,7 @@ nav a.active {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
     gap: .5ex;
     text-decoration: none;
     background-color: var(--mat-sys-surface);

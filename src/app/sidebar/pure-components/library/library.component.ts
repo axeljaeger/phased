@@ -1,13 +1,11 @@
 import { Component, input } from '@angular/core';
 
-import { MatSelectionList, MatListItem, MatListItemTitle, MatListItemIcon, MatListItemLine } from '@angular/material/list';
-import { MatIcon } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
 import { ArrayConfig } from 'src/app/store/store.service';
+import { CitationComponent } from '../citation/citation.component';
 
 @Component({
   selector: 'app-library',
-  imports: [MatSelectionList, MatListItem, MatIcon, MatListItemTitle, MatListItemIcon, MatListItemLine, RouterLink],
+  imports: [CitationComponent],
   templateUrl: './library.component.html',
   styleUrl: './library.component.scss'
 })

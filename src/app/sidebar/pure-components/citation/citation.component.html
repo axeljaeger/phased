@@ -1,0 +1,4 @@
+<div class="authors"><mat-icon>school</mat-icon>{{ citation()?.authors }}</div>
+<div class="title" [routerLink]="['/library', citationIndex()]">{{ citation()?.title }}</div>
+<a href="{{ citation()?.url }}" target="_blank">{{ citation()?.urlTitle }}<mat-icon>link</mat-icon></a>
+  
