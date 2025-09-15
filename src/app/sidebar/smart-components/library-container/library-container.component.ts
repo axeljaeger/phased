@@ -1,6 +1,5 @@
 import { Component, computed, effect, inject, input } from '@angular/core';
 import { LibraryComponent } from '../../pure-components/library/library.component';
-import { InfoComponent } from '../../pure-components/info/info.component';
 import { StoreService } from 'src/app/store/store.service';
 import { presets } from '../../../presets'
 
@@ -8,24 +7,23 @@ import { presets } from '../../../presets'
   selector: 'app-library-container',
   imports: [
     LibraryComponent,
-    InfoComponent
   ],
   templateUrl: './library-container.component.html',
   styleUrl: './library-container.component.scss'
 })
 export class LibraryContainerComponent {
-  public presets = presets;
+  public presets = presets.sort((a, b) => a.citation!.year < b.citation!.year ? 1 : -1);
   private store = inject(StoreService);
   public libraryIndex = input<number | null>();
 
-  oldIindex = -1
+  oldIndex = -1
 
   public loadPresetEffect = effect(() => {
     const index = this.libraryIndex();
-    if (index === null || index === undefined || index === this.oldIindex) {
+    if (index === null || index === undefined || index === this.oldIndex) {
       return;
     }
-    this.oldIindex = index;
+    this.oldIndex = index;
 
     const preset = this.presets[index!];
     if (preset) {

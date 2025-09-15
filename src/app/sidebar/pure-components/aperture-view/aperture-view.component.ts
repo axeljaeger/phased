@@ -4,7 +4,7 @@ import { Transducer, TransducerModel } from 'src/app/store/store.service';
 @Component({
   selector: 'app-aperture-view',
   templateUrl: './aperture-view.component.html',
-  styleUrls: ['./aperture-view.component.scss']
+  styleUrls: ['./aperture-view.component.scss'],
 })
 export class ApertureViewComponent {
   transducers = input<Transducer[]>([]);

@@ -1,24 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InfoComponent } from './info.component';
+import { CitationComponent } from './citation.component';
 
 import { describe, beforeEach, it, expect } from 'vitest';
 import { provideZonelessChangeDetection } from '@angular/core';
 
-describe('InfoComponent', () => {
-  let component: InfoComponent;
-  let fixture: ComponentFixture<InfoComponent>;
+describe('CitationComponent', () => {
+  let component: CitationComponent;
+  let fixture: ComponentFixture<CitationComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InfoComponent],
+      imports: [CitationComponent],
       providers: [
         provideZonelessChangeDetection(),
       ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(InfoComponent);
+    fixture = TestBed.createComponent(CitationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
