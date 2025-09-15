@@ -42,16 +42,15 @@ markArea: {
   label: {
     position: ['100%', '20%']
   },
-  data: [
- // xAxis + yAxis für Bereich                       
-    ]
+  data: []
   }
 }
 
 @Component({
     selector: 'app-chart',
     templateUrl: './chart.component.html',
-    styleUrl: './chart.component.scss'
+    styleUrl: './chart.component.scss',
+    imports: []
 })
 export class ChartComponent implements OnInit {
   private readonly store = inject(StoreService);

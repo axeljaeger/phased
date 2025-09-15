@@ -1,7 +1,5 @@
-<svg [attr.viewBox]="bb()" style="height: 150px; width: 150px">
+<svg [attr.viewBox]="bb()">
    <defs>
-  <defs>
-    <!-- normiertes Kreuz: -1..+1, Mittelpunkt = (0,0) -->
     <symbol id="cross" viewBox="-1 -1 2 2">
       <line x1="-1" y1="-1" x2="1" y2="1"
             stroke="crimson" [attr.stroke-width]="2"
@@ -11,12 +9,10 @@
             vector-effect="non-scaling-stroke"/>
     </symbol>
   </defs>
-  </defs>
-
 
     @let arrayDia = arrayDiameter();
     @if (arrayDia !== null) {
-        <circle [attr.r]="arrayDia / 2" style="fill: none; stroke: gray; stroke-width: 0.0001" />
+        <circle class="outline" [attr.r]="arrayDia / 2" />
     }
 
     @switch(transducerModel()) {

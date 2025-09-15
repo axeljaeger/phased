@@ -28,25 +28,6 @@ export const presets: ArrayConfig[] = [
         transducerModel: "Piston"
     },
     {
-        name: "URA 8x8 1.1lambda",
-        environment: {
-            speedOfSound: 343,
-            environmentHint: 'Air',
-            excitationFrequencyBase: 40,
-            excitationFrequencyMultiplier: 'kHz'
-        },
-        config: {
-            type: 'ura',
-            elementsX: 8,
-            elementsY: 8,
-            pitchX: 0.012,
-            pitchY: 0.012,
-        },
-        citation: null,
-        transducerDiameter: 0.008,
-        transducerModel: "Piston"
-    },
-    {
         name: "Line 6 0.5lambda",
         environment: {
             speedOfSound: 343,
@@ -95,51 +76,6 @@ export const presets: ArrayConfig[] = [
             elementsY: 12,
             pitchX: 0.0043,
             pitchY: 0.006,
-        },
-        transducerModel: "Point"
-    },
-    {
-        name: "Point source",
-        environment: {
-            speedOfSound: 343,
-            environmentHint: 'Air',
-            excitationFrequencyBase: 40,
-            excitationFrequencyMultiplier: 'kHz'
-        },
-        config: {
-            type: 'ura',
-            elementsX: 1,
-            elementsY: 1,
-            pitchX: 0.01,
-            pitchY: 0.01,
-        },
-        transducerDiameter: 0.001,
-        citation: null,
-        transducerModel: "Point"
-    },
-    {
-        name: "L11-5gH @8 MHz",
-        environment: {
-            speedOfSound: 1480,
-            environmentHint: 'Water',
-            excitationFrequencyBase: 8,
-            excitationFrequencyMultiplier: 'MHz'
-        },
-        config: {
-            type: 'ura',
-            elementsX: 128,
-            elementsY: 1,
-            pitchX: 0.0003,
-            pitchY: 0.0003,
-        },
-        transducerDiameter: 0.0002,
-        citation: {
-            kind: 'Industrial',
-            url: "https://verasonics.com/general-imaging-transducers/",
-            urlTitle: "Product overview",
-            title: "General Imaging Transducers",
-            authors: "Verasonics, Inc.",
-            year: 2025,
         },
         transducerModel: "Point"
     },
