@@ -9,16 +9,15 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Build Angular app
+      - name: Prepare static moved page
         run: | 
-          npm version ${{ github.event.release.tag_name }} --git-tag-version=false
-          npm ci
-          npx ng build --base-href https://TUDA-MUST.github.io/ITEP/
-          cp dist/phased/browser/index.html dist/phased/browser/404.html
+          mkdir -p dist/pages
+          cp index.html dist/pages/index.html
+          cp index.html dist/pages/404.html
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "dist/phased/browser"
+          path: "dist/pages"
 
   deploy:
     # Add a dependency to the build job
